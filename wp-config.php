@@ -87,6 +87,8 @@ $table_prefix  = 'aeg_';
  */
 define('WP_DEBUG', false);
 
+define('WP_ENV', 'development');
+
 /* That's all, stop editing! Happy blogging. */
 
 /** Absolute path to the WordPress directory. */
