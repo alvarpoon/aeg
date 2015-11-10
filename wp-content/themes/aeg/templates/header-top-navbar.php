@@ -12,6 +12,7 @@
     </div>
   </div>
   <div class="container">
+  	<div class="row">
       <div class="nav-container">
         <nav class="collapse navbar-collapse main-menu" role="navigation">
             <?php
@@ -22,7 +23,8 @@
     
             ?>
         </nav>
-        <a href="#" class="login-btn">Login</a>
+        <a href="#" class="login-btn">login</a>
       </div>
+  	</div>
   </div>
 </header>
