@@ -6627,6 +6627,8 @@ body {
 }
 .main {
   margin-top: 50px;
+  margin-bottom: 15px;
+  float: none!important;
 }
 .noPadding {
   padding-left: 0!important;
@@ -6702,6 +6704,15 @@ figure.alignnone {
     width: 33.33333333%;
   }
 }
+@media (min-width: 992px) {
+  .home-logo-container {
+    padding: 10px 0 15px 0;
+    background: url(../img/home/bg_home.png) no-repeat top center;
+  }
+  .home-logo-container .logo_aeg {
+    margin-left: 80px;
+  }
+}
 .nav-container {
   position: relative;
 }
@@ -6718,6 +6729,7 @@ figure.alignnone {
 }
 .navbar-default {
   background: #000;
+  border-bottom: none;
 }
 .navbar-default .navbar-nav {
   float: none;
