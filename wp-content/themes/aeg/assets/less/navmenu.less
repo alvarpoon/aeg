@@ -1,0 +1,110 @@
+//===============================================================================
+//===============================================================================
+// Base
+//===============================================================================
+//===============================================================================
+
+.nav-container{
+	position:relative;
+	.login-btn{
+		position:absolute;
+		right:0;
+		top:0;
+		background:#898989;
+		border-radius:15px;
+		padding:3px 20px;
+		color:#fff;
+		font-size:15px;
+		margin-top:10px;
+	}
+}
+
+.navbar-default{
+	background:#000;
+	.navbar-nav{
+		float:none;
+		li{
+			float:none;
+			display:inline-block;
+			a{
+				color:#fff;
+				padding:15px;
+			}
+		}
+	}
+}
+
+.navbar-collapse{
+	text-align:center;
+}
+
+#menu-primary-navigation{
+	font-size: 0;
+	li{
+		position:relative;
+		border-right:1px solid #C9C9C9;
+		&:last-child{
+			border-right:none;
+		}
+		
+		&:hover{
+			&>a{
+				color:#F8B62D;
+				background:#004E9E;
+			}
+			.sub-menu{
+				display:block;
+			}
+		}
+		
+		a{
+			font-size:15px;
+		}
+		
+		.sub-menu{
+			display:none;
+			position:absolute;
+			left:0;
+			top:50px;
+			background:#003062;
+			padding-left:0;
+			list-style:none;
+			-webkit-box-shadow: 7px 7px 12px 0px rgba(50, 50, 50, 0.6);
+			-moz-box-shadow:    7px 7px 12px 0px rgba(50, 50, 50, 0.6);
+			box-shadow:         7px 7px 12px 0px rgba(50, 50, 50, 0.6);
+			li{
+				border-bottom:1px solid #1A4E7A;
+				border-right:none;
+				display:block;
+				&:last-child{
+					border-bottom:none;
+				}
+				
+				a{
+					white-space: nowrap;
+					display:block;
+					padding:10px 15px;
+					text-align:left;
+				}
+			}
+		}
+	}
+}
+
+//===============================================================================
+//===============================================================================
+// tablet
+//===============================================================================
+//===============================================================================
+@media (min-width: @screen-sm-min) {
+
+}
+
+//===============================================================================
+//===============================================================================
+// Desktop
+//===============================================================================
+//===============================================================================
+@media (min-width: @screen-md-min) {
+
+}

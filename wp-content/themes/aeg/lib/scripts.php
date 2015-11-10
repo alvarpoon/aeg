@@ -37,6 +37,7 @@ function roots_scripts() {
     );
   }
   wp_enqueue_style('google_fonts', 'http://fonts.googleapis.com/css?family=Open+Sans:400italic,400,700,600', false, '9880649384aea9f1ee166331c0a30daa');
+  wp_enqueue_style('google_fonts2', 'http://fonts.googleapis.com/css?family=Roboto:400,700,300,500', false, '9880649384aea9f1ee166331c0a30daa');
   wp_enqueue_style('roots_css', get_template_directory_uri() . $assets['css'], false, null);
 
   /**
