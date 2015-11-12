@@ -4,6 +4,161 @@
 //===============================================================================
 //===============================================================================
 
+.home-left-container{
+	h2{
+		margin-left:25px;
+	}
+}
+
+.about-us-container{
+	.about-us-brief{
+		background:#B2C0D0;
+		padding:5px 10px;
+		a{
+			color:#000;
+			font-weight:bold;
+		}
+	}
+}
+
+.member-scroller-container{
+	.member-scroller-wrapper{
+		position:relative;
+		.slick-prev, .slick-next{
+			background:#003062;
+			height:100%;
+			top:0;
+			margin-top:0;
+		}
+		.member-scroller{
+			margin:0 25px;
+			.member_item{
+				margin:0 2px;
+				&:first-child{
+					margin-left:0;
+				}
+				&:right-child{
+					margin-right:0;
+				}
+				position:relative;
+				span{
+					position:absolute;
+					bottom:0;
+					width:100%;
+					display:block;
+					text-align:center;
+					color:#fff;
+					background: rgba(0,0,0,0);
+					background: -moz-linear-gradient(top, rgba(0,0,0,0) 0%, rgba(246,246,246,0) 0%, rgba(0,0,0,0.8) 100%);
+					background: -webkit-gradient(left top, left bottom, color-stop(0%, rgba(0,0,0,0)), color-stop(0%, rgba(246,246,246,0)), color-stop(100%, rgba(0,0,0,0.8)));
+					background: -webkit-linear-gradient(top, rgba(0,0,0,0) 0%, rgba(246,246,246,0) 0%, rgba(0,0,0,0.8) 100%);
+					background: -o-linear-gradient(top, rgba(0,0,0,0) 0%, rgba(246,246,246,0) 0%, rgba(0,0,0,0.8) 100%);
+					background: -ms-linear-gradient(top, rgba(0,0,0,0) 0%, rgba(246,246,246,0) 0%, rgba(0,0,0,0.8) 100%);
+					background: linear-gradient(to bottom, rgba(0,0,0,0) 0%, rgba(246,246,246,0) 0%, rgba(0,0,0,0.8) 100%);
+					filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#000000', endColorstr='#000000', GradientType=0 );
+				}
+			}
+		}
+	}
+}
+
+.up-coming-event-container{
+	height:412px;
+	overflow:hidden;
+	.coming-event-item{
+		position:relative;
+		height:133px;
+		margin-bottom:10px;
+		
+		&.major{
+			height:235px;
+			.event-title{
+				font-size:18px;
+				padding-left:20px;
+			}
+		}
+		
+		.feature-img-bg{
+			width:100%;
+			position:absolute;
+			height:100%;
+			top:0;
+			left:0;
+		}
+		
+		.event-date{
+			position:absolute;
+			top:0;
+			right:0;
+			font-weight:bold;
+			text-align:center;
+			color:#fff;
+			width:56px;
+			height:56px;
+			.month{
+				font-size:11px;
+				background:#036EB8;
+				width:56px;
+				display:block;
+			}
+			.date{				
+				font-size:30px;
+				background:#28A7E1;
+				width:56px;
+				display:block;
+			}
+		}
+		.event-title{
+			position:absolute;
+			bottom:0;
+			width:100%;
+			font-size:12px;
+			padding:5px 15px;
+			color:#fff;
+			background: rgba(0,47,98,0);
+			background: -moz-linear-gradient(top, rgba(0,47,98,0) 0%, rgba(0,47,98,1) 81%, rgba(0,47,98,1) 99%);
+			background: -webkit-gradient(left top, left bottom, color-stop(0%, rgba(0,47,98,0)), color-stop(81%, rgba(0,47,98,1)), color-stop(99%, rgba(0,47,98,1)));
+			background: -webkit-linear-gradient(top, rgba(0,47,98,0) 0%, rgba(0,47,98,1) 81%, rgba(0,47,98,1) 99%);
+			background: -o-linear-gradient(top, rgba(0,47,98,0) 0%, rgba(0,47,98,1) 81%, rgba(0,47,98,1) 99%);
+			background: -ms-linear-gradient(top, rgba(0,47,98,0) 0%, rgba(0,47,98,1) 81%, rgba(0,47,98,1) 99%);
+			background: linear-gradient(to bottom, rgba(0,47,98,0) 0%, rgba(0,47,98,1) 81%, rgba(0,47,98,1) 99%);
+			filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#002f62', endColorstr='#002f62', GradientType=0 );
+		}
+	}
+}
+
+.lastest-news-container{
+	position:relative;
+	border:5px solid #003062;
+	border-bottom:0;
+	height:412px;
+	overflow:hidden;
+	padding:10px;
+	.lastest-news-item{
+		color:#717171;
+		h3{
+			font-weight:bold;
+			color:#003062;
+			font-size:15px;
+			margin-bottom:0;
+			margin-top:0;
+		}
+	}
+	.btn-and-more{
+		background:#003062;
+		display:block;
+		color:#fff;
+		margin:0 -10px;
+		text-align:center;
+		padding:5px 0;
+		font-weight:bold;
+		font-size:15px;
+		position: absolute;
+		text-align: center;
+		width: 100%;
+		bottom:0;
+	}
+}
 
 //===============================================================================
 //===============================================================================

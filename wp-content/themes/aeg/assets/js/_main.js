@@ -29,6 +29,20 @@ var Roots = {
   home: {
     init: function() {
       // JavaScript to be fired on the home page
+	  $(document).ready(function(e) {
+      	$('.committees-home').slick({
+			slidesToShow: 4,
+			slidesToScroll:4,
+			dots: false	
+		});  
+		
+		$('.members-home').slick({
+			slidesToShow: 4,
+			slidesToScroll:4,
+			dots: false	
+		});  
+      });
+	  
     }
   },
   // About us page, note the change from about-us to about_us.
