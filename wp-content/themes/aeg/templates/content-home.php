@@ -35,7 +35,7 @@
             </div>
             
             <div class="member-scroller-container">
-                <h2>Committees</h2>
+                <h2><a href="/about-us/our-committees/">Committees</a></h2>
                 <div class="member-scroller-wrapper clearfix">
                     <div class="member-scroller committees-home">
                     	<?
@@ -54,7 +54,7 @@
                 </div>
             </div>
             <div class="member-scroller-container">
-                <h2>Members</h2>
+                <h2><a href="/about-us/our-members/">Members</a></h2>
                 <div class="member-scroller-wrapper clearfix">
                     <div class="member-scroller members-home">
                         <?
@@ -101,18 +101,8 @@
 				 	while (have_posts()) : the_post(); ?>
 					<div class="lastest-news-item">
                         <a href="<?php the_permalink(); ?>"><h3><?php the_title(); ?></h3></a>
-                        <p><?php the_excerpt(); ?></p>
+                        <a href="<?php the_permalink(); ?>"><p><?php the_excerpt(); ?></p></a>
                     </div>
-                    
-                    <!--<div class="news_item">
-						<p><a href="<?php the_permalink(); ?>"><?php the_title(); ?></a></p>
-						<p><span>Date:</span> <?=get_the_date(); ?></p>
-						<p><span>Subject:</span> <?
-								$post_categories = wp_get_post_categories( $post->ID );
-								//print_r($post_categories);
-								echo get_category( $post_categories[0] )->name;
-							?></p>
-					</div>-->
 				<?php endwhile; ?>
             	<!--<div class="lastest-news-item">
                 	<h3>AEG-KitasatoTTT</h3>

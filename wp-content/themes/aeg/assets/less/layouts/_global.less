@@ -29,6 +29,8 @@ p{
 }
 
 h1{
+  font-size:45px;
+  font-weight:bold;
   /*line-height: 1.1;
   color: @gray-dark;
   font-size: 24px;
@@ -88,15 +90,22 @@ strong,b{
 	width:100%;
 }
 
+.noPadding{
+	padding-left:0!important;
+	padding-right:0!important;
+}
+
 .main{
 	margin-top:50px;
 	margin-bottom:15px;
 	float:none!important;
 }
 
-.noPadding{
-	padding-left:0!important;
-	padding-right:0!important;
+.sidebar-primary{
+	.main{
+		width:100% !important;
+		float:none !important;
+	}
 }
 
 //===============================================================================

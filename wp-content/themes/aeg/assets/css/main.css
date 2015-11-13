@@ -6653,6 +6653,8 @@ p {
   font-size: 15px;
 }
 h1 {
+  font-size: 45px;
+  font-weight: bold;
   /*line-height: 1.1;
   color: @gray-dark;
   font-size: 24px;
@@ -6712,14 +6714,18 @@ b {
 .wp-caption a > img {
   width: 100%;
 }
+.noPadding {
+  padding-left: 0!important;
+  padding-right: 0!important;
+}
 .main {
   margin-top: 50px;
   margin-bottom: 15px;
   float: none!important;
 }
-.noPadding {
-  padding-left: 0!important;
-  padding-right: 0!important;
+.sidebar-primary .main {
+  width: 100% !important;
+  float: none !important;
 }
 @media (min-width: 1200px) {
   .container {
@@ -6798,9 +6804,15 @@ figure.alignnone {
   background: #B2C0D0;
   padding: 5px 10px;
 }
+.about-us-container .about-us-brief p {
+  margin: 0;
+}
 .about-us-container .about-us-brief a {
   color: #000;
   font-weight: bold;
+}
+.member-scroller-container h2 a {
+  color: #333333;
 }
 .member-scroller-container .member-scroller-wrapper {
   position: relative;
@@ -6928,6 +6940,9 @@ figure.alignnone {
 .lastest-news-container .lastest-news-item p {
   margin-bottom: 0;
 }
+.lastest-news-container .lastest-news-item a {
+  color: #717171;
+}
 .lastest-news-container .btn-and-more {
   background: #003062;
   display: block;
@@ -6949,6 +6964,76 @@ figure.alignnone {
   .home-logo-container .logo_aeg {
     margin-left: 80px;
   }
+}
+.page-banner-container {
+  position: relative;
+}
+.page-banner-container h1 {
+  position: absolute;
+  bottom: 25px;
+  left: 65px;
+  color: #fff;
+}
+.expandable-container .expandable-header {
+  width: 100%;
+  background: #003062;
+  color: #fff;
+  padding: 10px 30px 10px 60px;
+  margin-top: 10px;
+  font-weight: bold;
+  font-size: 30px;
+  cursor: pointer;
+}
+.expandable-container .expandable-header .fa {
+  float: right;
+  color: #F8B62C;
+  font-size: 40px;
+}
+.expandable-container.steering-committee .expandable-content {
+  padding: 0 60px 10px 60px;
+}
+.expandable-container.steering-committee .expandable-content .committee-item .committee-content {
+  width: 60%;
+}
+.expandable-container.steering-committee .expandable-content .committee-item .committee-content .position {
+  font-size: 18px;
+  margin-bottom: 10px;
+}
+.expandable-container.steering-committee .expandable-content .committee-item .committee-content .btn-detail {
+  margin-bottom: 20px;
+}
+.expandable-container .expandable-content {
+  padding: 0 45px 30px 45px;
+}
+.expandable-container .expandable-content .committee-item {
+  margin-top: 15px;
+  display: table;
+  height: 100%;
+}
+.expandable-container .expandable-content .committee-item .committee-content {
+  background: #F0EEF6;
+  display: table-cell;
+  vertical-align: bottom;
+  width: 70%;
+  padding-left: 20px;
+}
+.expandable-container .expandable-content .committee-item .committee-content .title {
+  font-size: 18px;
+  font-weight: bold;
+  margin-bottom: 0;
+}
+.expandable-container .expandable-content .committee-item .committee-content .position {
+  font-size: 18px;
+  margin-bottom: 5px;
+}
+.expandable-container .expandable-content .committee-item .committee-content .btn-detail {
+  background: #003062;
+  color: #fff;
+  font-size: 15px;
+  padding: 3px 10px;
+  border-radius: 15px;
+  display: inline-block;
+  margin-bottom: 5px;
 }
 .nav-container {
   position: relative;
@@ -7064,6 +7149,9 @@ figure.alignnone {
 .footer .footer-container .contact-info {
   border-left: 1px solid #FFF;
   color: #fff;
+}
+.footer .footer-container .contact-info p {
+  margin-bottom: 0;
 }
 /* Slider */
 .slick-slider {
