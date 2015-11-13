@@ -6856,6 +6856,12 @@ figure.alignnone {
   font-size: 18px;
   padding-left: 20px;
 }
+.up-coming-event-container .coming-event-item.major .event-date .month {
+  background: #036EB8;
+}
+.up-coming-event-container .coming-event-item.major .event-date .date {
+  background: #28A7E1;
+}
 .up-coming-event-container .coming-event-item .feature-img-bg {
   width: 100%;
   position: absolute;
@@ -6875,13 +6881,13 @@ figure.alignnone {
 }
 .up-coming-event-container .coming-event-item .event-date .month {
   font-size: 11px;
-  background: #036EB8;
+  background: #EA5413;
   width: 56px;
   display: block;
 }
 .up-coming-event-container .coming-event-item .event-date .date {
   font-size: 30px;
-  background: #28A7E1;
+  background: #F39800;
   width: 56px;
   display: block;
 }
@@ -6910,6 +6916,7 @@ figure.alignnone {
 }
 .lastest-news-container .lastest-news-item {
   color: #717171;
+  margin-bottom: 20px;
 }
 .lastest-news-container .lastest-news-item h3 {
   font-weight: bold;
@@ -6917,6 +6924,9 @@ figure.alignnone {
   font-size: 15px;
   margin-bottom: 0;
   margin-top: 0;
+}
+.lastest-news-container .lastest-news-item p {
+  margin-bottom: 0;
 }
 .lastest-news-container .btn-and-more {
   background: #003062;
@@ -7143,15 +7153,15 @@ figure.alignnone {
 }
 /* Slider */
 .slick-loading .slick-list {
-  background: #ffffff url('ajax-loader.gif') center center no-repeat;
+  background: #ffffff url('../img/ajax-loader.gif') center center no-repeat;
 }
 /* Icons */
 @font-face {
   font-family: 'slick';
   font-weight: normal;
   font-style: normal;
-  src: url('fonts/slick.eot');
-  src: url('fonts/slick.eot?#iefix') format('embedded-opentype'), url('fonts/slick.woff') format('woff'), url('fonts/slick.ttf') format('truetype'), url('fonts/slick.svg#slick') format('svg');
+  src: url('../fonts/slick.eot');
+  src: url('../fonts/slick.eot?#iefix') format('embedded-opentype'), url('../fonts/slick.woff') format('woff'), url('../fonts/slick.ttf') format('truetype'), url('../fonts/slick.svg#slick') format('svg');
 }
 /* Arrows */
 .slick-prev,
