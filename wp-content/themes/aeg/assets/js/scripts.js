@@ -4985,6 +4985,36 @@ var Roots = {
     init: function() {
       // JavaScript to be fired on the about us page
     }
+  },
+  our_committees:{
+	init: function() {
+		
+	  function initContentHeight(){
+		$('.expandable-content-wrapper').each(function(){
+			$(this).parent().attr('data-original-height',$(this).outerHeight());
+		});  
+	  }
+	  $(document).ready(function(){
+		  initContentHeight();
+		  $( ".expandable-header").click(function() {
+			if($(this).hasClass('open')){
+			  	$(this).parent().find( ".expandable-content" ).animate({
+					height:'0px'
+				},500);
+				$(this).removeClass('open');
+			}else{
+				$original_height = parseInt($(this).parent().find( ".expandable-content" ).attr('data-original-height'));
+				$(this).parent().find( ".expandable-content" ).animate({
+					height:$original_height
+				},500);
+				$(this).addClass('open');
+			}
+		  });  
+	  });
+	  $(window).resize(function(){
+		initContentHeight();  
+	  });
+	}
   }
 };
 

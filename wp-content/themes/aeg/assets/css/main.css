@@ -6989,8 +6989,23 @@ figure.alignnone {
   color: #F8B62C;
   font-size: 40px;
 }
+.expandable-container .expandable-header .fa-chevron-up {
+  display: none;
+}
+.expandable-container .expandable-header .fa-chevron-down {
+  display: block;
+}
+.expandable-container .expandable-header.open .fa-chevron-up {
+  display: block;
+}
+.expandable-container .expandable-header.open .fa-chevron-down {
+  display: none;
+}
 .expandable-container.steering-committee .expandable-content {
-  padding: 0 60px 10px 60px;
+  padding: 0 60px;
+}
+.expandable-container.steering-committee .expandable-content .expandable-content-wrapper {
+  padding-bottom: 10px;
 }
 .expandable-container.steering-committee .expandable-content .committee-item .committee-content {
   width: 60%;
@@ -7003,7 +7018,11 @@ figure.alignnone {
   margin-bottom: 20px;
 }
 .expandable-container .expandable-content {
-  padding: 0 45px 30px 45px;
+  padding: 0 45px;
+  overflow: hidden;
+}
+.expandable-container .expandable-content .expandable-content-wrapper {
+  padding-bottom: 30px;
 }
 .expandable-container .expandable-content .committee-item {
   margin-top: 15px;

@@ -22,14 +22,29 @@
 			float:right;
 			color:#F8B62C;
 			font-size:40px;
-			&.fa-chevron-down{
+		}
+		.fa-chevron-up{
+			display:none;
+		}
+		.fa-chevron-down{
+			display:block;
+		}		
+		&.open{
+			.fa-chevron-up{
+				display:block;
+			}
+			.fa-chevron-down{
+				display:none;
 			}
 		}
 	}
 	
 	&.steering-committee{
 		.expandable-content{
-			padding:0 60px 10px 60px;
+			padding:0 60px;
+			.expandable-content-wrapper{
+				padding-bottom:10px;
+			}
 			.committee-item{
 				.committee-content{
 					width:60%;
@@ -46,8 +61,11 @@
 	}
 	
 	.expandable-content{
-		padding:0 45px 30px 45px;
-		
+		padding:0 45px;
+		overflow:hidden;
+		.expandable-content-wrapper{
+			padding-bottom:30px;
+		}
 		.committee-item{
 			margin-top:15px;
 			display:table;
