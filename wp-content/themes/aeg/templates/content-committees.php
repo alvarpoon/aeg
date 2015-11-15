@@ -18,6 +18,7 @@
 	    	<img src="<?=get_stylesheet_directory_uri()?>/assets/img/committees/img_committees_banner.png" alt="" />
             <h1><?=the_title();?></h1>
         </div>
+        <?=do_shortcode('[acps id="156"]');?>
         <?
 			foreach ($types as $type){ ?>
                 <div class="expandable-container <? if($type->cat_ID == 3) {echo "steering-committee";} ?> clearfix">
