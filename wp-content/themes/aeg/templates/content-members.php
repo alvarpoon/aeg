@@ -3,7 +3,7 @@
 	$args= array(
 		'post_type'			=> 'member',
 		'post_status' 		=> 'publish',
-		'orderby'			=> 'menu_order',
+		'orderby'			=> 'id',
 		'order' 			=> 'ASC',
 		'numberposts' 		=> -1,
 		'posts_per_page' 	=> 3,
@@ -18,19 +18,18 @@
             <h1><?=the_title();?></h1>
         </div>
         <div class="members-container clearfix">
-        <?
-			foreach ($results as $result){ 
-				$member_image = wp_get_attachment_image_src( get_post_thumbnail_id( $result->ID ), 'full' );				
-				$member_countries = wp_get_object_terms( $result->ID, 'country');
+        <?php while (have_posts()) : the_post(); 
+				$member_image = wp_get_attachment_image_src( get_post_thumbnail_id( $post->ID ), 'full' );				
+				$member_countries = wp_get_object_terms( $post->ID, 'country');
 		?>
             	<div class="col-sm-4 committee-item">
                     <img src="<?=$member_image[0]?>" alt="" class="img-responsive" />
                     <div class="committee-content">
-                        <p class="title"><?=$result->post_title; ?></p>
+                        <p class="title"><?=$post->post_title; ?></p>
 						<p class="position"><?=$member_countries[0]->name;?></p>
                     </div>
                 </div>
-		<? } ?>        
+		<?php endwhile; ?>        
         </div>
         <div class="pagination_bar_container">
         	<div class="pagination_bar clearfix">

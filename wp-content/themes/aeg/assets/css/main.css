@@ -7054,6 +7054,9 @@ figure.alignnone {
   display: inline-block;
   margin-bottom: 5px;
 }
+.members-container {
+  padding: 0 20px;
+}
 .pagination_bar_container {
   width: 100%;
   margin: 20px 0;
@@ -7072,8 +7075,14 @@ figure.alignnone {
   color: #003062;
   float: left;
 }
+.pagination_bar_container .pagination_bar .page-numbers:first-child {
+  border-top-left-radius: 5px;
+  border-bottom-left-radius: 5px;
+}
 .pagination_bar_container .pagination_bar .page-numbers:last-child {
   border-right: none;
+  border-top-right-radius: 5px;
+  border-bottom-right-radius: 5px;
 }
 .pagination_bar_container .pagination_bar .page-numbers.current {
   color: #fff;

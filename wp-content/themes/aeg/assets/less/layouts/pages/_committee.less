@@ -100,6 +100,10 @@
 	}
 }
 
+.members-container{
+	padding:0 20px;
+}
+
 .pagination_bar_container{
 	width:100%;
 	margin:20px 0;
@@ -115,8 +119,14 @@
 			display:inline-block;
 			color:#003062;
 			float:left;
+			&:first-child{
+				border-top-left-radius: 5px;
+				border-bottom-left-radius: 5px;
+			}
 			&:last-child{
 				border-right:none;
+				border-top-right-radius: 5px;
+				border-bottom-right-radius: 5px;
 			}
 			&.current{
 				color:#fff;
