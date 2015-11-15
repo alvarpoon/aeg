@@ -80,6 +80,18 @@ var Roots = {
 		initContentHeight();  
 	  });
 	}
+  },
+  our_members:{
+	init: function(){
+		$(document).ready(function() {
+		  /*var text = $('.pagination_bar').html();
+		  text = text.replace('Previous ', '');
+		  text = text.replace('Next ', '');
+		  $('.pagination').html(text);	*/
+		  $('.pagination_bar .next').text('»');
+		  $('.pagination_bar .prev').text('«');
+		});  
+	}
   }
 };
 
