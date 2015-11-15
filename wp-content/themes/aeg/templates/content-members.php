@@ -17,7 +17,7 @@
 	    	<img src="<?=get_stylesheet_directory_uri()?>/assets/img/committees/img_committees_banner.png" alt="" />
             <h1><?=the_title();?></h1>
         </div>
-        <div class="members-container">
+        <div class="members-container clearfix">
         <?
 			foreach ($results as $result){ 
 				$member_image = wp_get_attachment_image_src( get_post_thumbnail_id( $result->ID ), 'full' );				
@@ -32,9 +32,10 @@
                 </div>
 		<? } ?>        
         </div>
-        
         <div class="pagination_bar_container">
-			<?php pagination_bar(); ?>
+        	<div class="pagination_bar clearfix">
+				<?php pagination_bar(); ?>
+            </div>
         </div>
     </div>
 </div>
