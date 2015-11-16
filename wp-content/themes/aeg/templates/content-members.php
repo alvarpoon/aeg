@@ -1,4 +1,10 @@
 <?	
+	if( isset($_GET['sorting']) ){
+		$sort_order = $_GET['sorting'];
+	}else{
+		$sort_order = '';
+	}
+	
 	$paged = (get_query_var('paged')) ? get_query_var('paged') : 1;
 	$args= array(
 		'post_type'			=> 'member',
@@ -6,7 +12,7 @@
 		'orderby'			=> 'id',
 		'order' 			=> 'ASC',
 		'numberposts' 		=> -1,
-		'posts_per_page' 	=> 3,
+		'posts_per_page' 	=> 30,
 		'paged' 			=> $paged,
 	);
 	$results = query_posts( $args );
@@ -16,6 +22,15 @@
     	<div class="page-banner-container">
 	    	<img src="<?=get_stylesheet_directory_uri()?>/assets/img/committees/img_committees_banner.png" alt="" />
             <h1><?=the_title();?></h1>
+        </div>
+        <div class="member-search-container">
+        	<div class="clearfix">
+		        <?=do_shortcode('[acps id="156"]');?>
+            </div>
+            <select>
+            	<option value="title_asc">Sort by Title (Ascending)</option>
+                <option value="country_asc">Sort by Country (Ascending)</option>
+            </select>            
         </div>
         <div class="members-container clearfix">
         <?php while (have_posts()) : the_post(); 
