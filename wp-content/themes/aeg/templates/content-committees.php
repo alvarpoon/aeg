@@ -54,7 +54,7 @@
                                     <div class="committee-content">
                                         <p class="title"><?=$result->post_title; ?></p>
                                         <p class="position"><?=get_field("position",$result->ID)?></p>
-                                        <a href="javascript:;" class="btn-detail">Details</a>
+                                        <a href="#committee_popup" class="btn-detail various" data-code="<?=$result->ID;?>">Details</a>
                                     </div>
                                 </div>
                                 
@@ -71,6 +71,8 @@
                     	</div>
                 	</div>
                 </div>
-		<? } ?>        
+		<? } ?>
     </div>
 </div>
+
+<div id="committee_popup"></div>

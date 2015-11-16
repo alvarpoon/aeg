@@ -100,28 +100,85 @@
 	}
 }
 
-.pagination_bar_container{
-	width:100%;
+.member-search-container{
+	padding:0 35px;	
 	margin:20px 0;
-	padding-bottom:50px;
-	text-align:center;
-	.pagination_bar{
-		display:inline-block;
-		border:1px solid #DDDEDC;
-		border-radius:5px;
-		.page-numbers{
-			padding:5px 10px;
-			border-right:1px solid #DDDEDC;
-			display:inline-block;
-			color:#003062;
+	.acps_form_container{
+		p{
 			float:left;
-			&:last-child{
-				border-right:none;
+			&:first-child{
+				width:40%;
 			}
-			&.current{
-				color:#fff;
-				background:#003062;
+			span{
+				display:block;
 			}
+		}
+		.acps_form_control_wrap{
+			.acps_text_input{
+				height:36px;
+				width:100%;
+				border-radius:5px;
+				border:1px solid #DDDEDC;
+				padding:5px 10px;
+			}
+			.acps_submit{
+				background:url(../img/btn_search_submit.png) no-repeat;
+				border: 0 none;
+				width: 37px;
+				height: 36px;
+				margin-left: 15px;
+				padding: 0;
+				text-indent: -9999px;
+			}
+			
+		}
+		.acps_keyword_input{
+			float:right;
+			width: 25%;
+			select{
+				width:100%;
+			}
+		}
+	}
+}
+
+.members-container{
+	padding:0 20px;
+}
+
+.committee_popup_content{
+	.popup_info{
+		display: table;
+		height: 100%;
+		width:100%;
+		color:#fff;
+		margin-bottom:20px;
+		.popup_image{
+			padding:10px;
+			background:#fff;
+		}
+		.popup_title{
+			display: table-cell;
+			padding-left: 20px;
+			vertical-align: bottom;
+			width: 65%;
+			.title{
+				font-size:35px;
+				font-weight:bold;
+				margin-bottom:0;
+			}
+			.position{
+				font-size:35px;
+				margin-bottom:0;
+			}
+		}
+	}
+	.popup_content{
+		span{
+			color:#9C9C9C;
+		}
+		p{
+			
 		}
 	}
 }
