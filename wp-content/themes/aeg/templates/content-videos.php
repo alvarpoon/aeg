@@ -2,7 +2,7 @@
 
 	$paged = (get_query_var('paged')) ? get_query_var('paged') : 1;
 	$args= array(
-		'post_type'			=> 'lecture',
+		'post_type'			=> 'video',
 		'post_status' 		=> 'publish',
 		'orderby'			=> 'date',
 		'order' 			=> 'DESC',
@@ -17,11 +17,11 @@
 	<div class="row">
         <div class="clearfix">
             <div class="lecture_nav_container clearfix">
-                <div class="lecture_nav_item active">
-                    <a href="#">LECTURE</a>
-                </div>
                 <div class="lecture_nav_item">
-                    <a href="/education/videos/">VIDEO<span>24</span></a>
+                    <a href="/education/lecture/">LECTURE<span>24</span></a>
+                </div>
+                <div class="lecture_nav_item active">
+                    <a href="#">VIDEO</a>
                 </div>
                 <div class="lecture_nav_item">
                     <a href="/education/image/">IMAGES<span>24</span></a>
@@ -49,38 +49,21 @@
                 	<td>LECTURE TITLE</td>
                     <td>SPEAKER</td>
                     <td>DATE</td>
-                    <td>
-                    	<span class="logo_pdf"></span>
-                        <span class="logo_video"></span>
-                        <span class="logo_audio"></span>
-                    </td>
+                    <td>&nbsp;</td>
                 </tr>
                 <? while ( $results->have_posts() ) : $results->the_post(); 
 					$author_id=$post->post_author;
-					$pdf = get_field("pdf", $post->ID);
-					$media_file = get_field("video_audio_file", $post->ID);
+					$media_file = get_field("file", $post->ID);
 				?>
                 <tr>
                 	<td><a href="#lecture_content" class="btn_lecture_detail various" data-code="<?=$post->ID;?>"><? the_title(); ?></a></td>
                     <td><a href="#author_content" class="btn_author_detail various" data-code="<?=$author_id;?>"><?=the_author_meta( 'user_nicename' , $author_id ); ?></a></td>
                     <td><?php echo get_the_time('F j, Y', $post->ID); ?><br /><?=get_the_time('g:ia', $post->ID);?></td>
-                    <td>
-                    	<? if(count($pdf) > 1) { ?>
-	                    	<a href="<?=$pdf['url']?>" target="_blank"><span class="logo_pdf enable"></span></a>
-                        <? }else{ ?>
-                        	<span class="logo_pdf"></span>
-                        <? } ?>
-                        
+                    <td align="center">
                         <? if(count($media_file) > 1 && $media_file['mime_type'] == 'video/mp4') { ?>
 	                    	<a href="<?=$media_file['url']?>" target="_blank"><span class="logo_video enable"></span></a>
                         <? }else{ ?>
                         	<span class="logo_video"></span>
-                        <? } ?>
-                        
-                        <? if(count($media_file) > 1 && $media_file['mime_type'] == 'audio/mpeg') { ?>
-	                    	<a href="<?=$media_file['url']?>" target="_blank"><span class="logo_audio enable"></span></a>
-                        <? }else{ ?>
-                        	<span class="logo_audio"></span>
                         <? } ?>
                     </td>
                 </tr>

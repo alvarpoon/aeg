@@ -2,7 +2,7 @@
 
 	$paged = (get_query_var('paged')) ? get_query_var('paged') : 1;
 	$args= array(
-		'post_type'			=> 'lecture',
+		'post_type'			=> 'image',
 		'post_status' 		=> 'publish',
 		'orderby'			=> 'date',
 		'order' 			=> 'DESC',
@@ -17,14 +17,14 @@
 	<div class="row">
         <div class="clearfix">
             <div class="lecture_nav_container clearfix">
-                <div class="lecture_nav_item active">
-                    <a href="#">LECTURE</a>
+                <div class="lecture_nav_item">
+                    <a href="/education/lecture/">LECTURE<span>24</span></a>
                 </div>
                 <div class="lecture_nav_item">
                     <a href="/education/videos/">VIDEO<span>24</span></a>
                 </div>
-                <div class="lecture_nav_item">
-                    <a href="/education/image/">IMAGES<span>24</span></a>
+                <div class="lecture_nav_item active">
+                    <a href="#">IMAGES</a>
                 </div>
             </div>
             <a href="#" class="btn_yellow">UPLOAD</a>
@@ -49,39 +49,18 @@
                 	<td>LECTURE TITLE</td>
                     <td>SPEAKER</td>
                     <td>DATE</td>
-                    <td>
-                    	<span class="logo_pdf"></span>
-                        <span class="logo_video"></span>
-                        <span class="logo_audio"></span>
-                    </td>
+                    <td></td>
                 </tr>
                 <? while ( $results->have_posts() ) : $results->the_post(); 
 					$author_id=$post->post_author;
-					$pdf = get_field("pdf", $post->ID);
-					$media_file = get_field("video_audio_file", $post->ID);
+					$postImage = wp_get_attachment_image_src( get_post_thumbnail_id( $post->ID ), 'full' );
 				?>
                 <tr>
                 	<td><a href="#lecture_content" class="btn_lecture_detail various" data-code="<?=$post->ID;?>"><? the_title(); ?></a></td>
                     <td><a href="#author_content" class="btn_author_detail various" data-code="<?=$author_id;?>"><?=the_author_meta( 'user_nicename' , $author_id ); ?></a></td>
                     <td><?php echo get_the_time('F j, Y', $post->ID); ?><br /><?=get_the_time('g:ia', $post->ID);?></td>
-                    <td>
-                    	<? if(count($pdf) > 1) { ?>
-	                    	<a href="<?=$pdf['url']?>" target="_blank"><span class="logo_pdf enable"></span></a>
-                        <? }else{ ?>
-                        	<span class="logo_pdf"></span>
-                        <? } ?>
-                        
-                        <? if(count($media_file) > 1 && $media_file['mime_type'] == 'video/mp4') { ?>
-	                    	<a href="<?=$media_file['url']?>" target="_blank"><span class="logo_video enable"></span></a>
-                        <? }else{ ?>
-                        	<span class="logo_video"></span>
-                        <? } ?>
-                        
-                        <? if(count($media_file) > 1 && $media_file['mime_type'] == 'audio/mpeg') { ?>
-	                    	<a href="<?=$media_file['url']?>" target="_blank"><span class="logo_audio enable"></span></a>
-                        <? }else{ ?>
-                        	<span class="logo_audio"></span>
-                        <? } ?>
+                    <td align="center">
+                        <a href="<?=$postImage[0];?>" target="_blank"><span class="logo_image"></span></a>
                     </td>
                 </tr>
                 <? endwhile; ?>				

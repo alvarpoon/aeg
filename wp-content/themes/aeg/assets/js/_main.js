@@ -23,6 +23,18 @@ var Roots = {
   common: {
     init: function() {
       // JavaScript to be fired on all pages
+	  $(".various").fancybox({
+			maxWidth	: 700,
+			maxHeight	: 700,
+			padding		: 30,
+			fitToView	: false,
+			width		: '70%',
+			height		: '70%',
+			autoSize	: false,
+			closeClick	: false,
+			openEffect	: 'none',
+			closeEffect	: 'none'
+		});		
     }
   },
   // Home page
@@ -41,6 +53,8 @@ var Roots = {
 			slidesToScroll:4,
 			dots: false	
 		});  
+		
+		
       });
 	  
     }
@@ -59,42 +73,15 @@ var Roots = {
 		});  
 	  }
 	  
-	  function initDetailPopup(){
-		$(".various").fancybox({
-			maxWidth	: 700,
-			maxHeight	: 700,
-			padding		: 30,
-			fitToView	: false,
-			width		: '70%',
-			height		: '70%',
-			autoSize	: false,
-			closeClick	: false,
-			openEffect	: 'none',
-			closeEffect	: 'none',
-			onClosed:function(){
-                //$(window).trigger('fancyboxClosed');
-				console.log('fancyboxCLosed');
-				$('.committee_popup_content').remove();
-            }
-		});
-		
-		$(window).on('fancyboxClosed', function(){
-			
-			
-		});
-		
+	  function initDetailPopup(){		
 		$(".btn-detail").each(function(){
-			$(this).click(function(){ // start execute when option is changed
-				// set the currency rate
+			$(this).click(function(){
 				$('.committee_popup_content').remove();
 				var post_ID = $(this).attr('data-code');
-				/********************************************************************************/
-				// Using jQuery Ajax Method to query the price and stock of the option combination
 				$.post( '../../wp-content/themes/aeg/templates/committee_popup.php', {postID: post_ID})
 				.done(function( data ) {
 					$('#committee_popup').append(data);
 				});
-				/********************************************************************************/
 			});
 		});  
 	  }
@@ -127,13 +114,31 @@ var Roots = {
   our_members:{
 	init: function(){
 		$(document).ready(function() {
-		  /*var text = $('.pagination_bar').html();
-		  text = text.replace('Previous ', '');
-		  text = text.replace('Next ', '');
-		  $('.pagination').html(text);	*/
 		  $('.pagination_bar .next').text('»');
 		  $('.pagination_bar .prev').text('«');
 		});  
+	}
+  },
+  lecture:{
+	init: function(){
+		
+		$(document).ready(function() {
+            initEducationPopup();
+        });	
+	}
+  },
+  videos:{
+	init: function(){
+		$(document).ready(function() {
+            initEducationPopup();
+        });	
+	}
+  },
+  image:{
+	init: function(){
+		$(document).ready(function() {
+            initEducationPopup();
+        });	
 	}
   }
 };
@@ -158,5 +163,28 @@ var UTIL = {
 };
 
 $(document).ready(UTIL.loadEvents);
+
+function initEducationPopup(){
+  $(".btn_lecture_detail").each(function(){
+		$(this).click(function(){
+			$('.lecture_popup_content').remove();
+			var post_ID = $(this).attr('data-code');
+			$.post( '../../wp-content/themes/aeg/templates/lecture_popup.php', {postID: post_ID})
+			.done(function( data ) {
+				$('#lecture_content').append(data);
+			});
+		});
+  });
+  $(".btn_author_detail").each(function(){
+		$(this).click(function(){
+			$('.author_popup_content').remove();
+			var post_ID = $(this).attr('data-code');
+			$.post( '../../wp-content/themes/aeg/templates/author_popup.php', {postID: post_ID})
+			.done(function( data ) {
+				$('#author_content').append(data);
+			});
+		});
+  });
+}
 
 })(jQuery); // Fully reference jQuery after this point.

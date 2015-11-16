@@ -150,6 +150,64 @@ select{
 	color:#fff!important;
 }
 
+.table{
+	td{
+		vertical-align:middle!important;
+		padding:8px 20px !important;
+
+	}
+	.header{
+		td{
+			background:#00325c;
+			color:#fff;
+			font-size:18px;
+		}
+		.logo_video, .logo_audio, .logo_pdf{
+			background-position:0 0;
+		}
+	}
+	.logo_video{
+		background:url(../img/lectures/logo_video.png) no-repeat;
+		background-position:0 -60px;
+		width:32px;
+		height:30px;
+		display:inline-block;
+		margin-right:17px;
+		padding:0;
+		&.enable{
+			background-position:0 -120px;
+		}
+	}
+	.logo_audio{
+		background:url(../img/lectures/logo_audio.png) no-repeat;
+		background-position:0 -62px;
+		width:32px;
+		height:30px;
+		display:inline-block;
+		padding:0;
+		&.enable{
+			background-position:0 -124px;
+		}
+	}
+	.logo_pdf{
+		background:url(../img/lectures/logo_pdf.png) no-repeat;
+		background-position:0 -62px;
+		width:30px;
+		height:32px;
+		display:inline-block;
+		margin-right:17px;
+		&.enable{
+			background-position:0 -124px;
+		}
+	}
+	.logo_image{
+		background:url(../img/lectures/logo_image.png) no-repeat;
+		width:49px;
+		height:52px;
+		display:inline-block;
+	}
+}
+
 //===============================================================================
 //===============================================================================
 // Wide desktop
