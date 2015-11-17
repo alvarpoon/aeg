@@ -23,3 +23,9 @@ function pagination_bar() {
         ));
     }
 }
+
+//hide the Admin Bar
+//https://s2member.com/kb-article/how-do-i-hide-the-admin-bar/
+if (!current_user_can('manage_options')){
+   show_admin_bar(FALSE); 
+}
