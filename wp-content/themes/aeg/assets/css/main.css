@@ -7251,6 +7251,9 @@ figure.alignnone {
   color: #00325C;
   padding: 5px 0;
 }
+.lecture_nav_container .lecture_nav_item.past-research {
+  width: 250px;
+}
 .lecture_nav_container .lecture_nav_item span {
   font-size: 15px;
   color: #fff;
