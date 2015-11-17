@@ -23,7 +23,7 @@
     
             ?>
         </nav>
-        <a href="#" class="login-btn">login</a>
+        <a href="<?=(is_user_logged_in()?wp_logout_url():wp_login_url())?>" class="login-btn"><?=(is_user_logged_in()?"logout":"login")?></a>
       </div>
   	</div>
   </div>

@@ -7,6 +7,12 @@ function roots_excerpt_more() {
 }
 add_filter('excerpt_more', 'roots_excerpt_more');
 
+//hide the Admin Bar
+//https://s2member.com/kb-article/how-do-i-hide-the-admin-bar/
+if (!current_user_can('manage_options')){
+   show_admin_bar(FALSE); 
+}
+
 function custom_pagination($numpages = '', $pagerange = '', $paged='') {
 
   if (empty($pagerange)) {
@@ -50,5 +56,4 @@ function custom_pagination($numpages = '', $pagerange = '', $paged='') {
     	echo "</div>";
 	echo "</div>";
   }
-
 }
