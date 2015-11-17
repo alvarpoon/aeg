@@ -15,7 +15,7 @@
 		'posts_per_page' 	=> 30,
 		'paged' 			=> $paged,
 	);
-	$results = query_posts( $args );
+	$results = new WP_Query( $args );
 ?>
 <div class="container">
 	<div class="row">
@@ -33,7 +33,7 @@
             </select>            
         </div>
         <div class="members-container clearfix">
-        <?php while (have_posts()) : the_post(); 
+        <?php while ( $results->have_posts() ) : $results->the_post(); 
 				$member_image = wp_get_attachment_image_src( get_post_thumbnail_id( $post->ID ), 'full' );				
 				$member_countries = wp_get_object_terms( $post->ID, 'country');
 		?>
@@ -46,10 +46,10 @@
                 </div>
 		<?php endwhile; ?>        
         </div>
-        <div class="pagination_bar_container">
-        	<div class="pagination_bar clearfix">
-				<?php pagination_bar(); ?>
-            </div>
-        </div>
+        <?php
+		  if (function_exists(custom_pagination)) {
+			custom_pagination($results->max_num_pages,"",$paged);
+		  }
+		?>
     </div>
 </div>

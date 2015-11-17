@@ -2,9 +2,7 @@
 /* Don't remove this line. */
 require('../../../../wp-blog-header.php');
 //global $wpdb;
-
 $postContent = get_post($_POST['postID']);
-
 $postImage = wp_get_attachment_image_src( get_post_thumbnail_id( $_POST['postID'] ), 'full' );
 ?>
 
@@ -21,13 +19,10 @@ $postImage = wp_get_attachment_image_src( get_post_thumbnail_id( $_POST['postID'
     <div class="popup_content">
     	<span>DESIGNATION</span>
         <p><?=get_field("designation",$_POST['postID'])?></p>
-        
         <span>INSTITUTION</span>
         <p><?=get_field("institution",$_POST['postID'])?></p>
-        
         <span>QUALIFICATIONS</span>
         <p><?=get_field("qualifications",$_POST['postID'])?></p>
-        
         <span>BIO-SKETCH</span>
         <p><?=get_field("bio-sketch",$_POST['postID'])?></p>
     </div>
