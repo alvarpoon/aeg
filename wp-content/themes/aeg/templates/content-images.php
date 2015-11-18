@@ -27,7 +27,7 @@
                     <a href="#">IMAGES</a>
                 </div>
             </div>
-            <a href="#" class="btn_yellow">UPLOAD</a>
+            <a href="<?=site_url().'/education/image-upload/';?>" class="btn_yellow">UPLOAD</a>
         </div>
         <div class="clearfix lecture-search-container">
             <div class="col-sm-5 noPadding">
@@ -57,7 +57,7 @@
 				?>
                 <tr>
                 	<td><a href="#lecture_content" class="btn_lecture_detail various" data-code="<?=$post->ID;?>"><? the_title(); ?></a></td>
-                    <td><a href="#author_content" class="btn_author_detail various" data-code="<?=$author_id;?>"><?=the_author_meta( 'user_nicename' , $author_id ); ?></a></td>
+                    <td><a href="#author_content" class="btn_author_detail various" data-code="<?=$author_id;?>"><?=the_author_meta( 'display_name' , $author_id ); ?></a></td>
                     <td><?php echo get_the_time('F j, Y', $post->ID); ?><br /><?=get_the_time('g:ia', $post->ID);?></td>
                     <td align="center">
                         <a href="<?=$postImage[0];?>" target="_blank"><span class="logo_image"></span></a>

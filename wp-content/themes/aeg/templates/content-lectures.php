@@ -27,7 +27,7 @@
                     <a href="/education/image/">IMAGES<span>24</span></a>
                 </div>
             </div>
-            <a href="#" class="btn_yellow">UPLOAD</a>
+            <a href="<?=site_url().'/education/lecture-upload/';?>" class="btn_yellow">UPLOAD</a>
         </div>
         <div class="clearfix lecture-search-container">
             <div class="col-sm-5 noPadding">
@@ -58,26 +58,30 @@
                 <? while ( $results->have_posts() ) : $results->the_post(); 
 					$author_id=$post->post_author;
 					$pdf = get_field("pdf", $post->ID);
-					$media_file = get_field("video_audio_file", $post->ID);
+					$video_file = get_field("video_file", $post->ID);
+                    $audio_file = get_field("audio_file", $post->ID);
 				?>
                 <tr>
                 	<td><a href="#lecture_content" class="btn_lecture_detail various" data-code="<?=$post->ID;?>"><? the_title(); ?></a></td>
-                    <td><a href="#author_content" class="btn_author_detail various" data-code="<?=$author_id;?>"><?=the_author_meta( 'user_nicename' , $author_id ); ?></a></td>
+                    <td><a href="#author_content" class="btn_author_detail various" data-code="<?=$author_id;?>"><?=the_author_meta( 'display_name' , $author_id ); ?></a></td>
                     <td><?php echo get_the_time('F j, Y', $post->ID); ?><br /><?=get_the_time('g:ia', $post->ID);?></td>
                     <td>
-                    	<? if(count($pdf) > 1) { ?>
+                    	<? //if(count($pdf) > 1) { 
+                            if($pdf) { ?>
 	                    	<a href="<?=$pdf['url']?>" target="_blank"><span class="logo_pdf enable"></span></a>
                         <? }else{ ?>
                         	<span class="logo_pdf"></span>
                         <? } ?>
                         
-                        <? if(count($media_file) > 1 && $media_file['mime_type'] == 'video/mp4') { ?>
+                        <? //if(count($media_file) > 1 && $media_file['mime_type'] == 'video/mp4') {
+                        if($video_file) { ?>
 	                    	<a href="<?=$media_file['url']?>" target="_blank"><span class="logo_video enable"></span></a>
                         <? }else{ ?>
                         	<span class="logo_video"></span>
                         <? } ?>
                         
-                        <? if(count($media_file) > 1 && $media_file['mime_type'] == 'audio/mpeg') { ?>
+                        <? //if(count($media_file) > 1 && $media_file['mime_type'] == 'audio/mpeg') {
+                          if($audio_file) { ?>
 	                    	<a href="<?=$media_file['url']?>" target="_blank"><span class="logo_audio enable"></span></a>
                         <? }else{ ?>
                         	<span class="logo_audio"></span>

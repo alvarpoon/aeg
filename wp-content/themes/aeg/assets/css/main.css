@@ -6890,6 +6890,17 @@ figure.alignnone {
     width: 33.33333333%;
   }
 }
+.page-template-default .main {
+  margin-top: 50px;
+  background-color: white;
+  min-height: 200px;
+}
+.page-template-default .page-banner-container h1 {
+  position: static;
+  bottom: auto;
+  left: auto;
+  color: #000;
+}
 .home-left-container h2 {
   margin-left: 25px;
 }
