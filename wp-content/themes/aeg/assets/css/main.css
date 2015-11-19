@@ -7223,13 +7223,15 @@ figure.alignnone {
 .lecture_nav_container .lecture_nav_item {
   float: left;
   text-align: center;
-  width: 180px;
+  min-width: 180px;
+  padding: 0 15px;
 }
 .lecture_nav_container .lecture_nav_item a {
   font-size: 18px;
   color: #878787;
   display: block;
   padding: 14px 0;
+  white-space: nowrap;
 }
 .lecture_nav_container .lecture_nav_item a:hover {
   text-decoration: none;
@@ -7252,7 +7254,7 @@ figure.alignnone {
   padding: 5px 0;
 }
 .lecture_nav_container .lecture_nav_item.past-research {
-  width: 250px;
+  min-width: 250px;
 }
 .lecture_nav_container .lecture_nav_item span {
   font-size: 15px;
