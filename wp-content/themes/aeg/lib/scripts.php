@@ -43,6 +43,10 @@ function roots_scripts() {
   wp_enqueue_style('font_awesome', '//netdna.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css', false, '90912b55a3d6b2070ca68c801a5ef6bb');
   wp_enqueue_style('roots_css', get_template_directory_uri() . $assets['css'], false, null);
 
+  //for fixing the uploader problem of 'Gravity Forms Advanced File Uploader'
+  /*wp_deregister_script('prso-pluploader-init');
+  wp_register_script('prso-pluploader-init', '/wp-content/themes/aeg/assets/js/plugins/init_plupload_jquery_ui.js', array(), null, false);*/
+
   /**
    * jQuery is loaded using the same method from HTML5 Boilerplate:
    * Grab Google CDN's latest jQuery with a protocol relative URL; fallback to local if offline

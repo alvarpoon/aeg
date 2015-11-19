@@ -60,8 +60,11 @@
                     <td><a href="#author_content" class="btn_author_detail various" data-code="<?=$author_id;?>"><?=the_author_meta( 'display_name' , $author_id ); ?></a></td>
                     <td><?php echo get_the_time('F j, Y', $post->ID); ?><br /><?=get_the_time('g:ia', $post->ID);?></td>
                     <td align="center">
-                        <? if(count($media_file) > 1 && $media_file['mime_type'] == 'video/mp4') { ?>
-	                    	<a href="<?=$media_file['url']?>" target="_blank"><span class="logo_video enable"></span></a>
+                        <? if(count($media_file) > 1 && $media_file['mime_type'] == 'video/mp4') {
+                            $attachments = get_children( array( 'post_parent' => $post->ID ) ); 
+                            $count = count( $attachments );
+                        ?>
+	                    	<?=$count?> <a href="<?=$media_file['url']?>" target="_blank"><span class="logo_video enable"></span></a>
                         <? }else{ ?>
                         	<span class="logo_video"></span>
                         <? } ?>
