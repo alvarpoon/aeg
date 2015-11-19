@@ -142,6 +142,23 @@ var Roots = {
             initEducationPopup();
         });	
 	}
+  },
+  up_coming_events:{
+	init: function(){
+		var masonryOptions = {
+			itemSelector: '.event-item',
+			columnWidth: '.event-sizer',
+			gutter: '.gutter-sizer',
+			percentPosition: true
+		};
+		$(document).ready(function() {
+			if($('.event-grid').length > 0){
+				$(window).load(function(){	
+					var product_grid = $('.event-grid').masonry(masonryOptions);
+				});	
+			}
+		});
+	}
   }
 };
 
