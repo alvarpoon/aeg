@@ -1,0 +1,134 @@
+.event-grid{
+	width:100%;
+	.gutter-sizer {
+		width: 2%;
+	}
+	.event-sizer {
+		width: 32%;
+	}
+	.event-item {
+		background-color: #fff;
+		border: 1px solid #898A8A;
+		border-radius: 8px;
+		float: left;
+		margin-bottom:20px;
+		padding: 2%;
+		width: 32%;
+		.event-header-container{
+			margin-bottom:20px;
+			h2{
+				margin:0;
+				font-size:25px;
+			}
+			.event-date-container{
+				.event-date{
+					font-weight:bold;
+					text-align:center;
+					color:#fff;
+					.month{
+						font-size:15px;
+						//background:#EA5413;
+						max-width:75px;
+						display:block;
+					}
+					.date{				
+						font-size:40px;
+						//background:#F39800;
+						max-width:75px;
+						//padding:5px 0;
+						display:block;
+					}
+				}
+			}
+		}
+		
+		.btn_readmore{
+			font-weight:bold;
+			font-size:15px;
+		}
+		
+		&.color-0{ //green
+			.event-header-container{
+				h2{
+					color:#078438;
+				}
+				.event-date-container{
+					.event-date{
+						.month{
+							background:#078438 ;
+						}
+						.date{
+							background:#4DB332;
+						}
+					}
+				}
+			}
+			.btn_readmore{
+				color:#4DB332;
+			}
+		}
+		
+		&.color-1{ //blue
+			.event-header-container{
+				h2{
+					color:#106EB8;
+				}
+				.event-date-container{
+					.event-date{
+						.month{
+							background:#106EB8;
+						}
+						.date{
+							background:#28A7E1;
+						}
+					}
+				}
+			}
+			.btn_readmore{
+				color:#28A7E1;
+			}
+		}
+		
+		&.color-2{ //orange
+			.event-header-container{
+				h2{
+					color:#EA5413;
+				}
+				.event-date-container{
+					.event-date{
+						.month{
+							background:#EA5413;
+						}
+						.date{
+							background:#F39800;
+						}
+					}
+				}
+			}
+			.btn_readmore{
+				color:#F39800;
+			}
+		}
+		
+		&.color-3{ //purple
+			.event-header-container{
+				h2{
+					color:#920783;
+				}
+				.event-date-container{
+					.event-date{
+						.month{
+							background:#601986;
+						}
+						.date{
+							background:#920783;
+						}
+					}
+				}
+			}
+			.btn_readmore{
+				color:#920783;
+			}
+		}
+	}
+}

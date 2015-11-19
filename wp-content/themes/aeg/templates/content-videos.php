@@ -27,7 +27,7 @@
                     <a href="/education/image/">IMAGES<span>24</span></a>
                 </div>
             </div>
-            <a href="#" class="btn_yellow">UPLOAD</a>
+            <a href="<?=site_url().'/education/video-upload/';?>" class="btn_yellow">UPLOAD</a>
         </div>
         <div class="clearfix lecture-search-container">
             <div class="col-sm-5 noPadding">
@@ -57,7 +57,7 @@
 				?>
                 <tr>
                 	<td><a href="#lecture_content" class="btn_lecture_detail various" data-code="<?=$post->ID;?>"><? the_title(); ?></a></td>
-                    <td><a href="#author_content" class="btn_author_detail various" data-code="<?=$author_id;?>"><?=the_author_meta( 'user_nicename' , $author_id ); ?></a></td>
+                    <td><a href="#author_content" class="btn_author_detail various" data-code="<?=$author_id;?>"><?=the_author_meta( 'display_name' , $author_id ); ?></a></td>
                     <td><?php echo get_the_time('F j, Y', $post->ID); ?><br /><?=get_the_time('g:ia', $post->ID);?></td>
                     <td align="center">
                         <? if(count($media_file) > 1 && $media_file['mime_type'] == 'video/mp4') { ?>

@@ -121,7 +121,7 @@ function lecture_register() {
       'capability_type' => 'post',
       'hierarchical' => true,
       'menu_position' => 7,
-      'supports'      => array('title', 'editor'),
+      'supports'      => array('title', 'editor','author'),
   );
   register_post_type( 'lecture' , $args );
 }
@@ -152,7 +152,7 @@ function video_register() {
       'capability_type' => 'post',
       'hierarchical' => true,
       'menu_position' => 8,
-      'supports'      => array('title', 'editor'),
+      'supports'      => array('title', 'editor','author'),
   );
   register_post_type( 'video' , $args );
 }
@@ -183,7 +183,7 @@ function image_register() {
       'capability_type' => 'post',
       'hierarchical' => true,
       'menu_position' => 9,
-      'supports'      => array('title', 'thumbnail'),
+      'supports'      => array('title', 'editor', 'thumbnail','author'),
   );
   register_post_type( 'image' , $args );
 }

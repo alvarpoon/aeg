@@ -11,6 +11,8 @@
 		$terms_id = 8; //published
 	}
 
+    $user_id = get_current_user_id();
+
 	$paged = (get_query_var('paged')) ? get_query_var('paged') : 1;
 	$args= array(
 		'post_type'			=> 'research',
@@ -26,8 +28,20 @@
 				'field' => 'id',
 				'terms' => $terms_id
 			)
-		),
+		)
 	);
+
+    //for on-going and past research, get only the research user is involved in
+    if($post->ID == 27 || $post->ID == 29){
+        $args['meta_query'] = array(
+              array(
+                'key' => 'researcher',
+                'value' => '"' . $user_id . '"',
+                'compare' => 'LIKE'
+            )
+        );
+    }
+
 	$results = new WP_Query( $args );
 
 ?>
@@ -56,7 +70,10 @@
                 <!--Search bar-->
             </div>
         </div>
-        <? if($post->ID == 27) { //on-going?>
+        <? if($post->ID == 27) { //on-going
+            $researcher_code = get_field('researcher_code', 'user_'.$user_id);
+            $centre_code = get_field('centre_code', 'user_'.$user_id);
+        ?>
         <div class="table-responsive lecture-table">
         	<table class="table">
             	<tr class="header">
@@ -64,7 +81,7 @@
                 </tr>
                 <? while ( $results->have_posts() ) : $results->the_post(); ?>
                 <tr>
-                	<td><a href="#"><? the_title(); ?></a></td>
+                	<td><a href="<?=home_url()?>/case-record-form/?researcher_code=<?=$researcher_code?>&centre_code=<?=$centre_code?>"><? the_title(); ?></a></td>
                 </tr>
                 <? endwhile; ?>				
             </table>
