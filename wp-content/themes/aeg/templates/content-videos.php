@@ -62,7 +62,11 @@
                     <td><a href="#author_content" class="btn_author_detail various" data-code="<?=$author_id;?>"><?=the_author_meta( 'display_name' , $author_id ); ?></a></td>
                     <td><?php echo get_the_time('F j, Y', $post->ID); ?><br /><?=get_the_time('g:ia', $id);?></td>
                     <td align="center">
+                    <?  if(is_user_logged_in()){?>
 	                    <a href="<?=usp_get_meta(false, 'usp-file-single')?>" target="_blank"><span class="logo_video enable"></span></a>
+                    <? }else{ ?>
+                        <span class="logo_video enable"></span>
+                    <? } ?>
                     </td>
                 </tr>
                 <? endwhile; ?>				

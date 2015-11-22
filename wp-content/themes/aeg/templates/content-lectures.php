@@ -70,22 +70,40 @@
                     <td><?php echo get_the_time('F j, Y', $post->ID); ?><br /><?=get_the_time('g:ia', $post->ID);?></td>
                     <td>
                     	<? //if(count($pdf) > 1) { 
-                            if($pdf!="") { ?>
-	                    	<a href="<?=$pdf?>" target="_blank"><span class="logo_pdf enable"></span></a>
+                            if($pdf!="") {
+                                 if(is_user_logged_in()){?>
+	                    	<a href="<?=$pdf?>" target="_blank">
+                                <? } ?>
+                                <span class="logo_pdf enable"></span>
+                                <? if(is_user_logged_in()){?>
+                            </a>
+                                <? } ?>
                         <? }else{ ?>
                         	<span class="logo_pdf"></span>
                         <? } ?>
                         
                         <? //if(count($media_file) > 1 && $media_file['mime_type'] == 'video/mp4') {
-                        if($video_file!="") { ?>
-	                    	<a href="<?=$video_file?>" target="_blank"><span class="logo_video enable"></span></a>
+                        if($video_file!=""){
+                                if(is_user_logged_in()){?>
+	                    	<a href="<?=$video_file?>" target="_blank">
+                                <? } ?>
+                                <span class="logo_video enable"></span>
+                                <? if(is_user_logged_in()){?>
+                            </a>
+                                <? } ?>
                         <? }else{ ?>
                         	<span class="logo_video"></span>
                         <? } ?>
                         
                         <? //if(count($media_file) > 1 && $media_file['mime_type'] == 'audio/mpeg') {
-                          if($audio_file!="") { ?>
-	                    	<a href="<?=$audio_file?>" target="_blank"><span class="logo_audio enable"></span></a>
+                          if($audio_file!=""){
+                                if(is_user_logged_in()){?>
+	                    	<a href="<?=$audio_file?>" target="_blank">
+                                <? } ?>
+                                <span class="logo_audio enable"></span>
+                                <? if(is_user_logged_in()){?>
+                            </a>
+                                <? } ?>
                         <? }else{ ?>
                         	<span class="logo_audio"></span>
                         <? } ?>

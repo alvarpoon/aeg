@@ -62,10 +62,11 @@
                     <td><?php echo get_the_time('F j, Y', $id); ?><br /><?=get_the_time('g:ia', $id);?></td>
                     <td align="center">
                         <!-- <a href="<?=$postImage[0];?>" target="_blank"><span class="logo_image"></span></a> -->
-                        <? 
+                     <?  if(is_user_logged_in()){
                             //echo usp_get_meta(false, 'usp-file-single');
                             echo usp_get_image(false, "image-thumbnail", false, false, "file", '', '', '', '', false, false, false, false, false);
-                        ?>
+                          }
+                    ?>
                     </td>
                 </tr>
                 <? endwhile; ?>				
