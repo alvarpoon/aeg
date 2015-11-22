@@ -23,6 +23,9 @@ function roots_setup() {
   // http://codex.wordpress.org/Function_Reference/add_image_size
   add_theme_support('post-thumbnails');
 
+/*  add_image_size('mainpage-event-big', 235, 265);
+  add_image_size('mainpage-event-small', 240, 133);*/
+
   // Add post formats
   // http://codex.wordpress.org/Post_Formats
   add_theme_support('post-formats', array('aside', 'gallery', 'link', 'image', 'quote', 'video', 'audio'));

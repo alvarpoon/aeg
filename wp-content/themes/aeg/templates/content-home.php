@@ -80,14 +80,29 @@
 					foreach( $events as $key => $event){
 						$event_content = get_post($event);
 						$event_image = get_field("mainpage_banner",$event->ID);
+                        $event_pdf = get_field("pdf",$event->ID);
 				?>
 					<div class="coming-event-item <? if($key == 0) { echo "major"; }?>">
+                <?
+                        if($event_pdf){
+                ?>
+                        <a href="<?=$event_pdf['url']?>" target="_blank">
+                <?
+                        }
+                ?>   
 						<div class="feature-img-bg" style="background:url(<?=$event_image['url'];?>) no-repeat top center;"></div>
 						<div class="event-date">
 							<span class="month"><?=date("M", (strtotime(get_field("date_from",$event->ID))));?></span>
 							<span class="date"><?=date("j", (strtotime(get_field("date_from",$event->ID))));?></span>
 						</div>
 						<div class="event-title"><?=$event_content->post_title;?></div>
+                <?
+                        if($event_pdf){
+                ?>
+                        </a>
+                <?
+                        }
+                ?>   
 					</div>
 				<? } ?>
             </div>
@@ -101,7 +116,7 @@
 				 	while (have_posts()) : the_post(); ?>
 					<div class="lastest-news-item">
                         <a href="<?php the_permalink(); ?>"><h3><?php the_title(); ?></h3></a>
-                        <a href="<?php the_permalink(); ?>"><p><?php the_excerpt(); ?></p></a>
+                        <?=apply_filters('the_content',get_field("mainpage_excerpt",get_the_ID()));?>
                     </div>
 				<?php endwhile; ?>
             	<!--<div class="lastest-news-item">
@@ -116,7 +131,7 @@
                 	<h3>Lecture on PsedocystDrainage</h3>
                     <p>The lecture on PsudocystDrainage by A/Prof Anthony Teoh is now published. Please visit the education page</p>
                 </div>-->
-                <a href="#" class="btn-and-more">AND MORE</a>
+                <a href="http://aeg.nowwhat.hk/news/" class="btn-and-more">AND MORE</a>
             </div>
         </div>
 	</div>

@@ -1,4 +1,4 @@
-.lecture-upload, .video-upload, .image-upload{
+.lecture-upload, .lecture-upload-bak,.video-upload, .video-upload-bak, .image-upload{
 	.page-banner-container{
 		background:#003062;
 		padding:10px 20px;
@@ -11,12 +11,12 @@
 		}
 	}
 	
-	.gfield_label{
+	.gfield_label,.usp-label{
 		color:#9A9A98;
 		font-weight:normal!important;
 	}
 	
-	.gform_button[type='submit']{
+	.gform_button[type='submit'],.usp-submit{
 		background:#3D88C8;
 		border-radius:5px;
 		font-size:18px;
@@ -35,7 +35,7 @@
 	}
 }
 
-.lecture-upload{
+.lecture-upload, .lecture-upload-bak{
 	#input_2_1, #input_2_2{
 		width:100%;
 		display:block;
@@ -83,7 +83,7 @@
 	}
 }
 
-.video-upload{
+.video-upload, .video-upload-bak{
 	#input_3_1, #input_3_3{
 		width:100%;
 		display:block;
@@ -144,4 +144,19 @@
 			width:auto;
 		}
 	}
+}
+
+.wp-editor-container textarea.wp-editor-area{
+	
+	width: 100%;
+    display: block;
+    border-radius: 5px;
+    border: 1px solid #CCCCCA;
+}
+.js .tmce-active .wp-editor-area{
+	color: #000!important;
+}
+
+.usp-input, .usp-textarea{
+	font: inherit;
 }

@@ -9,7 +9,7 @@
 	$args= array(
 		'post_type'			=> 'member',
 		'post_status' 		=> 'publish',
-		'orderby'			=> 'id',
+		'orderby'			=> 'menu_order',
 		'order' 			=> 'ASC',
 		'numberposts' 		=> -1,
 		'posts_per_page' 	=> 30,
