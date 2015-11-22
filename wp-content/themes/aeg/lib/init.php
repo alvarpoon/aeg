@@ -25,6 +25,9 @@ function roots_setup() {
 
 /*  add_image_size('mainpage-event-big', 235, 265);
   add_image_size('mainpage-event-small', 240, 133);*/
+  
+  //thumbnail for submitted image in listing page
+  add_image_size('image-thumbnail', 49, 9999);
 
   // Add post formats
   // http://codex.wordpress.org/Post_Formats

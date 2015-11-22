@@ -46,7 +46,7 @@
 								$committee_image = wp_get_attachment_image_src( get_post_thumbnail_id( $committee->ID ), 'full' );
 						?>
                             <div class="member_item">
-                                <a href="<?=get_permalink($committee)?>"><img src="<?=$committee_image[0];?>" alt="" class="img-responsive" /></a>
+                                <img src="<?=$committee_image[0];?>" alt="" class="img-responsive" />
                                 <span><?=$committee_content->post_title?></span>
                             </div>
 						<? } ?>
@@ -64,7 +64,7 @@
 								$member_image = wp_get_attachment_image_src( get_post_thumbnail_id( $member->ID ), 'full' );
 						?>
                             <div class="member_item">
-                                <a href="<?=get_permalink($member)?>"><img src="<?=$member_image[0];?>" alt="" class="img-responsive" /></a>
+                                <img src="<?=$member_image[0];?>" alt="" class="img-responsive" />
                                 <span><?=$member_content->post_title?></span>
                             </div>
 						<? } ?>

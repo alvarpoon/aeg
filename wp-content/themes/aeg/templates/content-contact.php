@@ -45,7 +45,7 @@
 				<p><span>Tel:</span>+65 6774 5201<br /><span>Fax:</span>+65 6774 5203<br /><span>Email:</span><a href="mailto:secretariat@asiaeus.org">secretariat@asiaeus.org</a></p>
 			</div>
 		</div>
-		<h2>ENQUIRIRES</h2>
+		<h2>ENQUIRIES</h2>
 		<?=do_shortcode('[contact-form-7 id="82" title="Contact form 1"]');?>
 	</div>
 </div>

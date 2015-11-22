@@ -6890,6 +6890,10 @@ figure.alignnone {
     width: 33.33333333%;
   }
 }
+.footer-container a {
+  color: #fff;
+  text-decoration: none;
+}
 .page-template-default .main {
   margin-top: 50px;
   background-color: white;
@@ -7390,7 +7394,8 @@ figure.alignnone {
 .lecture-upload-bak .page-banner-container,
 .video-upload .page-banner-container,
 .video-upload-bak .page-banner-container,
-.image-upload .page-banner-container {
+.image-upload .page-banner-container,
+.image-upload-bak .page-banner-container {
   background: #003062;
   padding: 10px 20px;
   margin-top: 40px;
@@ -7399,7 +7404,8 @@ figure.alignnone {
 .lecture-upload-bak .page-banner-container h1,
 .video-upload .page-banner-container h1,
 .video-upload-bak .page-banner-container h1,
-.image-upload .page-banner-container h1 {
+.image-upload .page-banner-container h1,
+.image-upload-bak .page-banner-container h1 {
   color: #fff;
   font-size: 30px;
   text-transform: uppercase;
@@ -7410,11 +7416,13 @@ figure.alignnone {
 .video-upload .gfield_label,
 .video-upload-bak .gfield_label,
 .image-upload .gfield_label,
+.image-upload-bak .gfield_label,
 .lecture-upload .usp-label,
 .lecture-upload-bak .usp-label,
 .video-upload .usp-label,
 .video-upload-bak .usp-label,
-.image-upload .usp-label {
+.image-upload .usp-label,
+.image-upload-bak .usp-label {
   color: #9A9A98;
   font-weight: normal!important;
 }
@@ -7423,11 +7431,13 @@ figure.alignnone {
 .video-upload .gform_button[type='submit'],
 .video-upload-bak .gform_button[type='submit'],
 .image-upload .gform_button[type='submit'],
+.image-upload-bak .gform_button[type='submit'],
 .lecture-upload .usp-submit,
 .lecture-upload-bak .usp-submit,
 .video-upload .usp-submit,
 .video-upload-bak .usp-submit,
-.image-upload .usp-submit {
+.image-upload .usp-submit,
+.image-upload-bak .usp-submit {
   background: #3D88C8;
   border-radius: 5px;
   font-size: 18px;
@@ -7440,7 +7450,8 @@ figure.alignnone {
 .lecture-upload-bak .gform_button,
 .video-upload .gform_button,
 .video-upload-bak .gform_button,
-.image-upload .gform_button {
+.image-upload .gform_button,
+.image-upload-bak .gform_button {
   background: #DC5849;
   border-radius: 5px;
   font-size: 18px!important;
@@ -7448,10 +7459,53 @@ figure.alignnone {
   padding: 10px 20px;
   border: 0;
 }
+.usp-reset-button {
+  background: #DC5849;
+  border-radius: 5px;
+  font-size: 18px!important;
+  color: #fff;
+  padding: 10px 20px;
+  border: 0;
+  display: inline-block;
+}
+.usp-reset-button a {
+  color: #fff;
+}
+.usp-reset-button a:hover {
+  text-decoration: none;
+}
+.usp-file {
+  margin: 10px 0;
+}
+.usp-label-title,
+.usp-label-content {
+  margin: 20px 0 10px!important;
+}
+.usp-input-content {
+  margin-bottom: 20px!important;
+}
+.usp-input-files {
+  width: 50%!important;
+  border-radius: 5px;
+  border: 1px solid #CCCCCA;
+  margin-left: 0!important;
+  border-left: none;
+  padding: 9px 0 9px 10px!important;
+  border-bottom-left-radius: 0;
+  border-top-left-radius: 0;
+}
+.usp-label {
+  margin: .625em 0 .5em;
+  font-size: 14px!important;
+}
 .lecture-upload #input_2_1,
 .lecture-upload-bak #input_2_1,
 .lecture-upload #input_2_2,
-.lecture-upload-bak #input_2_2 {
+.lecture-upload-bak #input_2_2,
+.lecture-upload input[type='text'],
+.lecture-upload-bak input[type='text'],
+.lecture-upload textarea,
+.lecture-upload-bak textarea {
   width: 100%;
   display: block;
   border-radius: 5px;
@@ -7492,22 +7546,55 @@ figure.alignnone {
   float: left;
   margin: 0;
 }
+.lecture-upload .usp-label-file,
+.lecture-upload-bak .usp-label-file {
+  margin: 0;
+  font-size: 18px;
+  color: #fff;
+  background: #003062;
+  border-top-left-radius: 5px;
+  border-bottom-left-radius: 5px;
+  padding: 15px 35px 15px 10px;
+  float: left;
+  margin-right: 0;
+  width: 110px;
+}
 .lecture-upload #field_2_4 .gfield_label,
 .lecture-upload-bak #field_2_4 .gfield_label {
+  background: url("../img/lectures/logo_pdf.png") no-repeat #003062 70px 50%;
+}
+.lecture-upload .usp-label-file-1,
+.lecture-upload-bak .usp-label-file-1 {
   background: url("../img/lectures/logo_pdf.png") no-repeat #003062 70px 50%;
 }
 .lecture-upload #field_2_5 .gfield_label,
 .lecture-upload-bak #field_2_5 .gfield_label {
   background: url("../img/lectures/logo_video.png") no-repeat #003062 70px 50%;
 }
+.lecture-upload .usp-label-file-2,
+.lecture-upload-bak .usp-label-file-2 {
+  background: url("../img/lectures/logo_video.png") no-repeat #003062 70px 50%;
+}
 .lecture-upload #field_2_6 .gfield_label,
 .lecture-upload-bak #field_2_6 .gfield_label {
   background: url("../img/lectures/logo_audio.png") no-repeat #003062 70px 50%;
 }
+.lecture-upload .usp-label-file-3,
+.lecture-upload-bak .usp-label-file-3 {
+  background: url("../img/lectures/logo_video.png") no-repeat #003062 70px 50%;
+}
+.lecture-upload .usp-input-files,
+.lecture-upload-bak .usp-input-files {
+  width: inherit;
+}
 .video-upload #input_3_1,
 .video-upload-bak #input_3_1,
 .video-upload #input_3_3,
-.video-upload-bak #input_3_3 {
+.video-upload-bak #input_3_3,
+.video-upload .usp-input-title,
+.video-upload-bak .usp-input-title,
+.video-upload .usp-input-content,
+.video-upload-bak .usp-input-content {
   width: 100%;
   display: block;
   border-radius: 5px;
@@ -7537,18 +7624,40 @@ figure.alignnone {
   float: left;
   margin: 0;
 }
+.video-upload .usp-label-file,
+.video-upload-bak .usp-label-file {
+  margin: 0;
+  font-size: 18px;
+  color: #fff;
+  background: #003062;
+  border-top-left-radius: 5px;
+  border-bottom-left-radius: 5px;
+  padding: 15px 35px 15px 10px;
+  float: left;
+  margin-right: 0;
+  width: 130px;
+  background: url("../img/lectures/logo_video.png") no-repeat #003062 90px 50%;
+}
 .image-upload #input_4_1,
-.image-upload #input_4_2 {
+.image-upload-bak #input_4_1,
+.image-upload #input_4_2,
+.image-upload-bak #input_4_2,
+.image-upload .usp-input-title,
+.image-upload-bak .usp-input-title,
+.image-upload .usp-input-content,
+.image-upload-bak .usp-input-content {
   width: 100%;
   display: block;
   border-radius: 5px;
   border: 1px solid #CCCCCA;
 }
-.image-upload #field_4_3 {
+.image-upload #field_4_3,
+.image-upload-bak #field_4_3 {
   overflow: auto;
   margin-top: 15px;
 }
-.image-upload #field_4_3 .gfield_label {
+.image-upload #field_4_3 .gfield_label,
+.image-upload-bak #field_4_3 .gfield_label {
   margin: 0;
   font-size: 18px;
   color: #fff;
@@ -7561,10 +7670,25 @@ figure.alignnone {
   width: 110px;
   background: url("../img/lectures/logo_image_white.png") no-repeat #003062 70px 50%;
 }
-.image-upload #field_4_3 .ginput_container {
+.image-upload #field_4_3 .ginput_container,
+.image-upload-bak #field_4_3 .ginput_container {
   float: left;
   margin: 0;
   width: auto;
+}
+.image-upload .usp-label-files,
+.image-upload-bak .usp-label-files {
+  margin: 0;
+  font-size: 18px;
+  color: #fff;
+  background: #003062;
+  border-top-left-radius: 5px;
+  border-bottom-left-radius: 5px;
+  padding: 15px 35px 15px 10px;
+  float: left;
+  margin-right: 0;
+  width: 130px;
+  background: url("../img/lectures/logo_image_white.png") no-repeat #003062 90px 50%;
 }
 .wp-editor-container textarea.wp-editor-area {
   width: 100%;
@@ -7578,6 +7702,14 @@ figure.alignnone {
 .usp-input,
 .usp-textarea {
   font: inherit;
+}
+.usp-success {
+  font-size: 17px;
+  margin-top: 30px;
+  min-height: 200px;
+}
+.contact-us h1 {
+  color: #00325F;
 }
 .contact-us h2 {
   font-size: 30px;
@@ -7628,6 +7760,9 @@ figure.alignnone {
   font-size: 18px;
   margin-right: 20px;
   padding: 10px 20px;
+}
+body.login div#login h1 a {
+  background: none!important;
 }
 .nav-container {
   position: relative;

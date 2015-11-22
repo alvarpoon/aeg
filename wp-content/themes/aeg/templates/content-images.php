@@ -46,21 +46,26 @@
                 <col width="15%">
                 <col width="20%">
             	<tr class="header">
-                	<td>LECTURE TITLE</td>
+                	<td>IMAGE TITLE</td>
                     <td>SPEAKER</td>
                     <td>DATE</td>
                     <td></td>
                 </tr>
                 <? while ( $results->have_posts() ) : $results->the_post(); 
 					$author_id=$post->post_author;
-					$postImage = wp_get_attachment_image_src( get_post_thumbnail_id( $post->ID ), 'full' );
+                    $id=get_the_ID();
+					/*$postImage = wp_get_attachment_image_src( get_post_thumbnail_id( $post->ID ), 'full' );*/
 				?>
                 <tr>
                 	<td><a href="#lecture_content" class="btn_lecture_detail various" data-code="<?=$post->ID;?>"><? the_title(); ?></a></td>
                     <td><a href="#author_content" class="btn_author_detail various" data-code="<?=$author_id;?>"><?=the_author_meta( 'display_name' , $author_id ); ?></a></td>
-                    <td><?php echo get_the_time('F j, Y', $post->ID); ?><br /><?=get_the_time('g:ia', $post->ID);?></td>
+                    <td><?php echo get_the_time('F j, Y', $id); ?><br /><?=get_the_time('g:ia', $id);?></td>
                     <td align="center">
-                        <a href="<?=$postImage[0];?>" target="_blank"><span class="logo_image"></span></a>
+                        <!-- <a href="<?=$postImage[0];?>" target="_blank"><span class="logo_image"></span></a> -->
+                        <? 
+                            //echo usp_get_meta(false, 'usp-file-single');
+                            echo usp_get_image(false, "image-thumbnail", false, false, "file", '', '', '', '', false, false, false, false, false);
+                        ?>
                     </td>
                 </tr>
                 <? endwhile; ?>				

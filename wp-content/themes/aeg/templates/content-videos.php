@@ -46,28 +46,23 @@
                 <col width="15%">
                 <col width="20%">
             	<tr class="header">
-                	<td>LECTURE TITLE</td>
+                	<td>VIDEO TITLE</td>
                     <td>SPEAKER</td>
                     <td>DATE</td>
                     <td>&nbsp;</td>
                 </tr>
                 <? while ( $results->have_posts() ) : $results->the_post(); 
 					$author_id=$post->post_author;
-					$media_file = get_field("file", $post->ID);
+                    $id=get_the_ID();
+					/*$media_file = get_field("file", $id);*/
+
 				?>
                 <tr>
                 	<td><a href="#lecture_content" class="btn_lecture_detail various" data-code="<?=$post->ID;?>"><? the_title(); ?></a></td>
                     <td><a href="#author_content" class="btn_author_detail various" data-code="<?=$author_id;?>"><?=the_author_meta( 'display_name' , $author_id ); ?></a></td>
-                    <td><?php echo get_the_time('F j, Y', $post->ID); ?><br /><?=get_the_time('g:ia', $post->ID);?></td>
+                    <td><?php echo get_the_time('F j, Y', $post->ID); ?><br /><?=get_the_time('g:ia', $id);?></td>
                     <td align="center">
-                        <? if(count($media_file) > 1 && $media_file['mime_type'] == 'video/mp4') {
-                            $attachments = get_children( array( 'post_parent' => $post->ID ) ); 
-                            $count = count( $attachments );
-                        ?>
-	                    	<?=$count?> <a href="<?=$media_file['url']?>" target="_blank"><span class="logo_video enable"></span></a>
-                        <? }else{ ?>
-                        	<span class="logo_video"></span>
-                        <? } ?>
+	                    <a href="<?=usp_get_meta(false, 'usp-file-single')?>" target="_blank"><span class="logo_video enable"></span></a>
                     </td>
                 </tr>
                 <? endwhile; ?>				
