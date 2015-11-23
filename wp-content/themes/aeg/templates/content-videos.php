@@ -1,7 +1,7 @@
 <?
 
 	$paged = (get_query_var('paged')) ? get_query_var('paged') : 1;
-	$args= array(
+	$video_args= array(
 		'post_type'			=> 'video',
 		'post_status' 		=> 'publish',
 		'orderby'			=> 'date',
@@ -10,7 +10,29 @@
 		'posts_per_page' 	=> 16,
 		'paged' 			=> $paged,
 	);
-	$results = new WP_Query( $args );
+	$results = new WP_Query( $video_args );
+	
+	$image_args= array(
+		'post_type'			=> 'image',
+		'post_status' 		=> 'publish',
+		'orderby'			=> 'date',
+		'order' 			=> 'DESC',
+		'numberposts' 		=> -1,
+		'posts_per_page' 	=> 16,
+		'paged' 			=> $paged,
+	);
+	$image_results = new WP_Query( $image_args );
+	
+	$lecture_args= array(
+		'post_type'			=> 'lecture',
+		'post_status' 		=> 'publish',
+		'orderby'			=> 'date',
+		'order' 			=> 'DESC',
+		'numberposts' 		=> -1,
+		'posts_per_page' 	=> 16,
+		'paged' 			=> $paged,
+	);
+	$lecture_results = new WP_Query( $lecture_args );
 
 ?>
 <div class="container">
@@ -18,13 +40,13 @@
         <div class="clearfix">
             <div class="lecture_nav_container clearfix">
                 <div class="lecture_nav_item">
-                    <a href="/education/lecture/">LECTURE<span>24</span></a>
+                    <a href="/education/lecture/">LECTURE<span><?=$lecture_results->post_count;?></span></a>
                 </div>
                 <div class="lecture_nav_item active">
                     <a href="#">VIDEO</a>
                 </div>
                 <div class="lecture_nav_item">
-                    <a href="/education/image/">IMAGES<span>24</span></a>
+                    <a href="/education/image/">IMAGES<span><?=$image_results->post_count;?></span></a>
                 </div>
             </div>
             <a href="<?=site_url().'/education/video-upload/';?>" class="btn_yellow">UPLOAD</a>
