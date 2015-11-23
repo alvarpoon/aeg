@@ -1,0 +1,22 @@
+
+========================================================================
+
+NOTE: This plugin (USP Pro) is comprised of two parts:
+	
+	* Part 1: Its PHP code is licensed under the GPL license, 
+			like WordPress. See the GPL License below. 
+			More info @ http://www.gnu.org/licenses/
+
+	* Part 2: Everything else (e.g., CSS, HTML, JavaScript, images, 
+			design) is licensed according to the purchased license. 
+			More info @ https://plugin-planet.com/usp-pro/
+	
+Without prior written consent from Monzilla Media, you must NOT 
+directly or indirectly: license, sub-license, sell, resell, 
+or provide for free any aspect or component of Part 2.
+
+Copyright: © 2013 Monzilla Media
+
+========================================================================
+
+

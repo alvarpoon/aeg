@@ -101,13 +101,19 @@
                         <span class="logo_audio"></span>
                     </td>
                 </tr>
-                <? while ( $results->have_posts() ) : $results->the_post(); 
-					$pdf = get_field("pdf", $post->ID);
-					$media_file = get_field("video_audio_file", $post->ID);
-					$researchers = get_field("researcher", $post->ID);
+                <? while ( $results->have_posts() ) : $results->the_post();
+                    $id = get_the_ID();
+					$pdf = get_field("pdf", $id);
+					$media_file = get_field("video_audio_file", $id);
+					$researchers = get_field("researcher", $id);
 				?>
                 <tr>
-                	<td><a href="#"><? the_title(); ?></a></td>
+                	<td>
+                    <? if(count($pdf) > 0) { ?>
+                        <a target="_blank" href="<?=$pdf['url']?>"><? the_title(); ?></a></td>
+                    <? }else{?>
+                        <? the_title(); ?></td>
+                    <? } ?>
                     <td>
                     	<? foreach($researchers as $key => $researcher) { 
                         	echo $researcher['display_name'];
@@ -117,7 +123,7 @@
                         } ?>
                     </td>
                     <td>
-                    	<? if(count($pdf) > 1) { ?>
+                    	<? if(count($pdf) > 0) { ?>
 	                    	<a href="<?=$pdf['url']?>" target="_blank"><span class="logo_pdf enable"></span></a>
                         <? }else{ ?>
                         	<span class="logo_pdf"></span>
@@ -149,10 +155,11 @@
                     <td>RESEARCHER</td>
                 </tr>
                 <? while ( $results->have_posts() ) : $results->the_post(); 
-					$researchers = get_field("researcher", $post->ID);
+                    $id = get_the_ID();
+					$researchers = get_field("researcher", $id);
 				?>
                 <tr>
-                	<td><a href="#"><? the_title(); ?></a></td>
+                	<td><? the_title(); ?></td>
                     <td>
                     	<? foreach($researchers as $key => $researcher) { 
                         	echo $researcher['display_name'];

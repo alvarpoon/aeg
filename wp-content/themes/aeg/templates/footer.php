@@ -27,7 +27,7 @@
             	Tel:  	<?=$footer_telephone;?><br />Fax:  	<?=$footer_fax;?>
             </div>
             <div class="col-sm-4 noPadding">
-            	Email:  	<?=$footer_email;?>
+            	Email:  	<a href="mailto:<?=$footer_email;?>"><?=$footer_email;?></a>
             </div>
         </div>
     </div>
