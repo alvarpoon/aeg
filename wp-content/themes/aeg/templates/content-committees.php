@@ -22,7 +22,7 @@
         <?
 			foreach ($types as $type){ ?>
                 <div class="expandable-container <? if($type->cat_ID == 3) {echo "steering-committee";} ?> clearfix">
-                    <div class="expandable-header open">
+                    <div class="expandable-header <? if($type->cat_ID == 3) {echo "open";}?>">
                         <?=$type->cat_name?>
                         <i class="fa fa-chevron-up"></i>
                         <i class="fa fa-chevron-down"></i>

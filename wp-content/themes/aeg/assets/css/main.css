@@ -6905,6 +6905,13 @@ figure.alignnone {
   left: auto;
   color: #000;
 }
+.home-banner .slick-dots {
+  bottom: 0;
+}
+.home-banner .slick-dots li button:before {
+  color: #0D4F9F;
+  font-size: 9px;
+}
 .home-left-container h2 {
   margin-left: 25px;
 }

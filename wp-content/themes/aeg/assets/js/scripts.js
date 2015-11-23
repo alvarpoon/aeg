@@ -7006,6 +7006,12 @@ var Roots = {
     init: function() {
       // JavaScript to be fired on the home page
 	  $(document).ready(function(e) {
+		$('.home-banner').slick({
+			slidesToShow: 1,
+			slidesToScroll:1,
+			dots: true
+		});
+		  
       	$('.committees-home').slick({
 			slidesToShow: 4,
 			slidesToScroll:4,
@@ -7034,6 +7040,9 @@ var Roots = {
 	  function initContentHeight(){
 		$('.expandable-content-wrapper').each(function(){
 			$(this).parent().attr('data-original-height',$(this).outerHeight());
+			if(!$(this).parent().parent().find('.expandable-header').hasClass('open')){
+				$(this).parent().css('height',0);
+			}
 		});  
 	  }
 	  

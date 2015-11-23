@@ -14,10 +14,14 @@
 				$results = get_posts( $args );
 				foreach( $results as $result ) :
 					$url = wp_get_attachment_image_src( get_post_thumbnail_id($result->ID), 'full');
-					$page_url = get_field("page_link",$result->ID);
+					$page_url = get_field("link",$result->ID);
 			?>
                     <div class="main-banner-item">
+                    	<? if($page_url != '') { ?>
                         <a href="<?=$page_url?>"><img src="<?=$url[0]?>" /></a>
+                        <? }else { ?>
+                        <img src="<?=$url[0]?>" />
+                        <? } ?>
                     </div>
 			<? endforeach;?>
         </div>
