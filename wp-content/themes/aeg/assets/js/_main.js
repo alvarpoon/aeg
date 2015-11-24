@@ -125,6 +125,7 @@ var Roots = {
   our_members:{
 	init: function(){
 		$(document).ready(function() {
+		  updateSortValue();
 		  $('.pagination_bar .next').text('»');
 		  $('.pagination_bar .prev').text('«');
 		});  
@@ -213,6 +214,45 @@ function initEducationPopup(){
 			});
 		});
   });
+}
+
+function getUrlVars()
+{
+	var vars = [], hash;
+	var hashes = window.location.href.slice(window.location.href.indexOf('?') + 1).split('&');
+	for(var i = 0; i < hashes.length; i++)
+	{
+		hash = hashes[i].split('=');
+		vars.push(hash[0]);
+		vars[hash[0]] = hash[1];
+	}
+	return vars;
+}	
+
+function updateSortValue(){
+	var current_sort = '';
+	var sort_str = '';
+	
+	current_sort = getUrlVars().sorting;	
+	console.log(current_sort);
+	
+	if(typeof(current_sort) !== 'undefined'){
+		$("#sorting_control").val(current_sort);	
+	}else{
+		console.log($("#sorting_control option:first").val());
+		$("#sorting_control").find('option:first').prop('selected', 'selected');
+	}
+	
+	$('#sorting_control').change(function(){
+		updateSortStr();
+	});
+	
+	function updateSortStr(){
+		sort_str = '';	
+		sort_str = $('#sorting_control').val();
+		var url = full_url + '?sorting=' + sort_str;
+		window.location.href = url;
+	}	
 }
 
 })(jQuery); // Fully reference jQuery after this point.
