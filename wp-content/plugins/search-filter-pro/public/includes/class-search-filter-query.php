@@ -1,0 +1,1166 @@
+<?php
+/**
+ * Search & Filter Pro
+ * 
+ * @package   class Search_Filter_Query
+ * @author    Ross Morsali
+ * @link      http://www.designsandcode.com/
+ * @copyright 2015 Designs & Code
+ */
+ 
+// https://codex.wordpress.org/Creating_Tables_with_Plugins
+
+		
+class Search_Filter_Query {
+	
+	public $sfid 	= 0;
+	public $all_filtered_post_ids 		= array();
+	public $all_unfiltered_post_ids		= array();
+	public $unfiltered_post_ids  		= array();
+	public $filtered_post_ids_excl  	= array();
+	public $table_name 				 	= "";
+	public $has_run						= false;
+	public $has_prep_query				= false;
+	
+	
+	public $cache_term_results			= array(); //
+	//public $cache_field_results			= array(); //
+	
+	public $term_results				= array(); //an array for each possible term (field value) containing all possible results for  each term
+	public $field_results				= array(); //an array of results for all the terms combined for each field (taking into consideration the operator)
+	public $cache_field_results			= array(); //an array of results for all the terms combined for each field (taking into consideration the operator)
+	
+	public $term_counts					= array(); //calculate the number of posts in each term based on the current search/filter
+	
+	
+	public $query_args					= array();
+	public $form_settings				= array();
+	
+	
+	public $filters						= array();
+	public $all_post_ids_cached			= array();
+	
+	public $count_data					= array();
+	public $cache						= array();
+	public $pagination_filter_type		= "";
+	
+	
+	public function __construct($sfid, $settings, $fields, $filters)
+	{
+		global $wpdb;
+		
+		if($this->sfid == 0)
+		{
+			
+			$this->sfid = $sfid;
+			$this->filter_operator = "and";			
+			$this->table_name = $wpdb->prefix . 'search_filter_cache';
+			$this->form_fields = $fields;
+			$this->form_settings = $settings;
+			
+			$this->cache = new Search_Filter_Cache($sfid, $settings, $fields, $filters);
+			/*
+			 * Call $plugin_slug from public plugin class.
+			 */
+			
+			global $searchandfilter;
+			
+			//echo $this->form_settings['display_results_as'];
+			
+			if(isset($this->form_settings['display_results_as']))
+			{
+				if($this->form_settings['display_results_as']=="custom_edd_store")
+				{
+					add_action( 'edd_downloads_query', array( $this, 'setup_edd_query' ), 200 );
+				}
+				else
+				{
+					add_action( 'pre_get_posts', array( $this, 'setup_archive_query' ), 200 );
+				}			
+			}
+			
+			add_filter( 'sf_edit_query_args', array( $this, 'sf_filter_query_args' ), 10, 2);
+			add_action( 'parse_query', array($this, 'disable_canonical_redirect' ));
+			
+			//$this->init($sfid);
+		}
+
+	}
+	function disable_canonical_redirect( $query )
+	{
+		remove_filter( 'template_redirect', 'redirect_canonical' );
+	}
+	public function do_main_query()
+	{
+		$this->prep_query();
+		
+		$args = $this->query_args;
+		
+		query_posts($args);
+	}
+	
+	function setup_archive_query($query)
+	{
+		
+		global $searchandfilter;
+		
+		$display_results_as = $searchandfilter->get($this->sfid)->settings("display_results_as");
+		$force_is_search = $searchandfilter->get($this->sfid)->settings("force_is_search");
+		
+		//for post_type_archive results
+		$post_types = array_keys($searchandfilter->get($this->sfid)->settings("post_types"));
+		
+		
+		$filter_query = false;
+		
+		
+		//if(($display_results_as=="archive")||($display_results_as=="custom_woocommerce_store")||($display_results_as=="custom_edd_store"))
+		if(($display_results_as=="archive")&&( $query->is_main_query() ))
+		{
+			$filter_query = true;
+		}
+		else if($display_results_as=="custom_woocommerce_store")
+		{
+			if(function_exists("is_shop"))
+			{
+				if(is_shop() && $query->is_main_query())
+				{
+					add_filter( 'woocommerce_redirect_single_search_result', '__return_false' );
+					$filter_query = true;
+				}
+			}
+		}
+		else if($display_results_as=="post_type_archive")
+		{
+			if(isset($post_types[0]))
+			{
+				$post_type = $post_types[0];
+				
+				if((is_post_type_archive($post_type))&&( $query->is_main_query() ))
+				{
+					$filter_query = true;
+				}
+			}
+		}
+			
+		if(($filter_query) && ( !is_admin() ))
+		{
+			$this->prep_query();
+			
+			add_filter('get_pagenum_link', array($this, 'pagination_fix_pagenum'), 100);
+			add_filter('paginate_links', array($this, 'pagination_fix_paginate'), 100); 
+			
+			//convert already init args and set under pre_get_posts
+			foreach ($this->query_args as $key => $val)
+			{
+				//if($key!="paged")
+				//{
+					$query->set($key, $val);
+				//}
+				/*if($key=="sf_paged")
+				{
+					
+				}*/
+				
+			}
+			
+			if($force_is_search==1)
+			{
+				$query->set('is_search', true);
+				$query->is_search = true;
+			}
+		}
+		//return $query;
+	}
+	public function setup_edd_query($args)
+	{
+		global $searchandfilter;
+		
+		//$display_results_as = $searchandfilter->get($this->sfid)->settings("display_results_as");
+		
+		$this->prep_query();
+		
+		add_filter('get_pagenum_link', array($this, 'pagination_fix_pagenum'), 100);
+		add_filter('paginate_links', array($this, 'pagination_fix_paginate'), 100); 
+		
+		$args = array_merge($args, $this->query_args);
+		
+		return $args;
+	}
+	
+	public function setup_pagination()
+	{
+		add_filter('get_pagenum_link', array($this, 'pagination_fix_pagenum'), 100);
+		add_filter('paginate_links', array($this, 'pagination_fix_paginate'), 100); 
+		
+	}
+	/* ***************************** */
+	public function prep_query()
+	{
+		global $wpdb;
+		global $searchandfilter;
+		
+		if($this->has_prep_query==false)
+		{//only run once
+			
+			$this->has_prep_query = true;
+			//apply filter logic from cache, and `sf_edit_query_args` filter
+			$this->query_args = $this->cache->filter_query_args($this->query_args);
+			
+			$this->add_permalink_filters();
+			
+		}
+	}
+	public function add_permalink_filters()
+	{//apply any regular WP_Query logic
+		global $searchandfilter;
+
+		if($searchandfilter->get($this->sfid)->settings("maintain_state")==1)
+		{
+			add_filter( 'the_permalink', array($this, 'maintain_search_settings'), 20);
+			add_filter( 'post_link', array($this, 'maintain_search_settings'), 20);
+			add_filter( 'page_link', array($this, 'maintain_search_settings'), 20);
+			add_filter( 'post_type_link', array($this, 'maintain_search_settings'), 20);
+		}
+	}
+	public function remove_permalink_filters()
+	{
+		global $searchandfilter;
+
+		if($searchandfilter->get($this->sfid)->settings("maintain_state")==1)
+		{
+			remove_filter( 'the_permalink', array($this, 'maintain_search_settings'), 20);
+			remove_filter( 'post_link', array($this, 'maintain_search_settings'), 20);
+			remove_filter( 'page_link', array($this, 'maintain_search_settings'), 20);
+			remove_filter( 'post_type_link', array($this, 'maintain_search_settings'), 20);
+		}
+	}
+	
+	function maintain_search_settings($url) {
+		
+		$tGET = $_GET;
+		unset($tGET['action']);
+		unset($tGET['paged']);
+		unset($tGET['sfid']);
+		unset($tGET['lang']);
+		unset($tGET['page_id']);
+		
+		if(isset($tGET['s']))
+		{
+			$tGET['_sf_s'] = $tGET['s'];
+			unset($tGET['s']);
+		}
+		foreach($tGET as &$get)
+		{
+			$get = str_replace(" ", "+", $get); //force + signs back in - otherwise WP seems to strip just " "
+		}
+		
+		return add_query_arg($tGET, $url);
+	}
+	
+	///grabs all post IDs for the filter name/term - possibly do 1 query for all??
+	
+	public function sf_filter_query_args($query_args, $sfid) {
+		
+		if($this->sfid==$sfid)
+		{
+			$query_args = $this->get_wp_query_args($query_args);
+		}
+		
+		
+		/*$add_query_args = array(
+		   
+		   'orderby' 	=> 'meta_value_num',
+		   'meta_key' 	=> '_price',
+		   'order'     => 'ASC',
+		   
+		   'meta_query' => array(
+				array(
+					'key'     => '_price',
+					'value' => array(20,50000),
+					'compare' => 'BETWEEN',
+					'type'		=> "NUMERIC"
+				)				
+			)
+		);*/
+		
+		//$query_args = array_merge($query_args, $add_query_args);
+		
+		return $query_args;
+	}
+	
+	
+	
+	public function get_wp_query_args($args)
+	{
+		//ajax paged value
+		$sfpaged = 1;
+		if(isset($_GET['sf_paged']))
+		{
+			$sfpaged = (int)$_GET['sf_paged'];
+		}
+		
+		//regular paged value - normally found when loading the page (non ajax)
+		$args['paged'] = $sfpaged;
+		$args['search_filter_id'] = $this->sfid;
+		
+		/* to do - make sure its ajax/shortcode request */
+		//if(is_admin()) //is_admin is a great way to test if this is in an ajax call
+		//{
+			global $paged;
+			$paged = $sfpaged;
+	//	}
+		
+		
+		
+		$args = $this->filter_settings($args);
+		$args = $this->filter_query_search_term($args);
+		$args = $this->filter_query_post_types($args);
+		$args = $this->filter_query_author($args);
+		//$args = $this->filter_query_tax_meta($args);
+		$args = $this->filter_query_sort_order($args);
+		$args = $this->filter_query_post_date($args);
+		$args = $this->filter_query_inherited_defaults($args);
+		
+		
+		//var_dump($args);
+		
+		return $args;
+	}
+	
+	private function filter_query_inherited_defaults($args)
+	{
+		//var_dump($searchform);
+		if(isset($this->form_settings['inherit_current_post_type_archive']))
+		{
+			
+			if($this->form_settings['inherit_current_post_type_archive']=="1")
+			{
+				if(is_post_type_archive())
+				{
+					$post_type_slug = get_post_type();
+
+					if ( $post_type_slug )
+					{
+						$args['post_type'] = $post_type_slug;
+						//$args['post_type'] = array($post_type_slug);
+					}
+
+				}
+				else if(is_home())
+				{//this is the same as the "posts" archive
+					
+				}
+			}
+		}
+		
+		if(isset($this->form_settings['inherit_current_author_archive']))
+		{
+			if($this->form_settings['inherit_current_author_archive']=="1")
+			{
+				global $wp_query;
+				
+				if(is_author())
+				{
+					$author = $wp_query->queried_object;
+					
+					$args['author'] = $term->ID; //here we set the post types that we want WP to search
+				}
+			}
+		}
+		
+		return $args;
+	}
+	
+	function filter_query_search_term($args)
+	{
+		global $wp_query;
+		global $searchandfilter;
+		
+		
+		if(isset($_GET['_sf_s']))
+		{
+			$search_term = trim(urldecode(stripslashes($_GET['_sf_s'])));
+			$args['s'] = $search_term;	
+		}
+		
+		return $args;
+	}
+	
+	function filter_query_post_types($args)
+	{
+		global $wp_query;
+		global $searchandfilter;
+		$searchform =  $searchandfilter->get($this->sfid);
+		
+		if(isset($_GET['post_types']))
+		{
+			$post_types_filter = array();
+			$form_post_types = array();
+			
+			$post_types = $searchform->settings('post_types');
+			if($post_types)
+			{
+				if(is_array($post_types))
+				{
+					foreach ($post_types as $key => $value)
+					{
+						array_push($form_post_types, $key);
+					}
+				}
+			}
+			
+			$user_post_types = explode(",",esc_attr($_GET['post_types']));
+			
+			if(isset($user_post_types))
+			{
+				if(is_array($user_post_types))
+				{
+					//this means the user has submitted some post types
+					foreach($user_post_types as $upt)
+					{
+						if(in_array($upt, $form_post_types))
+						{
+							array_push($post_types_filter, $upt);
+						}
+					}
+				}					
+			}
+			
+			$args['post_type'] = $post_types_filter; //here we set the post types that we want WP to search
+			
+			$this->rel_query_args['post_types'] = $post_types_filter;
+			
+		}
+		else
+		{
+			$form_post_types = array();
+			$post_types = $searchform->settings('post_types');
+			
+			if($post_types)
+			{
+				if(is_array($post_types))
+				{
+					foreach ($post_types as $key => $value)
+					{
+						array_push($form_post_types, $key);
+					}
+				}
+			}
+			
+			$args['post_type'] = $form_post_types;
+		}
+		
+		//if its a single post type, get rid of array - helps with some compatibility issues where themes are not expecting an array here
+		if(count($args['post_type'])==1)
+		{
+			$args['post_type'] = $args['post_type'][0];
+		}
+		
+		if($searchform->settings('force_is_search')==1)
+		{
+			$args['is_search'] = true;
+		}
+		
+		
+		return $args;
+	}
+	
+	
+	
+	function filter_query_author($args)
+	{
+		global $wp_query;
+		
+		if(isset($_GET['authors']))
+		{
+			
+			$authors = explode(",",esc_attr($_GET['authors']));
+			foreach ($authors as &$author)
+			{
+				$author = (int)$author;
+			}
+			
+			$args['author'] = implode(",", $authors); //here we set the post types that we want WP to search
+			
+			$this->rel_query_args['authors'] = $authors;
+		}
+		
+		return $args;
+	}
+	
+	function filter_query_sort_order($args)
+	{
+		global $wp_query;
+		
+	
+		if(isset($_GET['sort_order']))
+		{
+			$search_all = false;
+			
+			$sort_order_arr = explode("+",esc_attr(urlencode($_GET['sort_order'])));
+			$sort_arr_length = count($sort_order_arr);
+			
+			//check both elems in arr exist - field name [0] and direction [1]
+			if($sort_arr_length>=2)
+			{
+				$sort_order_arr[1] = strtoupper($sort_order_arr[1]);
+				if(($sort_order_arr[1]=="ASC")||($sort_order_arr[1]=="DESC"))
+				{
+					if($this->is_meta_value($sort_order_arr[0]))
+					{
+						$sort_by = "meta_value";
+						if(isset($sort_order_arr[2]))
+						{
+							if($sort_order_arr[2]=="num")
+							{
+								$sort_by = "meta_value_num";
+							}
+						}
+						$meta_key = substr($sort_order_arr[0], strlen(SF_META_PRE));
+						
+						$args['orderby'] = $sort_by;
+						$args['order'] = $sort_order_arr[1];
+						$args['meta_key'] = $meta_key;
+					}
+					else
+					{
+						$sort_by = $sort_order_arr[0];
+						if($sort_by=="id")
+						{
+							$sort_by = "ID";
+						}
+						
+						$args['orderby'] = $sort_by;
+						$args['order'] = $sort_order_arr[1];
+					}
+				}
+			}
+		}
+		else
+		{
+			global $searchandfilter;
+			$searchform = $searchandfilter->get($this->sfid);
+			
+			$sort_by = $searchform->settings('default_sort_by');
+			$sort_dir = $searchform->settings('default_sort_dir');
+			$meta_key = $searchform->settings('default_meta_key');
+			$sort_type = $searchform->settings('default_sort_type');
+			
+			if(isset($sort_by))
+			{
+				if($sort_by!="0")
+				{
+					if($sort_by=="meta_value")
+					{
+						if(isset($sort_type))
+						{
+							if($sort_type=="numeric")
+							{
+								$sort_by = "meta_value_num";
+							}
+						}
+						
+						$args['orderby'] = $sort_by;
+						$args['order'] = $sort_dir;
+						$args['meta_key'] = $meta_key;
+						
+					}
+					else
+					{
+						$args['orderby'] = $sort_by;
+						$args['order'] = $sort_dir;
+					}
+				}
+			}
+		}
+	
+		
+		return $args;
+	}
+	
+	
+	function filter_query_post_date($args)
+	{
+		global $wp_query;
+		
+		if(isset($_GET['post_date']))
+		{
+			//get post dates into array
+			$post_date = explode("+", esc_attr(urlencode($_GET['post_date'])));
+			
+			if(!empty($post_date))
+			{
+				global $searchandfilter;
+				$post_date_field = $searchandfilter->get($this->sfid)->get_field_by_key('post_date');
+				$date_format="m/d/Y";
+				
+				if(isset($post_date_field['date_format']))
+				{
+					$date_format = $post_date_field['date_format'];
+				}
+				
+				//if there is more than 1 post date and the dates are not the same
+				if (count($post_date) > 1 && $post_date[0] != $post_date[1])
+				{
+					
+					if((!empty($post_date[0]))&&(!empty($post_date[1])))
+					{
+						
+						
+						$fromDate = $this->getDateDMY($post_date[0],$date_format);
+						$toDate = $this->getDateDMY($post_date[1],$date_format);
+						
+						$args['date_query'] = array(
+							'after' => array(
+								'day'   	=> $fromDate['day'],
+								'month'     => $fromDate['month'],
+								'year'      => $fromDate['year'],
+								//'compare'   => '>='
+							),
+							'before' => array(
+								'day'   	=> $toDate['day'],
+								'month'     => $toDate['month'],
+								'year'      => $toDate['year'],
+								//'compare'   => '<='
+							),
+							'inclusive' => true
+						);
+					}
+				}
+				else
+				{ //else we are dealing with one date or both dates are the same (so need to find posts for a single day)
+					
+					
+					if (!empty($post_date[0]))
+					{
+						$theDate = $this->getDateDMY($post_date[0], $date_format);
+						
+						$args['year'] = $theDate['year'];
+						$args['monthnum'] = $theDate['month'];
+						$args['day'] = $theDate['day'];
+					}
+				}
+			}
+		}
+		
+		return $args;
+	}
+	
+	
+	
+	
+	public function is_meta_value($key)
+	{
+		if(substr( $key, 0, 5 )===SF_META_PRE)
+		{
+			return true;
+		}
+		return false;
+	}
+	
+	public function is_taxonomy_key($key)
+	{
+		if(substr( $key, 0, 5 )===SF_TAX_PRE)
+		{
+			return true;
+		}
+		return false;
+	}
+	
+	function getDateDMY($date, $date_format)
+	{
+		if($date_format=="m/d/Y")
+		{
+			$month = substr($date, 0, 2);
+			$day = substr($date, 2, 2);
+			$year = substr($date, 4, 4);
+		}
+		else if($date_format=="d/m/Y")
+		{
+			$month = substr($date, 2, 2);
+			$day = substr($date, 0, 2);
+			$year = substr($date, 4, 4);
+		}
+		else if($date_format=="Y/m/d")
+		{
+
+			$month = substr($date, 4, 2);
+			$day = substr($date, 6, 2);
+			$year = substr($date, 0, 4);
+			
+		}
+		
+		$rdate["year"] = $year;
+		$rdate["month"] = $month;
+		$rdate["day"] = $day;
+		
+		return $rdate;
+	}
+	
+	function the_results()
+	{
+		global $searchandfilter;
+		
+		$this->prep_query();
+		
+		$args = $this->query_args;
+		
+		$returnvar = "";
+		
+		
+		//add_action('posts_where', array($this, 'filter_meta_query_where'));
+		//add_action('posts_join' , array($this, 'filter_meta_join'));
+		
+		// Attach hook to filter WHERE clause.
+		//add_filter('posts_where', array($this,'limit_date_range_query'));
+		// Remove the filter after it is executed.
+		//add_action('posts_selection', array($this,'remove_limit_date_range_query'));
+		
+		/*if($searchandfilter->get($this->sfid)->settings("maintain_state")==1)
+		{
+			add_filter('the_permalink', array($this, 'maintain_search_settings'));
+		}*/
+		
+		add_filter('get_pagenum_link', array($this, 'pagination_fix_pagenum'), 100);
+		add_filter('paginate_links', array($this, 'pagination_fix_paginate'), 100); 
+		
+		$query = new WP_Query($args);
+		
+		ob_start();
+		
+		//first check to see if there is a search form that matches the ID of this form
+		if ( $overridden_template = locate_template( 'search-filter/'.$this->sfid.'.php' ) )
+		{
+			// locate_template() returns path to file
+			// if either the child theme or the parent theme have overridden the template
+			include($overridden_template);
+			
+		}
+		else
+		{
+			
+			//the check for the default template (results.php)
+			
+			if ( $overridden_template = locate_template( 'search-filter/results.php' ) )
+			{
+				// locate_template() returns path to file
+				// if either the child theme or the parent theme have overridden the template
+				include($overridden_template);
+				
+			}
+			else
+			{
+				// If neither the child nor parent theme have overridden the template,
+				// we load the template from the 'templates' sub-directory of the directory this file is in
+				include(plugin_dir_path( SEARCH_FILTER_PRO_BASE_PATH ) . '/templates/results.php');
+			}
+		}
+		
+		$returnvar = ob_get_clean();
+		
+		wp_reset_postdata();
+		
+		return $returnvar;
+		
+		
+		
+	}
+	
+	
+	function pagination_fix_pagenum($url)
+	{
+		$new_url = $this->pagination_fix(remove_query_arg("sf_paged", $url));
+		
+		return $new_url;
+	}
+	
+	function pagination_fix_paginate($url)
+	{
+		$new_url = $this->pagination_fix($url);
+		
+		return $new_url;
+		
+	}
+	function pagination_fix($url)
+	{
+		global $searchandfilter;
+		
+		$url = urldecode($url);
+		$url = remove_query_arg("sfid", $url);
+		
+		$sf_inst = $searchandfilter->get($this->sfid);
+		
+		$display_results_as = $sf_inst->settings('display_results_as');
+		$results_url = "";
+		
+		if($display_results_as=="shortcode")
+		{
+			$results_url = $sf_inst->settings('results_url');
+		}
+		else if($display_results_as=="archive")
+		{
+			$results_url = home_url("?sfid=".$this->sfid);
+			
+			if(get_option('permalink_structure'))
+			{
+				$page_slug = $sf_inst->settings('page_slug');
+				
+				if($page_slug!="")
+				{
+					$results_url = trailingslashit(home_url($page_slug));
+				}
+				else
+				{
+					$results_url = home_url("?sfid=".$this->sfid);
+				}
+			}
+		}
+		else if(($display_results_as=="custom_woocommerce_store")&&(function_exists('woocommerce_get_page_id')))
+		{
+			//$results_url = home_url("?page_id=".woocommerce_get_page_id( 'shop' ));
+			$results_url = home_url("?post_type=product");
+			
+			if(get_option('permalink_structure'))
+			{
+				$results_url = get_permalink( woocommerce_get_page_id( 'shop' ));
+			}
+		}
+		else if($display_results_as=="post_type_archive")
+		{
+			if(is_array($sf_inst->settings('post_types')))
+			{
+				$post_types = array_keys($sf_inst->settings('post_types'));
+				if(isset($post_types[0]))
+				{
+					$post_type = $post_types[0];
+					$results_url = get_post_type_archive_link( $post_type );
+				}
+			}			
+		}
+		
+		else if($display_results_as=="custom_edd_store")
+		{
+			$results_url = $sf_inst->settings('results_url');
+		}
+		
+		$sf_page_no = 0;
+		$url_query = urldecode(parse_url($url, PHP_URL_QUERY));
+		
+		$new_url = $results_url;
+		
+		if($url_query!="")
+		{
+			if (strpos($new_url, '?') !== false) { 
+				$new_url = $new_url."&".$url_query;
+			}
+			else
+			{
+				$new_url = $new_url."?".$url_query;
+			}
+		}
+		
+		parse_str($url_query, $url_args);
+		
+		if(isset($url_args['paged']))
+		{
+			$sf_page_no = (int)$url_args['paged'];
+		}
+		else if($this->has_url_var($url, "page")) //check to see if this is different for different langs
+		{//try to get page number from permalink url
+			
+			$sf_page_no = (int)$this->get_url_var($url, "page");
+		}
+		else if(isset($url_args['sf_paged']))
+		{
+			$sf_page_no = (int)$url_args['sf_paged'];
+		}
+		
+		
+		
+		if($sf_page_no>1)
+		{
+			$new_url = add_query_arg("sf_paged", $sf_page_no, $new_url);
+		}
+		else
+		{
+			$new_url = remove_query_arg("sf_paged", $new_url);
+		}
+		
+		$new_url = remove_query_arg("action", $new_url);
+		$new_url = remove_query_arg("paged", $new_url);
+		
+		return ($new_url);
+	}
+	
+	
+	function get_url_var($url, $name)
+	{
+		$strURL = $url;
+		$arrVals = explode("/",$strURL);
+		$found = 0;
+		foreach ($arrVals as $index => $value) 
+		{
+			if($value == $name) $found = $index;
+		}
+		$place = $found + 1;
+		return $arrVals[$place];
+	}
+	
+	function has_url_var($url, $name)
+	{
+		$strURL = $url;
+		$arrVals = explode("/",$strURL);
+		$found = 0;
+		foreach ($arrVals as $index => $value) 
+		{
+			if($value == $name)
+			{
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	function filter_settings($args)
+	{
+		global $searchandfilter;
+		
+		//posts per page
+		$args['posts_per_page'] = $searchandfilter->get($this->sfid)->settings('results_per_page') == "" ? get_option('posts_per_page') : $searchandfilter->get($this->sfid)->settings('results_per_page');
+		
+		//post status
+		if($searchandfilter->get($this->sfid)->settings('post_status')!="")
+		{
+			$post_status = $searchandfilter->get($this->sfid)->settings('post_status');
+			$args['post_status'] = array_map("esc_attr", array_keys($post_status));
+			
+			$post_types = $searchandfilter->get($this->sfid)->settings('post_types');
+			if($post_types!="")
+			{
+				if(array_key_exists('attachment', $post_types))
+				{
+					array_push($args['post_status'], "inherit");
+				}
+			}
+		}
+		
+		//exclude post ids
+		if($searchandfilter->get($this->sfid)->settings('exclude_post_ids')!="")
+		{
+			$exclude_post_ids = $searchandfilter->get($this->sfid)->settings('exclude_post_ids');
+			$args['post__not_in'] = array_map("intval" , explode(",", $exclude_post_ids));
+		}
+		
+		//include/exclude taxonomies
+		if($searchandfilter->get($this->sfid)->settings('taxonomies_settings')!="")
+		{
+			if(is_array($searchandfilter->get($this->sfid)->settings('taxonomies_settings')))
+			{
+				foreach ($searchandfilter->get($this->sfid)->settings('taxonomies_settings') as $key => $val)
+				{
+					
+					if($key == "category")
+					{
+						if(isset($val['ids']))
+						{
+							if($val['ids']!="")
+							{
+								if($val["include_exclude"]=="include")
+								{
+									$args['category__in'] = $this->lang_object_ids(array_map("intval" , explode(",", $val['ids'])), $key);
+								}
+								else
+								{
+									$args['category__not_in'] = $this->lang_object_ids(array_map("intval" , explode(",", $val['ids'])), $key);
+								}
+							}
+						}
+					}
+					else if($key=="post_tag")
+					{
+						if(isset($val['ids']))
+						{
+							if($val['ids']!="")
+							{
+								if($val["include_exclude"]=="include")
+								{
+									$args['tag__in'] = $this->lang_object_ids(array_map("intval" , explode(",", $val['ids'])), $key);
+								}
+								else
+								{
+									$args['tag__not_in'] = $this->lang_object_ids(array_map("intval" , explode(",", $val['ids'])), $key);
+								}
+							}
+						}
+					}
+					else
+					{//taxonomy
+						if(isset($val['ids']))
+						{
+							if($val['ids']!="")
+							{
+								$args['tax_query']['relation'] = "AND";
+								
+								if($val["include_exclude"]=="include")
+								{
+									$operator = "IN";
+								}
+								else
+								{
+									$operator = 'NOT IN';
+								}
+								
+								$args['tax_query'][] = array(
+									'taxonomy' => $key,
+									'field'    => 'id',
+									'terms'    => $this->lang_object_ids(array_map("intval" , explode(",", $val['ids'])), $key),
+									'operator' => $operator
+								);
+							}
+						}	
+					}
+					
+				}
+			}
+		}
+		
+		//meta queries
+		if(!isset($args['meta_query']))
+		{
+			$args['meta_query'] = array();
+		}
+		
+		
+		if($searchandfilter->get($this->sfid)->settings('settings_post_meta')!="")
+		{
+			//$args['meta_query']
+			if(is_array($searchandfilter->get($this->sfid)->settings('settings_post_meta')))
+			{
+				foreach($searchandfilter->get($this->sfid)->settings('settings_post_meta') as $post_meta)
+				{					
+					$compare_val = "";
+					if($post_meta['meta_compare']=="e")
+					{
+						$compare_val = "=";
+					}
+					else if($post_meta['meta_compare']=="ne")
+					{
+						$compare_val = "!=";
+					}
+					else if($post_meta['meta_compare']=="lt")
+					{
+						$compare_val = "<";
+					}
+					else if($post_meta['meta_compare']=="gt")
+					{
+						$compare_val = ">";
+					}
+					else if($post_meta['meta_compare']=="lte")
+					{
+						$compare_val = "<=";
+					}
+					else if($post_meta['meta_compare']=="gte")
+					{
+						$compare_val = ">=";
+					}
+					else
+					{
+						$compare_val = $post_meta['meta_compare'];
+					}
+					
+					
+					if($post_meta['meta_type']=="DATE")
+					{
+						if($post_meta['meta_date_value_current_date']==1)
+						{
+							$meta_query = array(
+								
+								'key'		=> $post_meta['meta_key'],
+								'value'		=> date( 'Ymd' ),
+								'type'		=> $post_meta['meta_type'],
+								'compare'	=> $compare_val
+							);
+						}
+						else
+						{
+							$meta_query = array(
+								
+								'key'		=> $post_meta['meta_key'],
+								'value'		=> $post_meta['meta_date_value_date'],
+								'type'		=> $post_meta['meta_type'],
+								'compare'	=> $compare_val
+							);
+						}
+					}
+					else if($post_meta['meta_type']=="TIMESTAMP")
+					{
+						if($post_meta['meta_date_value_current_timestamp']==1)
+						{
+							$meta_query = array(
+								
+								'key'		=> $post_meta['meta_key'],
+								'value'		=> current_time('timestamp'),
+								'type'		=> "NUMERIC",
+								'compare'	=> $compare_val
+							);
+						}
+						else
+						{
+							$meta_query = array(
+								
+								'key'		=> $post_meta['meta_key'],
+								'value'		=> $post_meta['meta_date_value_timestamp'],
+								'type'		=> "NUMERIC",
+								'compare'	=> $compare_val
+							);
+						}
+					}
+					else
+					{
+						$meta_query = array(
+							
+							'key'		=> $post_meta['meta_key'],
+							'value'		=> $post_meta['meta_value'],
+							'type'		=> $post_meta['meta_type'],
+							'compare'	=> $compare_val
+						);				
+					}
+					
+					//we don't want to pass the value when checking if a field exists or not
+					if(($compare_val=="EXISTS")||($compare_val=="NOT EXISTS"))
+					{
+						unset($meta_query['value']);
+						unset($meta_query['type']);
+						
+					}
+					
+					array_push($args['meta_query'], $meta_query);
+					
+				}
+			}
+		}
+		
+		
+		return $args;
+	}
+	
+	function lang_object_ids($ids_array, $type)
+	{
+		if(function_exists('icl_object_id'))
+		{
+			$res = array();
+			foreach ($ids_array as $id)
+			{
+				$xlat = icl_object_id($id,$type,false);
+				if(!is_null($xlat)) $res[] = $xlat;
+			}
+			return $res;
+		}
+		else
+		{
+			return $ids_array;
+		}
+	}
+	
+}
