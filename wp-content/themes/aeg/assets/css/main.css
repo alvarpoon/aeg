@@ -6770,15 +6770,35 @@ select {
   vertical-align: middle!important;
   padding: 8px 20px !important;
 }
+.table .header {
+  /*.header_asc, .header_desc{
+			padding-right:10px;	
+		}
+		.header_asc{
+			background:url(../img/arrow_up.png) no-repeat right center;
+		}
+		.header_desc{
+			background:url(../img/arrow_down.png) no-repeat right center;
+		}*/
+}
 .table .header td {
   background: #00325c;
   color: #fff;
   font-size: 18px;
 }
+.table .header td a {
+  color: #fff;
+}
+.table .header td a:hover {
+  text-decoration: none;
+}
 .table .header .logo_video,
 .table .header .logo_audio,
 .table .header .logo_pdf {
   background-position: 0 0;
+}
+.table .header .fa {
+  margin-left: 10px;
 }
 .table .logo_video {
   background: url(../img/lectures/logo_video.png) no-repeat;

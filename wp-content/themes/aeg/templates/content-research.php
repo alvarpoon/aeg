@@ -14,22 +14,106 @@
     $user_id = get_current_user_id();
 
 	$paged = (get_query_var('paged')) ? get_query_var('paged') : 1;
-	$args= array(
-		'post_type'			=> 'research',
-		'post_status' 		=> 'publish',
-		'orderby'			=> 'date',
-		'order' 			=> 'DESC',
-		'numberposts' 		=> -1,
-		'posts_per_page' 	=> 16,
-		'paged' 			=> $paged,
-		'tax_query' => array(
-			array(
-				'taxonomy' => 'status',
-				'field' => 'id',
-				'terms' => $terms_id
-			)
-		)
-	);
+	
+	if( isset($_GET['sorting']) ){
+		$sort_order = $_GET['sorting'];
+	}else{
+		$sort_order = '';
+	}
+	
+	switch ($sort_order) {
+		case "title_asc":
+			$args= array(
+				'post_type'			=> 'research',
+				'post_status' 		=> 'publish',
+				'orderby'			=> 'title',
+				'order' 			=> 'ASC',
+				'numberposts' 		=> -1,
+				'posts_per_page' 	=> 16,
+				'paged' 			=> $paged,
+				'tax_query' => array(
+					array(
+						'taxonomy' => 'status',
+						'field' => 'id',
+						'terms' => $terms_id
+					)
+				)
+			);
+			break;
+		case "title_desc":	
+			$args= array(
+				'post_type'			=> 'research',
+				'post_status' 		=> 'publish',
+				'orderby'			=> 'title',
+				'order' 			=> 'DESC',
+				'numberposts' 		=> -1,
+				'posts_per_page' 	=> 16,
+				'paged' 			=> $paged,
+				'tax_query' => array(
+					array(
+						'taxonomy' => 'status',
+						'field' => 'id',
+						'terms' => $terms_id
+					)
+				)
+			);
+			break;
+		case "speaker_asc":
+			$args= array(
+				'post_type'			=> 'research',
+				'post_status' 		=> 'publish',
+				'meta_key' 			=> 'researcher',
+				'orderby' 			=> 'meta_value',
+				'order' 			=> 'ASC',
+				'numberposts' 		=> -1,
+				'posts_per_page' 	=> 16,
+				'paged' 			=> $paged,
+				'tax_query' => array(
+					array(
+						'taxonomy' => 'status',
+						'field' => 'id',
+						'terms' => $terms_id
+					)
+				)
+			);
+			break;
+		case "speaker_desc":
+			$args= array(
+				'post_type'			=> 'research',
+				'post_status' 		=> 'publish',
+				'meta_key' 			=> 'researcher',
+				'orderby' 			=> 'meta_value',
+				'order' 			=> 'DESC',
+				'numberposts' 		=> -1,
+				'posts_per_page' 	=> 16,
+				'paged' 			=> $paged,
+				'tax_query' => array(
+					array(
+						'taxonomy' => 'status',
+						'field' => 'id',
+						'terms' => $terms_id
+					)
+				)
+			);
+			break;
+		default:
+			$args= array(
+				'post_type'			=> 'research',
+				'post_status' 		=> 'publish',
+				'orderby'			=> 'date',
+				'order' 			=> 'DESC',
+				'numberposts' 		=> -1,
+				'posts_per_page' 	=> 16,
+				'paged' 			=> $paged,
+				'tax_query' => array(
+					array(
+						'taxonomy' => 'status',
+						'field' => 'id',
+						'terms' => $terms_id
+					)
+				)
+			);
+	}
 
     //for on-going and past research, get only the research user is involved in
     if($post->ID == 27 || $post->ID == 29){
@@ -62,9 +146,9 @@
         </div>
         <div class="clearfix lecture-search-container">
             <div class="col-sm-5 noPadding">
-                <select>
+                <!--<select>
                     <option>Sort by Title (Ascending)</option>
-                </select>
+                </select>-->
             </div>
             <div class="col-sm-7 noPadding">
                 <!--Search bar-->
@@ -77,7 +161,7 @@
         <div class="table-responsive lecture-table">
         	<table class="table">
             	<tr class="header">
-                	<td>RESEARCH TITLE</td>
+                    <td><a href="" class="title_sort">RESEARCH TITLE<i class="fa fa-caret-down"></i></a></td>
                 </tr>
                 <? while ( $results->have_posts() ) : $results->the_post(); ?>
                 <tr>
@@ -93,8 +177,11 @@
                 <col width="20%">
                 <col width="20%">
             	<tr class="header">
-                	<td>RESEARCH TITLE</td>
-                    <td>RESEARCHER</td>
+                	<!--<td>RESEARCH TITLE</td>
+                    <td>RESEARCHER</td>-->
+                    
+                    <td><a href="" class="title_sort">RESEARCH TITLE<i class="fa fa-caret-down"></i></a></td>
+                    <td><a href="" class="speaker_sort">RESEARCHER<i class="fa fa-caret-down"></i></a></td>
                     <td>
                     	<span class="logo_pdf"></span>
                         <span class="logo_video"></span>
@@ -151,8 +238,11 @@
             	<col width="70%">
                 <col width="30%">
             	<tr class="header">
-                	<td>RESEARCH TITLE</td>
-                    <td>RESEARCHER</td>
+                	<!--<td>RESEARCH TITLE</td>
+                    <td>RESEARCHER</td>-->
+                    
+                    <td><a href="" class="title_sort">RESEARCH TITLE<i class="fa fa-caret-down"></i></a></td>
+                    <td><a href="" class="speaker_sort">RESEARCHER<i class="fa fa-caret-down"></i></a></td>
                 </tr>
                 <? while ( $results->have_posts() ) : $results->the_post(); 
                     $id = get_the_ID();
@@ -183,3 +273,11 @@
 
 <div id="lecture_content"></div>
 <div id="author_content"></div>
+
+<? 
+	$uri_parts = explode('?', $_SERVER['REQUEST_URI'], 2);
+?>
+<script>
+	
+	var full_url = 'http://<?=$_SERVER['HTTP_HOST']; ?>'+'<?=$uri_parts[0];?>';
+</script>

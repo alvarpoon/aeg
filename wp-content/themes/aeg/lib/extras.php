@@ -30,9 +30,16 @@ function custom_pagination($numpages = '', $pagerange = '', $paged='') {
         $numpages = 1;
     }
   }
-
+  
+  $uri_parts = explode('?', $_SERVER['REQUEST_URI'], 2);
+  $split_parameters = explode('&', $uri_parts[1]);
+  for($i = 0; $i < count($split_parameters); $i++) {
+	  $final_split = explode('=', $split_parameters[$i]);
+	  $split_complete[$final_split[0]] = $final_split[1];
+  }
+  
   $pagination_args = array(
-    'base'            => get_pagenum_link(1) . '%_%',
+	'base' 			  => preg_replace('/\?.*/', '', get_pagenum_link(1)) . '%_%',
     'format'          => 'page/%#%',
     'total'           => $numpages,
     'current'         => $paged,
@@ -43,8 +50,8 @@ function custom_pagination($numpages = '', $pagerange = '', $paged='') {
     'prev_text'       => __('&laquo;'),
     'next_text'       => __('&raquo;'),
     'type'            => 'plain',
-    'add_args'        => false,
-    'add_fragment'    => ''
+	'add_args'		  => $split_complete,
+	'add_fragment'    => '',	
   );
 
   $paginate_links = paginate_links($pagination_args);

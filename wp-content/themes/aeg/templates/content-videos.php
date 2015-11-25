@@ -1,15 +1,97 @@
 <?
 
 	$paged = (get_query_var('paged')) ? get_query_var('paged') : 1;
-	$video_args= array(
-		'post_type'			=> 'video',
-		'post_status' 		=> 'publish',
-		'orderby'			=> 'date',
-		'order' 			=> 'DESC',
-		'numberposts' 		=> -1,
-		'posts_per_page' 	=> 16,
-		'paged' 			=> $paged,
-	);
+	if( isset($_GET['sorting']) ){
+		$sort_order = $_GET['sorting'];
+	}else{
+		$sort_order = '';
+	}
+		
+	switch ($sort_order) {
+		case "title_asc":
+			$video_args= array(
+				'post_type'			=> 'video',
+				'post_status' 		=> 'publish',
+				'orderby'			=> 'title',
+				'order' 			=> 'ASC',
+				'numberposts' 		=> -1,
+				'posts_per_page' 	=> 16,
+				'paged' 			=> $paged,
+				'suppress_filters' => false
+			);
+			break;
+		case "title_desc":	
+			$video_args= array(
+				'post_type'			=> 'video',
+				'post_status' 		=> 'publish',
+				'orderby'			=> 'title',
+				'order' 			=> 'DESC',
+				'numberposts' 		=> -1,
+				'posts_per_page' 	=> 16,
+				'paged' 			=> $paged,
+				'suppress_filters' => false
+			);
+			break;
+		case "speaker_asc":
+			$video_args= array(
+				'post_type'			=> 'video',
+				'post_status' 		=> 'publish',
+				'orderby'			=> 'author date',
+				'order' 			=> 'ASC',
+				'numberposts' 		=> -1,
+				'posts_per_page' 	=> 16,
+				'paged' 			=> $paged,
+				'suppress_filters' => false
+			);
+			break;
+		case "speaker_desc":
+			$video_args= array(
+				'post_type'			=> 'video',
+				'post_status' 		=> 'publish',
+				'orderby'			=> 'author date',
+				'order' 			=> 'DESC',
+				'numberposts' 		=> -1,
+				'posts_per_page' 	=> 16,
+				'paged' 			=> $paged,
+				'suppress_filters' => false
+			);
+			break;
+		case "date_asc":
+			$video_args= array(
+				'post_type'			=> 'video',
+				'post_status' 		=> 'publish',
+				'orderby'			=> 'date',
+				'order' 			=> 'ASC',
+				'numberposts' 		=> -1,
+				'posts_per_page' 	=> 16,
+				'paged' 			=> $paged,
+				'suppress_filters' => false
+			);
+			break;
+		case "date_desc":
+			$video_args= array(
+				'post_type'			=> 'video',
+				'post_status' 		=> 'publish',
+				'orderby'			=> 'date',
+				'order' 			=> 'DESC',
+				'numberposts' 		=> -1,
+				'posts_per_page' 	=> 16,
+				'paged' 			=> $paged,
+				'suppress_filters' => false
+			);
+			break;
+		default:
+			$video_args= array(
+				'post_type'			=> 'video',
+				'post_status' 		=> 'publish',
+				'orderby'			=> 'title',
+				'order' 			=> 'DESC',
+				'numberposts' 		=> -1,
+				'posts_per_page' 	=> 16,
+				'paged' 			=> $paged,
+				'suppress_filters' => false
+			);
+	}
 	$results = new WP_Query( $video_args );
 	
 	$image_args= array(
@@ -53,9 +135,9 @@
         </div>
         <div class="clearfix lecture-search-container">
             <div class="col-sm-5 noPadding">
-                <select>
+                <!--<select>
                     <option>Sort by Title (Ascending)</option>
-                </select>
+                </select>-->
             </div>
             <div class="col-sm-7 noPadding">
                 <!--Search bar-->
@@ -68,9 +150,9 @@
                 <col width="15%">
                 <col width="20%">
             	<tr class="header">
-                	<td>VIDEO TITLE</td>
-                    <td>SPEAKER</td>
-                    <td>DATE</td>
+                    <td><a href="" class="title_sort">VIDEO TITLE<i class="fa fa-caret-down"></i></a></td>
+                    <td><a href="" class="speaker_sort">SPEAKER<i class="fa fa-caret-down"></i></a></td>
+                    <td><a href="" class="date_sort">DATE<i class="fa fa-caret-down"></i></a></td>
                     <td>&nbsp;</td>
                 </tr>
                 <? while ( $results->have_posts() ) : $results->the_post(); 
@@ -104,3 +186,11 @@
 
 <div id="lecture_content"></div>
 <div id="author_content"></div>
+
+<? 
+	$uri_parts = explode('?', $_SERVER['REQUEST_URI'], 2);
+?>
+<script>
+	
+	var full_url = 'http://<?=$_SERVER['HTTP_HOST']; ?>'+'<?=$uri_parts[0];?>';
+</script>

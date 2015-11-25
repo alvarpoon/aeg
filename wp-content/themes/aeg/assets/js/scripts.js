@@ -7098,6 +7098,7 @@ var Roots = {
 		
 		$(document).ready(function() {
             initEducationPopup();
+			updateEducationSortValue();
         });	
 	}
   },
@@ -7105,6 +7106,7 @@ var Roots = {
 	init: function(){
 		$(document).ready(function() {
             initEducationPopup();
+			updateEducationSortValue();
         });	
 	}
   },
@@ -7112,7 +7114,29 @@ var Roots = {
 	init: function(){
 		$(document).ready(function() {
             initEducationPopup();
+			updateEducationSortValue();
         });	
+	}
+  },
+  on_going_research:{
+	init: function(){
+		$(document).ready(function(){
+			updateResearchSortValue();
+		});
+	}
+  },
+  past_research:{
+	init: function(){
+		$(document).ready(function(){
+			updateResearchSortValue();
+		});
+	}
+  },
+  research_published:{
+	init: function(){
+		$(document).ready(function(){
+			updateResearchSortValue();
+		});
 	}
   },
   up_coming_events:{
@@ -7196,7 +7220,7 @@ function updateSortValue(){
 	var sort_str = '';
 	
 	current_sort = getUrlVars().sorting;	
-	console.log(current_sort);
+	//console.log(current_sort);
 	
 	if(typeof(current_sort) !== 'undefined'){
 		$("#sorting_control").val(current_sort);	
@@ -7216,5 +7240,132 @@ function updateSortValue(){
 		window.location.href = url;
 	}	
 }
+
+function updateEducationSortValue(){
+	var sort_str = {};
+	var current_sort = '';
+	current_sort = getUrlVars().sorting;
+	
+	if(typeof(current_sort) !== 'undefined'){
+		switch (current_sort) {
+			case 'title_asc':
+				$('.title_sort').find('i').removeClass('fa-caret-down').addClass('fa-caret-up');
+				break;
+			case 'title_desc':
+				$('.title_sort').find('i').removeClass('fa-caret-up').addClass('fa-caret-down');
+				break;
+			case 'speaker_asc':
+				$('.speaker_sort').find('i').removeClass('fa-caret-down').addClass('fa-caret-up');
+				break;
+			case 'speaker_desc':
+				$('.speaker_sort').find('i').removeClass('fa-caret-up').addClass('fa-caret-down');
+				break;
+			case 'date_asc':
+				$('.date_sort').find('i').removeClass('fa-caret-down').addClass('fa-caret-up');
+				break;
+			case 'date_desc':
+				$('.date_sort').find('i').removeClass('fa-caret-up').addClass('fa-caret-down');
+				break;
+		}	
+	}
+	
+	
+	function updateSortStr(current_sort){
+		// 0: title
+		// 1: speaker
+		// 2: date
+		sort_str = [full_url + '?sorting=title_asc', full_url + '?sorting=speaker_asc', full_url + '?sorting=date_asc'];
+		
+		var temp_str = '';
+		
+		switch (current_sort) {
+			case 'title_asc':
+				temp_str = full_url + '?sorting=title_desc';
+				sort_str[0] = temp_str;
+				break;
+			case 'title_desc':
+				temp_str = full_url + '?sorting=title_asc';
+				sort_str[0] = temp_str;
+				break;
+			case 'speaker_asc':
+				temp_str = full_url + '?sorting=speaker_desc';
+				sort_str[1] = temp_str;
+				break;
+			case 'speaker_desc':
+				temp_str = full_url + '?sorting=speaker_asc';
+				sort_str[1] = temp_str;
+				break;
+			case 'date_asc':
+				temp_str = full_url + '?sorting=date_desc';
+				sort_str[2] = temp_str;
+				break;
+			case 'date_desc':
+				temp_str = full_url + '?sorting=date_asc';
+				sort_str[2] = temp_str;
+				break;
+		}	
+		
+		$('.title_sort').attr('href', sort_str[0]);
+		$('.speaker_sort').attr('href', sort_str[1]);
+		$('.date_sort').attr('href', sort_str[2]);
+	}	
+	updateSortStr(current_sort);
+}
+
+function updateResearchSortValue(){
+	var sort_str = {};
+	var current_sort = '';
+	current_sort = getUrlVars().sorting;
+	
+	if(typeof(current_sort) !== 'undefined'){
+		switch (current_sort) {
+			case 'title_asc':
+				$('.title_sort').find('i').removeClass('fa-caret-down').addClass('fa-caret-up');
+				break;
+			case 'title_desc':
+				$('.title_sort').find('i').removeClass('fa-caret-up').addClass('fa-caret-down');
+				break;
+			case 'speaker_asc':
+				$('.speaker_sort').find('i').removeClass('fa-caret-down').addClass('fa-caret-up');
+				break;
+			case 'speaker_desc':
+				$('.speaker_sort').find('i').removeClass('fa-caret-up').addClass('fa-caret-down');
+				break;
+		}	
+	}
+	
+	
+	function updateSortStr(current_sort){
+		// 0: title
+		// 1: researcher
+		sort_str = [full_url + '?sorting=title_asc', full_url + '?sorting=speaker_asc'];
+		
+		var temp_str = '';
+		
+		switch (current_sort) {
+			case 'title_asc':
+				temp_str = full_url + '?sorting=title_desc';
+				sort_str[0] = temp_str;
+				break;
+			case 'title_desc':
+				temp_str = full_url + '?sorting=title_asc';
+				sort_str[0] = temp_str;
+				break;
+			case 'speaker_asc':
+				temp_str = full_url + '?sorting=speaker_desc';
+				sort_str[1] = temp_str;
+				break;
+			case 'speaker_desc':
+				temp_str = full_url + '?sorting=speaker_asc';
+				sort_str[1] = temp_str;
+				break;
+		}	
+		
+		$('.title_sort').attr('href', sort_str[0]);
+		$('.speaker_sort').attr('href', sort_str[1]);
+	}	
+	updateSortStr(current_sort);
+}
+
 
 })(jQuery); // Fully reference jQuery after this point.
