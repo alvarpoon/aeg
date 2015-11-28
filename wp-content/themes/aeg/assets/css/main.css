@@ -7791,6 +7791,41 @@ figure.alignnone {
 body.login div#login h1 a {
   background: none!important;
 }
+.gform_wrapper #gform_page_1_2 .top_label .gfield_label,
+.gform_wrapper #gform_page_1_3 .top_label .gfield_label {
+  width: 70%;
+  float: left;
+}
+.gform_wrapper #gform_page_1_2 label.gfield_label + div.ginput_container,
+.gform_wrapper #gform_page_1_3 label.gfield_label + div.ginput_container {
+  float: left;
+  width: 30%;
+}
+.gform_wrapper #gform_page_1_2 ul.gfield_checkbox li,
+.gform_wrapper #gform_page_1_3 ul.gfield_checkbox li,
+.gform_wrapper #gform_page_1_2 ul.gfield_radio li,
+.gform_wrapper #gform_page_1_3 ul.gfield_radio li {
+  float: left;
+  margin-left: 20px!important;
+}
+.gform_wrapper #gform_page_1_2 ul.gfield_checkbox li:first-of-type,
+.gform_wrapper #gform_page_1_3 ul.gfield_checkbox li:first-of-type,
+.gform_wrapper #gform_page_1_2 ul.gfield_radio li:first-of-type,
+.gform_wrapper #gform_page_1_3 ul.gfield_radio li:first-of-type {
+  margin-left: 0!important;
+}
+.gform_wrapper #gform_page_1_2 .gfield_radio li label,
+.gform_wrapper #gform_page_1_3 .gfield_radio li label {
+  margin: 0 0 0 20px;
+}
+.gform_wrapper #gform_page_1_2 ul li.gfield:after,
+.gform_wrapper #gform_page_1_3 ul li.gfield:after {
+  visibility: hidden;
+  display: block;
+  content: "";
+  clear: both;
+  height: 0;
+}
 .nav-container {
   position: relative;
 }
