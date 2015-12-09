@@ -219,6 +219,37 @@ function research_register() {
   register_post_type( 'research' , $args );
 }
 
+//    Research Center
+add_action('init', 'research_center_register');
+function research_center_register() {
+  $labels = array(
+      'name' => _x('Research Center', 'post type general name'),
+      'singular_name' => _x('Research Center', 'post type singular name'),
+      'add_new' => _x('Add Research Center', 'rep'),
+      'add_new_item' => __('Add Research Center'),
+      'edit_item' => __('Edit Research Center'),
+      'new_item' => __('New Research Center'),
+      'view_item' => __('View Research Center'),
+      'search_items' => __('Search Research Center'),
+      'not_found' =>  __('Nothing found'),
+      'not_found_in_trash' => __('Nothing found in Trash'),
+      'parent_item_colon' => ''
+  );
+  $args = array(
+      'labels' => $labels,
+      'public' => true,
+      'publicly_queryable' => true,
+      'show_ui' => true,
+      'query_var' => true,
+      'rewrite' => true,
+      'capability_type' => 'post',
+      'hierarchical' => true,
+      'menu_position' => 10,
+      'supports'      => array('title'),
+  );
+  register_post_type( 'research_center' , $args );
+}
+
 //    Event
 add_action('init', 'event_register');
 function event_register() {
