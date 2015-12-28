@@ -6934,6 +6934,9 @@ figure.alignnone {
     width: 66.66666667%;
   }
 }
+.sidebar-primary .main {
+  min-height: 500px;
+}
 .sidebar {
   position: relative;
   min-height: 1px;
