@@ -12,12 +12,12 @@
   </div>
   <div class="container footer-container">
   	<div class="row">
-    	<div class="col-sm-4 social-media">
-        	<a href="<?=$facebook_link;?>" class="btn_facebook"></a>
-            <a href="#" class="btn_google"></a>
+    	<div class="col-sm-1 social-media">
+        	<a href="<?=$facebook_link;?>" class="btn_facebook" target="_blank"></a>
+            <!--<a href="#" class="btn_google"></a>
             <a href="#" class="btn_youtube"></a>
             <a href="#" class="btn_twitter"></a>
-            <a href="#" class="btn_rss"></a>
+            <a href="#" class="btn_rss"></a>-->
         </div>
         <div class="col-sm-8 contact-info">
         	<div class="col-sm-5 noPadding">

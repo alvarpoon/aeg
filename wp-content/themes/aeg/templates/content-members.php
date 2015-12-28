@@ -80,8 +80,8 @@
             <h1><?=the_title();?></h1>
         </div>
         <div class="member-search-container">
-        	<!-- <div class="clearfix">
-		        <?//=do_shortcode('[acps id="156"]');?>
+        	 <!--<div class="clearfix">
+		        <?//=do_shortcode('[searchandfilter id="358"]');?>
             </div> -->
             <select id="sorting_control">
             	<option value="title_asc">Sort by Title (Ascending)</option>
