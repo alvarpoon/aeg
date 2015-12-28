@@ -47,18 +47,24 @@ var Roots = {
 		$('.home-banner').slick({
 			slidesToShow: 1,
 			slidesToScroll:1,
+			autoplay: true,
+			autoplaySpeed: 4000,
 			dots: true
 		});
 		  
       	$('.committees-home').slick({
 			slidesToShow: 4,
 			slidesToScroll:4,
+			autoplay: true,
+			autoplaySpeed: 4000,
 			dots: false	
 		});  
 		
 		$('.members-home').slick({
 			slidesToShow: 4,
 			slidesToScroll:4,
+			autoplay: true,
+			autoplaySpeed: 4000,
 			dots: false	
 		});  
 		
@@ -107,6 +113,13 @@ var Roots = {
 				},500);
 				$(this).removeClass('open');
 			}else{
+				$( ".expandable-header").each(function(){
+					$(this).parent().find( ".expandable-content" ).animate({
+						height:'0px'
+					},500);
+					$(this).removeClass('open');
+				});
+				
 				$original_height = parseInt($(this).parent().find( ".expandable-content" ).attr('data-original-height'));
 				$(this).parent().find( ".expandable-content" ).animate({
 					height:$original_height

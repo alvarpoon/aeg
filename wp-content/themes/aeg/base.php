@@ -13,6 +13,14 @@
   ?>
 
       <main class="main" role="main">
+      	<!--<div class="container contact_wrapper">
+			<div class="row">
+                <div class="page-banner-container">
+                    <img src="<?=get_stylesheet_directory_uri()?>/assets/img/banner_contact.png" alt="" />
+                    <h1><?=the_title();?></h1>
+                </div>
+            </div>
+        </div>-->
         <?php include roots_template_path(); ?>
       </main>
 
