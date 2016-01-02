@@ -7927,6 +7927,16 @@ body.profile .alert {
   font-size: 15px;
   margin-top: 12px;
 }
+.nav-container .user-menu {
+  position: absolute;
+  right: 0;
+  top: 0;
+  margin-top: 12px;
+}
+.nav-container .user-menu a {
+  color: #fff;
+  font-size: 15px;
+}
 .navbar-default {
   background: #000;
   border-bottom: none;
@@ -7943,7 +7953,7 @@ body.profile .alert {
   padding: 15px;
 }
 .navbar-collapse {
-  text-align: center;
+  text-align: left;
 }
 #menu-primary-navigation {
   font-size: 0;
