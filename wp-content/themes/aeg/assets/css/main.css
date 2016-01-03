@@ -7931,7 +7931,7 @@ body.profile .alert {
   position: absolute;
   right: 0;
   top: 0;
-  margin-top: 12px;
+  margin-top: 15px;
 }
 .nav-container .user-menu:hover > a {
   color: #F8B62D;
@@ -7944,12 +7944,13 @@ body.profile .alert {
   color: #fff;
   padding: 15px;
   font-size: 15px;
+  line-height: 20px;
 }
 .nav-container .user-menu ul {
   display: none;
   position: absolute;
   right: 0;
-  top: 36px;
+  top: 35px;
   background: #003062;
   padding-left: 0;
   list-style: none;
