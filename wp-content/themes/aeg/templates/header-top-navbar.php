@@ -31,7 +31,7 @@
           <div class="user-menu">
             <a href="javascript:;">Welcome, <?=$current_user->display_name?></a>
             <ul>
-              <li><a href="<?=home_url(); ?>/profile/">Edit password</a></li>
+              <li><a href="<?=home_url(); ?>/profile/">Edit profile & password</a></li>
               <li><a href="<?=wp_logout_url(get_permalink($post->ID))?>">Logout</a></li>
             </ul>
           </div>
