@@ -7863,6 +7863,12 @@ body.login div#login h1 a {
   clear: both;
   height: 0;
 }
+.gform_wrapper .top_label .gfield_description {
+  padding: 0;
+}
+.gform_wrapper .top_label .gfield_label {
+  margin: 1.2em 0 .5em 0;
+}
 #wppb_general_top_error_message {
   color: red;
 }
