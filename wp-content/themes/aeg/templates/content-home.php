@@ -94,7 +94,8 @@
                 <?
                         }
                 ?>   
-						<div class="feature-img-bg" style="background:url(<?=$event_image['url'];?>) no-repeat top center;"></div>
+                		<img src="<?=$event_image['url'];?>" class="hidden-md visible-sm visible-xs hidden-lg img-responsive" />
+						<div class="feature-img-bg hidden-xs hidden-sm visible-md visible-lg" style="background:url(<?=$event_image['url'];?>) no-repeat top center;"></div>
 						<div class="event-date">
 							<span class="month"><?=date("M", (strtotime(get_field("date_from",$event->ID))));?></span>
 							<span class="date"><?=date("j", (strtotime(get_field("date_from",$event->ID))));?></span>

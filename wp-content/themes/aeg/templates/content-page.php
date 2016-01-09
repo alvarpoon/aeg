@@ -6,8 +6,6 @@
             <? } ?>
             <h1 <?=(has_post_thumbnail()?"":"class='no-banner'");?>><?=the_title();?></h1>
         </div>
-    </div>
-    <div class="row">
-    	<?php the_content(); ?>
-    </div>
+    </div>    
+  	<?php the_content(); ?>
 </div>
