@@ -137,7 +137,7 @@
                 	<h3>Lecture on PsedocystDrainage</h3>
                     <p>The lecture on PsudocystDrainage by A/Prof Anthony Teoh is now published. Please visit the education page</p>
                 </div>-->
-                <a href="http://aeg.nowwhat.hk/news/" class="btn-and-more">AND MORE</a>
+                <a href="/latest-news/" class="btn-and-more">AND MORE</a>
             </div>
         </div>
 	</div>

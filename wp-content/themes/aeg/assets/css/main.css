@@ -7773,6 +7773,13 @@ figure.alignnone {
   margin-top: 30px;
   min-height: 200px;
 }
+.latest-news .latest-new-container {
+  margin-bottom: 40px;
+}
+.latest-news .latest-new-container .latest-new-item {
+  border-bottom: 1px solid #000;
+  margin-bottom: 10px;
+}
 .contact-us h1 {
   color: #00325F;
 }
@@ -7864,10 +7871,15 @@ body.login div#login h1 a {
   height: 0;
 }
 .gform_wrapper .top_label .gfield_description {
-  padding: 0;
+  padding: 0 0 0.5em;
+  line-height: 1;
 }
 .gform_wrapper .top_label .gfield_label {
-  margin: 1.2em 0 .5em 0;
+  margin: 0;
+}
+.gform_wrapper form li,
+.gform_wrapper li {
+  margin-bottom: 2em;
 }
 #wppb_general_top_error_message {
   color: red;
