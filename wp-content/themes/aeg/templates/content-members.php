@@ -81,7 +81,9 @@
         </div>
         <div class="member-search-container">
         	<div class="clearfix">
-		        <?=do_shortcode('[acps id="156"]');?>
+		        <? //=do_shortcode('[acps id="156"]');?>
+				
+				<?=do_shortcode('[searchandfilter id="349"]'); ?>
             </div>
             <select id="sorting_control">
             	<option value="title_asc">Sort by Title (Ascending)</option>
