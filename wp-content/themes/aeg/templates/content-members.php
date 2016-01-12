@@ -88,8 +88,8 @@
             <select id="sorting_control">
             	<option value="title_asc">Sort by Title (Ascending)</option>
                 <option value="title_desc">Sort by Title (Descending)</option>
-                <option value="country_asc">Sort by Country (Ascending)</option>
-                <option value="country_desc">Sort by Country (Descending)</option>
+                <!-- <option value="country_asc">Sort by Country (Ascending)</option>
+                <option value="country_desc">Sort by Country (Descending)</option> -->
             </select>            
         </div>
         <div class="members-container clearfix">
@@ -99,13 +99,14 @@
 			while ( $results->have_posts() ) : $results->the_post(); 
 				$member_image = wp_get_attachment_image_src( get_post_thumbnail_id( $post->ID ), 'full' );				
 				//$member_countries = wp_get_object_terms( $post->ID, 'country');
-				$member_countries = get_field('country', $post->ID);
+				//$member_countries = get_field('country', $post->ID);
+				$member_countries = get_the_terms($post->ID, 'country');
 		?>
             	<div class="col-sm-4 committee-item">
                     <img src="<?=$member_image[0]?>" alt="" class="img-responsive" />
                     <div class="committee-content">
                         <p class="title"><?=$post->post_title; ?></p>
-						<p class="position"><?=$member_countries;?></p>
+						<p class="position"><?=$member_countries[0]->name;?></p>
                     </div>
                 </div>
 		<?php 

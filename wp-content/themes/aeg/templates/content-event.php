@@ -1,13 +1,41 @@
 <?
 	$today = date('Ymd');
 	$paged = (get_query_var('paged')) ? get_query_var('paged') : 1;
-	if($post->ID == 39){//up-coming
+	if($post->ID == 37){ //Asian EUS Congress
 		$current_args= array(
 			'post_type'			=> 'event',
 			'post_status' 		=> 'publish',
 			'order' 			=> 'DESC',
 			'numberposts' 		=> -1,
 			'posts_per_page' 	=> 10,
+			'category__in'		=> 11,
+/*			'meta_key' 			=> 'date_to',
+			'meta_compare'		=> '>',
+			'meta_value' 		=> $today,*/
+			'orderby' 			=> 'date_from',
+			'paged' 			=> $paged,
+		);
+		
+		/*$past_args= array(
+			'post_type'			=> 'event',
+			'post_status' 		=> 'publish',
+			'order' 			=> 'DESC',
+			'numberposts' 		=> -1,
+			'posts_per_page' 	=> 10,
+			'meta_key' 			=> 'date_to',
+			'meta_compare'		=> '<',
+			'meta_value' 		=> $today,
+			'orderby' 			=> 'date_from',
+			'paged' 			=> $paged,
+		);*/
+	} else if($post->ID == 39){//up-coming
+		$current_args= array(
+			'post_type'			=> 'event',
+			'post_status' 		=> 'publish',
+			'order' 			=> 'DESC',
+			'numberposts' 		=> -1,
+			'posts_per_page' 	=> 10,
+			'category__not_in'  => 11,
 			'meta_key' 			=> 'date_to',
 			'meta_compare'		=> '>',
 			'meta_value' 		=> $today,
@@ -21,6 +49,7 @@
 			'order' 			=> 'DESC',
 			'numberposts' 		=> -1,
 			'posts_per_page' 	=> 10,
+			'category__not_in'  => 11,
 			'meta_key' 			=> 'date_to',
 			'meta_compare'		=> '<',
 			'meta_value' 		=> $today,
@@ -34,6 +63,7 @@
 			'order' 			=> 'DESC',
 			'numberposts' 		=> -1,
 			'posts_per_page' 	=> 10,
+			'category__not_in'  => 11,
 			'meta_key' 			=> 'date_to',
 			'meta_compare'		=> '<',
 			'meta_value' 		=> $today,
@@ -47,6 +77,7 @@
 			'order' 			=> 'DESC',
 			'numberposts' 		=> -1,
 			'posts_per_page' 	=> 10,
+			'category__not_in'  => 11,
 			'meta_key' 			=> 'date_to',
 			'meta_compare'		=> '>',
 			'meta_value' 		=> $today,
@@ -56,7 +87,9 @@
 	}
 		
 	$results = new WP_Query( $current_args );
-	$past_result = new WP_Query ($past_args);
+	if($post->ID != 37){
+		$past_result = new WP_Query ($past_args);
+	}
 ?>
 <div class="container">
 	<div class="row">
@@ -66,6 +99,7 @@
 </div>
 <div class="container">
 	<div class="row">
+    	<? if($post->ID != 37) { ?>
         <div class="clearfix">
             <div class="lecture_nav_container clearfix">
                 <div class="lecture_nav_item <? if($post->ID == 39){ echo "active"; } ?>">
@@ -76,6 +110,53 @@
                 </div>
             </div>
         </div>
+        <? } ?>
+        <? if($post->ID == 37) { ?>
+        <div class="container">
+            <div class="row">
+                <div class="page-banner-container">
+                    <?php if ( !has_post_thumbnail() ) { ?>
+                        <img src="<?=get_stylesheet_directory_uri()?>/assets/img/banner_contact.png" alt="" />
+                    <? } ?>
+                    <h1 <?=(has_post_thumbnail()?"":"class='no-banner'");?>><?=the_title();?></h1>
+                </div>
+            </div>
+        </div>
+        <div class="table-responsive lecture-table">
+        	<table class="table">
+            	<col width="25%">
+                <col width="25%">
+                <col width="20%">
+                <col width="30%">
+            	<tr class="header">
+                	<td>DATE</td>
+                    <td>VENUE</td>
+                    <td>COUNTRY</td>
+                    <td></td>
+                </tr>
+                <? while ( $results->have_posts() ) : $results->the_post(); 
+					//$pdf = get_field("pdf", $post->ID);
+					
+					$event_image = get_field("mainpage_banner",$results->ID);
+				?>
+                <tr>
+                	<td>
+                    	<?=date('F j, Y', strtotime(get_field('date_from', $post->ID)));?><br/><?=date('g:ia', strtotime(get_field('date_from', $post->ID)));?>
+                    </td>
+                    <td>
+                    	<?=get_field('venue', $post->ID);?>
+                    </td>
+                    <td>
+	                    <?=get_field('country', $post->ID);?>
+                    </td>
+                    <td>
+                    	<img src="<?=$event_image['url'];?>" class="img-respsonive" />
+                    </td>
+                </tr>
+                <? endwhile; ?>				
+            </table>
+        </div>
+        <? } ?>
         <? if($post->ID == 39) { ?>
         <div class="event-grid">
             <div class="gutter-sizer"></div>

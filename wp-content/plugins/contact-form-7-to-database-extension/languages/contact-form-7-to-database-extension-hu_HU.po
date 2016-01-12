@@ -5,22 +5,22 @@ msgstr ""
 "Project-Id-Version: Contact Form 7 - Database extension\n"
 "Report-Msgid-Bugs-To: http://wordpress.org/tag/contact-form-7-to-database-extension\n"
 "POT-Creation-Date: 2011-06-23 00:19:58+00:00\n"
-"PO-Revision-Date: 2011-07-18 12:29+0100\n"
+"PO-Revision-Date: 2015-11-13 07:27+0100\n"
 "Last-Translator: Szijártó József <hutchington@gmail.com>\n"
 "Language-Team: Szijártó József (Hutchington) <hutchington@gmail.com>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Poedit-Language: Hungarian\n"
-"X-Poedit-Country: HUNGARY\n"
 "X-Poedit-SourceCharset: utf-8\n"
+"Language: hu_HU\n"
+"X-Generator: Poedit 1.8.6\n"
+"X-Poedit-Bookmarks: 54,-1,-1,-1,-1,-1,-1,-1,-1,-1\n"
 
 #: CFDBView.php:63
 msgid "Rate this Plugin"
 msgstr "Értékelje a kiegészítőt"
 
-#: CFDBView.php:69
-#: CFDBViewShortCodeBuilder.php:63
+#: CFDBView.php:69 CFDBViewShortCodeBuilder.php:63
 #: CFDBViewShortCodeBuilder.php:523
 msgid "Documentation"
 msgstr "Dokumentáció"
@@ -61,24 +61,22 @@ msgstr ""
 msgid "Add these two lines to the file:"
 msgstr "Adja a következő két sort a fájlhoz:"
 
-#: CFDBCheckZendFramework.php72
+#: CJ7DBCheckZendFramework.php:72
 msgid "Missing Zend Framework"
 msgstr "Hiányzó Zend Framework"
 
 #: ExportBase.php:177
 msgid "You do not have sufficient permissions to access this data."
-msgstr ""
+msgstr "Nem rendelkezik megfelelő jogosultsággal ezen elem eléréséhez."
 
-#: CFDBShortcodeExportUrl.php:62
-#: CFDBViewWhatsInDB.php:212
+#: CFDBShortcodeExportUrl.php:62 CFDBViewWhatsInDB.php:212
 msgid "Export"
 msgstr "Exportálás"
 
-#: CF7DBOptionsManager.php:278
-#: CF7DBPlugin.php:277
+#: CF7DBOptionsManager.php:278 CF7DBPlugin.php:277
 #: ExportToGoogleLiveData.php:31
 msgid "You do not have sufficient permissions to access this page."
-msgstr ""
+msgstr "Nem rendelkezik megfelelő jogosultsággal az oldal eléréséhez."
 
 #: CF7DBOptionsManager.php:296
 msgid "System Settings"
@@ -104,13 +102,11 @@ msgstr "Beállítások"
 msgid "Save Changes"
 msgstr "Változatások mentése"
 
-#: CF7DBOptionsManager.php:387
-#: CF7DBPlugin.php:76
+#: CF7DBOptionsManager.php:387 CF7DBPlugin.php:76
 msgid "true"
 msgstr "igen"
 
-#: CF7DBOptionsManager.php:388
-#: CF7DBPlugin.php:78
+#: CF7DBOptionsManager.php:388 CF7DBPlugin.php:78
 msgid "false"
 msgstr "nem"
 
@@ -216,21 +212,19 @@ msgstr "Hiányzó űrlap paraméterek"
 
 #: CF7DBPlugin.php:287
 msgid "No such file."
-msgstr "Nem található fájl."
+msgstr "Nem található a fájl."
 
-#: CF7DBPlugin.php:319
-#: CF7DBPlugin.php:339
+#: CF7DBPlugin.php:319 CF7DBPlugin.php:339
 msgid "Database Options"
-msgstr "Adatbázis beállíásai"
+msgstr "Adatbázis beállításai"
 
-#: CF7DBPlugin.php:337
-#: CF7DBPlugin.php:512
+#: CF7DBPlugin.php:337 CF7DBPlugin.php:512
 msgid "Database"
 msgstr "Adatbázis"
 
 #: CF7DBPlugin.php:341
 msgid "Build Short Code"
-msgstr "Shortcode készítése"
+msgstr "Rövidkód készítése"
 
 #: CF7DBPlugin.php:343
 msgid "FAQ"
@@ -238,18 +232,17 @@ msgstr "GYIK"
 
 #: CF7DBPlugin.php:520
 msgid "Database Short Code"
-msgstr "Adatbázis shotcode"
+msgstr "Adatbázis rövidkód"
 
 #: ExportToGoogleLiveData.php:170
 msgid "How to Set up Google Spreadsheet to pull data from WordPress"
-msgstr ""
+msgstr "Hogyan állítsuk be a Google táblázatokat, hogy átvegye az adatokat a WordPressből"
 
 #: CFDBViewWhatsInDB.php:43
 msgid "No form submissions in the database"
 msgstr "Nincsenek rögzített adatok az adatbázisban"
 
-#: CFDBViewWhatsInDB.php:102
-#: CFDBViewShortCodeBuilder.php:508
+#: CFDBViewWhatsInDB.php:102 CFDBViewShortCodeBuilder.php:508
 msgid "* Select a form *"
 msgstr "* Válasszon űrlapot *"
 
@@ -261,23 +254,19 @@ msgstr "Google bejelentkezés a feltöltéshez"
 msgid "Cannot perform operation because jQuery is not loaded in this page"
 msgstr "A műveletet nem lehet befejezni, mert a jQuery nem töltődött be az oldalon"
 
-#: CFDBViewWhatsInDB.php:187
-#: CFDBViewShortCodeBuilder.php:680
+#: CFDBViewWhatsInDB.php:187 CFDBViewShortCodeBuilder.php:680
 msgid "Excel Internet Query"
 msgstr "Excel Internet Query"
 
-#: CFDBViewWhatsInDB.php:190
-#: CFDBViewShortCodeBuilder.php:671
+#: CFDBViewWhatsInDB.php:190 CFDBViewShortCodeBuilder.php:671
 msgid "Excel CSV (UTF8-BOM)"
 msgstr "Excel CSV (UTF8-BOM)"
 
-#: CFDBViewWhatsInDB.php:193
-#: CFDBViewShortCodeBuilder.php:674
+#: CFDBViewWhatsInDB.php:193 CFDBViewShortCodeBuilder.php:674
 msgid "Excel TSV (UTF16LE-BOM)"
 msgstr "Excel TSV (UTF16LE-BOM)"
 
-#: CFDBViewWhatsInDB.php:196
-#: CFDBViewShortCodeBuilder.php:677
+#: CFDBViewWhatsInDB.php:196 CFDBViewShortCodeBuilder.php:677
 msgid "Plain CSV (UTF-8)"
 msgstr "Egyszerű CSV (UTF-8)"
 
@@ -299,7 +288,7 @@ msgstr "JSON"
 
 #: CFDBViewWhatsInDB.php:223
 msgid "Delete All This Form's Records"
-msgstr "Az összes rögzített adat tödlése"
+msgstr "Az összes rögzített adat törlése"
 
 #: CFDBViewWhatsInDB.php:307
 msgid "Did you know: This plugin captures data from both these plugins:"
@@ -307,7 +296,7 @@ msgstr "Tudta, hogy: Ez a bővítmény képes adatok rögzítésére e két bőv
 
 #: CFDBViewWhatsInDB.php:318
 msgid "Did you know: You can add this data to your posts and pages using these shortcodes:"
-msgstr "Tudata, hogy: Az alábbi shortcode-ok segítségével  beilleszthati a rögzített adatokat bejegyzésekbe és oldalakba:"
+msgstr "Tudata, hogy: Az alábbi rövidkódok segítségével  beilleszthati a rögzített adatokat bejegyzésekbe és oldalakba:"
 
 #: CFDBViewWhatsInDB.php:332
 msgid "Would you like to help translate this plugin into your language?"
@@ -319,7 +308,7 @@ msgstr "Hogyan hozzunk létre fordítást"
 
 #: CFDBViewWhatsInDB.php:345
 msgid "Query:"
-msgstr "Keresés:"
+msgstr "Lekérdezés:"
 
 #: CFDBViewWhatsInDB.php:367
 msgid "Cancel"
@@ -347,7 +336,7 @@ msgstr "Hiba: \""
 
 #: CFDBViewShortCodeBuilder.php:153
 msgid "\" should not contain double-quotes (\")"
-msgstr ""
+msgstr "\" Nem tartalmazhat dupla idézőjelet (\")"
 
 #: CFDBViewShortCodeBuilder.php:200
 msgid "Error: no form is chosen"
@@ -363,11 +352,11 @@ msgstr ""
 
 #: CFDBViewShortCodeBuilder.php:237
 msgid "Error: \"limit\": \"Num Rows\" must be a positive integer"
-msgstr ""
+msgstr "Hiba: \"limit\": \"Num Rows\" pozitív egész szám kell legyen"
 
 #: CFDBViewShortCodeBuilder.php:244
 msgid "Error: \"limit\": \"Start Row\" must be a positive integer"
-msgstr ""
+msgstr "Hiba: \"limit\": \"Start Rows\" pozitív egész szám kell legyen"
 
 #: CFDBViewShortCodeBuilder.php:495
 msgid "* Select a short code *"
@@ -383,7 +372,7 @@ msgstr "(Tudata, hogy: saját maga is létrehozhat shortcode-ot)"
 
 #: CFDBViewShortCodeBuilder.php:531
 msgid "Which fields/columns do you want to display?"
-msgstr ""
+msgstr "Melyik mezőt/oszlopot szeretné megjeleníteni?"
 
 #: CFDBViewShortCodeBuilder.php:544
 msgid "Which rows/submissions do you want to display?"
@@ -420,4 +409,3 @@ msgstr "Hiba"
 #: ExportToHtmlTable.php:158
 msgid "Delete"
 msgstr "Törlés"
-

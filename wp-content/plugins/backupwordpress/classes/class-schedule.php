@@ -468,6 +468,7 @@ class Scheduled_Backup {
 
 		}
 
+		// If we don't have it cached then we'll need to re-calculate
 		$files = $this->backup->get_files();
 
 		foreach ( $files as $file ) {
@@ -479,9 +480,6 @@ class Scheduled_Backup {
 			}
 
 		}
-
-		// This will be the total size of the included folders MINUS default excludes.
-		$directory_sizes[ $this->backup->get_root() ] = array_sum( $directory_sizes );
 
 		set_transient( 'hmbkp_directory_filesizes', $directory_sizes, DAY_IN_SECONDS );
 
@@ -537,10 +535,6 @@ class Scheduled_Backup {
 
 			}
 
-			if ( $this->backup->get_root() === $file->getPathname() ) {
-				return $directory_sizes[ $file->getPathname() ];
-			}
-
 			$current_pathname = trailingslashit( $file->getPathname() );
 			$root             = trailingslashit( $this->backup->get_root() );
 
@@ -569,7 +563,7 @@ class Scheduled_Backup {
 			}
 
 			// Directory size is now just a sum of all files across all sub directories
-			return array_sum( $directory_sizes );
+			return absint( array_sum( $directory_sizes ) );
 
 		}
 
@@ -647,7 +641,7 @@ class Scheduled_Backup {
 
 		// Check it's valid
 		if ( ! is_string( $reoccurrence ) || ! trim( $reoccurrence ) || ( ! in_array( $reoccurrence, array_keys( $hmbkp_schedules ) ) ) && 'manually' !== $reoccurrence ) {
-			return new \WP_Error( 'hmbkp_invalid_argument_error', sprintf( __( 'Argument 1 for %s must be a valid cron reoccurrence or "manually"', 'backupwordpress' ), __METHOD__ ) );
+			return new \WP_Error( 'hmbkp_invalid_argument_error', sprintf( __( 'Argument 1 for %s must be a valid cron recurrence or "manually"', 'backupwordpress' ), __METHOD__ ) );
 		}
 
 		// If the recurrence is already set to the same thing then there's no need to continue
@@ -975,7 +969,7 @@ class Scheduled_Backup {
 
 			default:
 
-				return new \WP_Error( 'unexpected-error', __( 'An unexpected error occured', 'backupwordpress' ) );
+				return new \WP_Error( 'unexpected-error', __( 'An unexpected error occurred', 'backupwordpress' ) );
 
 		endswitch;
 

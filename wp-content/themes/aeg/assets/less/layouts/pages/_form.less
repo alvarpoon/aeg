@@ -1,0 +1,122 @@
+//===============================================================================
+//===============================================================================
+// Base
+//===============================================================================
+//===============================================================================
+.gform_wrapper{
+	#gform_page_1_2, #gform_page_1_3{
+		.top_label .gfield_label{
+			width: 70%;
+		    float: left;
+		}
+		label.gfield_label+div.ginput_container{
+			    float: left;
+		    width: 30%;
+		}
+		ul.gfield_checkbox li, ul.gfield_radio li{
+			float: left;
+		    margin-left: 20px!important;
+		    &:first-of-type{
+		    	margin-left: 0!important;
+		    }
+		}
+		.gfield_radio li label{
+			    margin: 0 0 0 20px;
+		}
+		ul li.gfield:after {
+			visibility: hidden;
+			display: block;
+			content: "";
+			clear: both;
+			height: 0;
+		}
+	}
+	.top_label{
+		.gfield_description{
+			padding: 0 0 0.5em;
+			line-height: 1;
+		}
+		.gfield_label{
+		 	margin: 0;
+		}
+	}
+}
+.gform_wrapper form li, .gform_wrapper li{
+	margin-bottom: 2em;
+}
+#wppb_general_top_error_message{
+	color: red;
+}
+body.profile .alert{
+	padding-left: 0;
+}
+#wppb-edit-user{
+	
+	ul{
+		list-style-type: none;
+    	padding-left: 0;
+    	li{
+			    margin-bottom: 1.5em;
+		}
+	}
+	.wppb-form-error{
+		display: block;
+		color: red;
+	}
+	.wppb-default-username{
+		display: none;
+	}
+	.wppb-default-name-heading,
+	.wppb-default-contact-info-heading,
+	.wppb-default-about-yourself-heading{
+		list-style-type: none;
+
+	    h4{
+			border-bottom: 1px solid #CCC;
+			padding: 0 0 .5em;
+			margin: 2.5em 0 1em;
+			font-weight: bold;
+			text-transform: uppercase;
+	    }
+	}
+
+	label{
+		/*width: 20%;
+		    vertical-align: top;*/
+		display: block;
+	}
+	input, button, select, textarea{
+		 width: 100%;
+		 padding: 5px 10px;
+	}
+	input.button{
+		padding: 2px 6px 3px;
+		width:inherit;
+	}
+}
+//===============================================================================
+//===============================================================================
+// tablet
+//===============================================================================
+//===============================================================================
+@media (min-width: @screen-sm-min) {
+
+}
+//===============================================================================
+//===============================================================================
+// Desktop
+//===============================================================================
+//===============================================================================
+@media (min-width: @screen-md-min) {
+
+
+}
+
+//===============================================================================
+//===============================================================================
+// Wide desktop
+//===============================================================================
+//===============================================================================
+@media (min-width: @screen-lg-min) {
+
+}

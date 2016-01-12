@@ -86,7 +86,7 @@
 						$event_image = get_field("mainpage_banner",$event->ID);
                         $event_pdf = get_field("pdf",$event->ID);
 				?>
-					<div class="coming-event-item <? if($key == 0) { echo "major"; }?>">
+					<div class="coming-event-item <? //if($key == 0) { echo "major"; } ?>">
                 <?
                         if($event_pdf){
                 ?>
@@ -94,7 +94,8 @@
                 <?
                         }
                 ?>   
-						<div class="feature-img-bg" style="background:url(<?=$event_image['url'];?>) no-repeat top center;"></div>
+                		<img src="<?=$event_image['url'];?>" class="hidden-md visible-sm visible-xs hidden-lg img-responsive" />
+						<div class="feature-img-bg hidden-xs hidden-sm visible-md visible-lg" style="background:url(<?=$event_image['url'];?>) no-repeat top center;"></div>
 						<div class="event-date">
 							<span class="month"><?=date("M", (strtotime(get_field("date_from",$event->ID))));?></span>
 							<span class="date"><?=date("j", (strtotime(get_field("date_from",$event->ID))));?></span>
@@ -114,15 +115,17 @@
         <div class="col-sm-3">
             <h2>Latest News</h2>
             <div class="lastest-news-container">
-            	<?
-					query_posts('showposts=3');
-					
-				 	while (have_posts()) : the_post(); ?>
-					<div class="lastest-news-item">
-                        <a href="<?php the_permalink(); ?>"><h3><?php the_title(); ?></h3></a>
-                        <?=apply_filters('the_content',get_field("mainpage_excerpt",get_the_ID()));?>
-                    </div>
-				<?php endwhile; ?>
+            	<div class="lastest-news-inner-container">
+					<?
+                        query_posts('showposts=3');
+                        
+                        while (have_posts()) : the_post(); ?>
+                        <div class="lastest-news-item">
+                            <a href="<?php the_permalink(); ?>"><h3><?php the_title(); ?></h3></a>
+                            <?=apply_filters('the_content',get_field("mainpage_excerpt",get_the_ID()));?>
+                        </div>
+                    <?php endwhile; ?>
+                </div>
             	<!--<div class="lastest-news-item">
                 	<h3>AEG-KitasatoTTT</h3>
                     <p>AEG-KitasatoTTT Nomination is now open Trainers and potential trainers may be nominated by members of .</p>
@@ -135,7 +138,7 @@
                 	<h3>Lecture on PsedocystDrainage</h3>
                     <p>The lecture on PsudocystDrainage by A/Prof Anthony Teoh is now published. Please visit the education page</p>
                 </div>-->
-                <a href="http://aeg.nowwhat.hk/news/" class="btn-and-more">AND MORE</a>
+                <a href="/latest-news/" class="btn-and-more">AND MORE</a>
             </div>
         </div>
 	</div>

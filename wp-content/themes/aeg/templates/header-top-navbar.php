@@ -23,7 +23,27 @@
     
             ?>
         </nav>
-        <a href="<?=(is_user_logged_in()?wp_logout_url(get_permalink($post->ID)):wp_login_url())?>" class="login-btn"><?=(is_user_logged_in()?"logout":"login")?></a>
+        <?
+        if(is_user_logged_in()){
+          global $current_user;
+          get_currentuserinfo();
+        ?>
+          <div class="user-menu">
+            <a href="javascript:;">Welcome, <?=$current_user->display_name?></a>
+            <ul>
+              <li><a href="<?=home_url(); ?>/profile/">Edit profile & password</a></li>
+              <li><a href="<?=wp_logout_url(get_permalink($post->ID))?>">Logout</a></li>
+            </ul>
+          </div>
+        <!-- <a href="<?=(is_user_logged_in()?wp_logout_url(get_permalink($post->ID)):wp_login_url(get_permalink($post->ID)))?>" class="login-btn"><?=(is_user_logged_in()?"logout":"login")?></a> -->
+
+        <?
+        }else{
+        ?>
+          <a href="<?=wp_login_url(get_permalink($post->ID))?>" class="login-btn">login</a>
+        <?
+        }
+        ?>
       </div>
   	</div>
   </div>

@@ -37,6 +37,15 @@ switch ($_SERVER['SERVER_NAME']) {
     define( 'DB_USER',     'nowwhat' );
     define( 'DB_PASSWORD', '20273214' );
     define( 'DB_HOST',     'localhost' );
+
+  case "www.asianeus.org":
+  case "asianeus.org":
+    define( 'DB_NAME',     'asianeus_wp' );
+    define( 'WP_SITEURL',  'http://www.asianeus.org' );
+    define( 'WP_HOME', 'http://www.asianeus.org' );
+    define( 'DB_USER',     'asianeus' );
+    define( 'DB_PASSWORD', 'aegWIZ#02-06' );
+    define( 'DB_HOST',     'localhost' );
 }
 
 /** Database Charset to use in creating database tables. */

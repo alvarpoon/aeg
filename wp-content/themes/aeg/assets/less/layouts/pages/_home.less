@@ -4,6 +4,14 @@
 //===============================================================================
 //===============================================================================
 
+.home-logo-container{
+	padding:10px 0 15px 0;
+	background:url(../img/home/bg_home.png) no-repeat top center;
+	.logo_aeg{
+		margin-left:80px;
+	}
+}
+
 .home-banner{
 	.slick-dots{
 		bottom:0;
@@ -15,6 +23,10 @@
 				}
 			}
 		}
+	}
+	
+	&.slick-slider{
+		margin-bottom:0;
 	}
 }
 
@@ -87,15 +99,15 @@
 }
 
 .up-coming-event-container{
-	height:412px;
-	overflow:hidden;
+	//height:412px;
+	//overflow:hidden;
 	.coming-event-item{
 		position:relative;
-		height:133px;
-		margin-bottom:10px;
+		//height:129px;
+		margin-bottom:11px;
 		
 		&.major{
-			height:265px;
+			//height:265px;
 			.event-title{
 				font-size:18px;
 				padding-left:20px;
@@ -164,32 +176,35 @@
 	position:relative;
 	border:5px solid #003062;
 	border-bottom:0;
-	height:412px;
-	overflow:hidden;
-	padding:10px;
-	.lastest-news-item{
-		color:#717171;
-		margin-bottom:20px;
-		h3{
-			font-weight:bold;
-			color:#003062;
-			font-size:15px;
-			margin-bottom:0;
-			margin-top:0;
-		}
-		p{
-			margin-bottom:0;
-			font-size: 13px;
-		}
-		a{
+	//height:412px;
+	.lastest-news-inner-container{
+		overflow-y:scroll;
+		//height:375px;
+		padding:10px 10px 30px;
+		.lastest-news-item{
 			color:#717171;
+			margin-bottom:20px;
+			h3{
+				font-weight:bold;
+				color:#003062;
+				font-size:15px;
+				margin-bottom:0;
+				margin-top:0;
+			}
+			p{
+				margin-bottom:0;
+				font-size: 13px;
+			}
+			a{
+				color:#717171;
+			}
 		}
 	}
 	.btn-and-more{
 		background:#003062;
 		display:block;
 		color:#fff;
-		margin:0 -10px;
+		//margin:0 -10px;
 		text-align:center;
 		padding:5px 0;
 		font-weight:bold;
@@ -208,6 +223,51 @@
 //===============================================================================
 @media (min-width: @screen-sm-min) {
 
+	.home-banner{		
+		&.slick-slider{
+			margin-bottom:30;
+		}
+	}
+	
+	.up-coming-event-container{
+		height:412px;
+		overflow:hidden;
+		.coming-event-item{
+			position:relative;
+			height:129px;
+			margin-bottom:11px;
+			
+			&.major{
+				height:265px;
+				.event-title{
+					font-size:18px;
+					padding-left:20px;
+					line-height: 100%;
+				}
+				.event-date{
+					.month{
+						background:#036EB8;
+					}
+					.date{				
+						background:#28A7E1;
+					}
+				}
+			}
+		}
+	}
+	
+	.lastest-news-container{
+		position:relative;
+		border:5px solid #003062;
+		border-bottom:0;
+		height:412px;
+		.lastest-news-inner-container{
+			overflow-y:scroll;
+			height:375px;
+			padding:10px;
+		}
+	}
+
 }
 //===============================================================================
 //===============================================================================
@@ -215,14 +275,6 @@
 //===============================================================================
 //===============================================================================
 @media (min-width: @screen-md-min) {
-
-	.home-logo-container{
-		padding:10px 0 15px 0;
-		background:url(../img/home/bg_home.png) no-repeat top center;
-		.logo_aeg{
-			margin-left:80px;
-		}
-	}
 
 }
 
