@@ -68,13 +68,13 @@
 			endif;
 			?>
 			<!--</div>-->
-		</nav>    
+		</nav>
         <?
         if(is_user_logged_in()){
           global $current_user;
           get_currentuserinfo();
         ?>
-          <div class="user-menu">
+          <div class="user-menu hidden-xs hidden-sm">
             <a href="javascript:;">Welcome, <?=$current_user->display_name?></a>
             <ul>
               <li><a href="<?=home_url(); ?>/profile/">Edit profile & password</a></li>
@@ -86,7 +86,7 @@
         <?
         }else{
         ?>
-          <a href="<?=wp_login_url(get_permalink($post->ID))?>" class="login-btn">login</a>
+          <a href="<?=wp_login_url(get_permalink($post->ID))?>" class="login-btn hidden-xs hidden-sm">login</a>
         <?
         }
         ?>
