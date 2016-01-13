@@ -156,7 +156,8 @@
         </div>
         <? if($post->ID == 27) { //on-going
             $researcher_code = get_field('researcher_code', 'user_'.$user_id);
-            $centre_code = get_field('centre_code', 'user_'.$user_id);
+            $centre = get_field('research_center', 'user_'.$user_id);
+            $centre_code = get_field('centre_code',$centre->ID);
         ?>
         <div class="table-responsive lecture-table">
         	<table class="table">
