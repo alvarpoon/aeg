@@ -33,26 +33,6 @@
 				if (has_nav_menu('top_navigation')) :
 				   wp_nav_menu(array('theme_location' => 'top_navigation', 'menu_class' => 'top-function-nav nav visible-xs visible-sm hidden-md hidden-lg','depth' => 0));
 				endif;
-	
-				/*echo '<div class="lang-switcher visible-xs visible-sm hidden-md hidden-lg">';
-				$i = 0;
-				foreach( $lang_arr as $lang ){
-				  if ($i == $lang_len - 1) {
-					$lang_class = "last";
-				  }
-				  else{
-					$lang_class = "";
-				  }
-					   //print_r($lang);
-					  if(ICL_LANGUAGE_CODE == $lang['language_code']){
-						  $lang_active = " active";
-					  }else{
-						  $lang_active = "";  
-					  }
-				  echo '<span><a class="'.$lang_class.$lang_active.'" href="'.$lang['url'].'">'.$lang['tag'].'</a></span>';
-				  $i++;
-				}
-				echo '</div>';*/
 			?>
 			<label class="control-label visible-xs visible-sm hidden-md hidden-lg" for="search-textfield"><?= _e('Search')?></label>
 			<div class="search-container visible-xs visible-sm hidden-md hidden-lg clearfix">
@@ -64,7 +44,7 @@
 			<?php
 			//main menu for mobile
 			if (has_nav_menu('primary_navigation')) :
-				wp_nav_menu(array('theme_location' => 'primary_navigation', 'menu_class' => 'nav navbar-nav siteMainMenu','depth' => 1));
+				wp_nav_menu(array('theme_location' => 'primary_navigation', 'menu_class' => 'nav navbar-nav siteMainMenu','depth' => 3));
 			endif;
 			?>
 			<!--</div>-->
