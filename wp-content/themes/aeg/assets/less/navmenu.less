@@ -146,8 +146,28 @@
 }
 
 .mobile-menu{
-	.navbar-nav li{
-		display:block;
+	.navbar-nav{
+		margin-top:0;
+		margin-bottom:0;
+		li{
+			display:block;
+			.sub-menu{
+				padding-left:0;
+				a{
+					padding-left:30px;
+				}
+			}
+			
+			&.active > a, & > a:hover, & > a:focus{
+				background-color: #ea5413!important;
+				color: #fff!important;
+			}
+		}
+		
+		&>li a{
+			border-bottom:1px solid #FFF;
+			display:block;
+		}
 	}
 }
 

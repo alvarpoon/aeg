@@ -6986,6 +6986,16 @@ var Roots = {
     init: function() {
       // JavaScript to be fired on all pages
       //var $ = jQuery.noConflict();
+	  
+	  function setMobileMenu(){
+        //console.log('setMobileMenu');
+        if(window.innerWidth<992){
+          $(".mobile-menu").css({overflow:"auto", maxHeight: $(window).height() - $(".navbar-header").height() + "px" });
+        }
+        else{
+          $(".nav-container").css({overflow:"inherit"});
+        }
+      }
 
 	  $(".various").fancybox({
 			maxWidth	: 700,
@@ -6998,7 +7008,15 @@ var Roots = {
 			closeClick	: false,
 			openEffect	: 'none',
 			closeEffect	: 'none'
-		});		
+	  });		
+	  
+	  $(document).ready(function(){
+		  setMobileMenu();
+	  });
+	  
+	  $(window).resize(function(){
+		  setMobileMenu();
+	  });
     }
   },
   // Home page

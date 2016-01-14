@@ -30,14 +30,14 @@
 				  wp_nav_menu(array('theme_location' => 'primary_navigation', 'menu_class' => 'nav navbar-nav visible-xs visible-sm hidden-md hidden-lg', 'depth' => 3));
 				endif;
 	
-				if (has_nav_menu('top_navigation')) :
+				/*if (has_nav_menu('top_navigation')) :
 				   wp_nav_menu(array('theme_location' => 'top_navigation', 'menu_class' => 'top-function-nav nav visible-xs visible-sm hidden-md hidden-lg','depth' => 0));
-				endif;
+				endif;*/
 			?>
-			<label class="control-label visible-xs visible-sm hidden-md hidden-lg" for="search-textfield"><?= _e('Search')?></label>
+			<!--<label class="control-label visible-xs visible-sm hidden-md hidden-lg" for="search-textfield"><?= _e('Search')?></label>
 			<div class="search-container visible-xs visible-sm hidden-md hidden-lg clearfix">
 			  <?php get_search_form(); ?>
-			</div>
+			</div>-->
 		</nav>
 		<nav class="collapse navbar-collapse main-menu hidden-xs hidden-sm" role="navigation">
 			<!--<div class="container">-->
