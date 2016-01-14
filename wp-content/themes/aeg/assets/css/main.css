@@ -7486,6 +7486,9 @@ figure.alignnone {
 .event-grid .event-item.color-3 .btn_readmore {
   color: #920783;
 }
+td.eus-image img {
+  max-width: 250px;
+}
 .lecture-upload .page-banner-container,
 .lecture-upload-bak .page-banner-container,
 .video-upload .page-banner-container,

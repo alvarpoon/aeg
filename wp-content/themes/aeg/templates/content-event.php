@@ -149,7 +149,7 @@
                     <td>
 	                    <?=get_field('country', $post->ID);?>
                     </td>
-                    <td>
+                    <td class="eus-image">
                     	<img src="<?=$event_image['url'];?>" class="img-respsonive" />
                     </td>
                 </tr>
