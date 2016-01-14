@@ -7968,17 +7968,6 @@ body.profile .alert {
 .nav-container {
   position: relative;
 }
-.nav-container .login-btn {
-  position: absolute;
-  right: 0;
-  top: 0;
-  background: #898989;
-  border-radius: 15px;
-  padding: 3px 20px;
-  color: #fff;
-  font-size: 15px;
-  margin-top: 12px;
-}
 .nav-container .user-menu {
   position: absolute;
   right: 0;
@@ -8028,6 +8017,21 @@ body.profile .alert {
   background: #000;
   border-bottom: none;
 }
+.navbar-default .navbar-toggle {
+  float: left;
+  margin: 8px 15px;
+}
+.navbar-default .login-btn {
+  position: absolute;
+  right: 15px;
+  top: 0;
+  background: #898989;
+  border-radius: 15px;
+  padding: 3px 20px;
+  color: #fff;
+  font-size: 15px;
+  margin-top: 12px;
+}
 .navbar-default .navbar-nav {
   float: none;
 }
@@ -8042,27 +8046,27 @@ body.profile .alert {
 .navbar-collapse {
   text-align: left;
 }
-#menu-primary-navigation-2 {
+#menu-primary-navigation-1 {
   font-size: 0;
 }
-#menu-primary-navigation-2 li {
+#menu-primary-navigation-1 li {
   position: relative;
   border-right: 1px solid #C9C9C9;
 }
-#menu-primary-navigation-2 li:last-child {
+#menu-primary-navigation-1 li:last-child {
   border-right: none;
 }
-#menu-primary-navigation-2 li:hover > a {
+#menu-primary-navigation-1 li:hover > a {
   color: #F8B62D;
   background: #004E9E;
 }
-#menu-primary-navigation-2 li:hover .sub-menu {
+#menu-primary-navigation-1 li:hover .sub-menu {
   display: block;
 }
-#menu-primary-navigation-2 li a {
+#menu-primary-navigation-1 li a {
   font-size: 15px;
 }
-#menu-primary-navigation-2 li .sub-menu {
+#menu-primary-navigation-1 li .sub-menu {
   display: none;
   position: absolute;
   left: 0;
@@ -8073,16 +8077,16 @@ body.profile .alert {
   -webkit-box-shadow: 7px 7px 12px 0px rgba(50, 50, 50, 0.6);
   box-shadow: 7px 7px 12px 0px rgba(50, 50, 50, 0.6);
 }
-#menu-primary-navigation-2 li .sub-menu li {
+#menu-primary-navigation-1 li .sub-menu li {
   border-bottom: 1px solid #1A4E7A;
   border-right: none;
   display: block;
   min-width: 180px;
 }
-#menu-primary-navigation-2 li .sub-menu li:last-child {
+#menu-primary-navigation-1 li .sub-menu li:last-child {
   border-bottom: none;
 }
-#menu-primary-navigation-2 li .sub-menu li a {
+#menu-primary-navigation-1 li .sub-menu li a {
   white-space: nowrap;
   display: block;
   padding: 10px 15px;
