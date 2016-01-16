@@ -1,13 +1,25 @@
+//===============================================================================
+//===============================================================================
+// Base
+//===============================================================================
+//===============================================================================
+
 .lecture_nav_container{
-	margin:25px 0;
-	width:60%;
-	background:url(../img/bg_border_grey.png) repeat-x bottom;
+	//margin:25px 0;
+	margin-top:25px;
+	//width:60%;
+	//background:url(../img/bg_border_grey.png) repeat-x bottom;
 	.lecture_nav_item{
 		//border-bottom:1px solid #DDDDDC;
-		float:left;
+		//float:left;
 		text-align:center;
 		min-width:180px;
 		padding:0 15px;
+		
+		border:1px solid #DDDDDC;
+		border-radius:5px;
+		margin:0 10px 10px 10px;
+		
 		a{
 			font-size:18px;
 			color:#878787;
@@ -25,7 +37,7 @@
 		
 		&.active{
 			border:1px solid #DDDDDC;
-			border-bottom:none;
+			//border-bottom:none;
 			border-top-left-radius:5px;
 			border-top-right-radius:5px;
 			background:#fff;
@@ -51,13 +63,12 @@
 }
 
 .btn_yellow{
-	position:absolute;
-	right:0;
-	top:25px;
 	background:#F8B62C;
 	color:#fff;
 	border-radius:5px;
 	padding:15px 40px;
+	margin-left:10px;
+	display:inline-block;
 }
 
 .lecture-search-container{
@@ -68,4 +79,65 @@
 	a{
 		color:#444;
 	}
+}
+
+//===============================================================================
+//===============================================================================
+// tablet
+//===============================================================================
+//===============================================================================
+@media (min-width: @screen-sm-min) {
+	
+}
+
+//===============================================================================
+//===============================================================================
+// Desktop
+//===============================================================================
+//===============================================================================
+@media (min-width: @screen-md-min) {
+
+	.lecture_nav_container{
+		margin:25px 0;
+		width:60%;
+		background:url(../img/bg_border_grey.png) repeat-x bottom;
+		.lecture_nav_item{
+			float:left;
+			
+			border:none;
+			border-radius:0;
+			margin:0;
+			
+			&.active{
+				border:1px solid #DDDDDC!important;
+				border-bottom:none!important;
+				border-top-left-radius:5px!important;
+				border-top-right-radius:5px!important;
+				background:#fff;
+				a{
+					font-size:30px;
+					font-weight:bold;
+					color:#00325C;
+					padding:5px 0;
+				}
+			}
+		}
+	}
+
+	.btn_yellow{
+		position:absolute;
+		right:0;
+		top:25px;
+		margin-left:0;
+	}
+
+}
+
+//===============================================================================
+//===============================================================================
+// Wide desktop
+//===============================================================================
+//===============================================================================
+@media (min-width: @screen-lg-min) {
+
 }
