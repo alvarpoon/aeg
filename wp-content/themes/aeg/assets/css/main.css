@@ -7495,6 +7495,49 @@ figure.alignnone {
 td.eus-image img {
   max-width: 250px;
 }
+#bbpress-forums div.odd,
+#bbpress-forums ul.odd {
+  background-color: #fff;
+}
+#bbpress-forums div.even,
+#bbpress-forums ul.even {
+  background-color: #D2D3D5;
+}
+#bbpress-forums ul.bbp-lead-topic,
+#bbpress-forums ul.bbp-topics,
+#bbpress-forums ul.bbp-forums,
+#bbpress-forums ul.bbp-replies,
+#bbpress-forums ul.bbp-search-results {
+  border: none;
+  font-size: 14px;
+}
+#bbpress-forums ul.bbp-lead-topic a,
+#bbpress-forums ul.bbp-topics a,
+#bbpress-forums ul.bbp-forums a,
+#bbpress-forums ul.bbp-replies a,
+#bbpress-forums ul.bbp-search-results a {
+  color: #000;
+}
+#bbpress-forums li.bbp-header {
+  background: #00325c;
+  color: #fff;
+  font-size: 18px;
+  padding: 8px 20px;
+}
+#bbpress-forums li.bbp-body ul.forum,
+#bbpress-forums li.bbp-body ul.topic {
+  padding: 8px 20px;
+}
+#bbpress-forums li.bbp-footer {
+  display: none;
+}
+#bbpress-forums fieldset.bbp-form legend {
+  margin-bottom: 40px;
+}
+#bbpress-forums #bbp-search-form {
+  text-align: right;
+  margin-bottom: 10px;
+}
 .lecture-upload .page-banner-container,
 .lecture-upload-bak .page-banner-container,
 .video-upload .page-banner-container,
