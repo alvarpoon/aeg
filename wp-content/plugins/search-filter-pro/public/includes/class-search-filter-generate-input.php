@@ -10,593 +10,14 @@
 
 class Search_Filter_Generate_Input {
 	
+	private $field_count = 0;
+	
 	public function __construct($plugin_slug, $sfid) {
 
 		$this->plugin_slug = $plugin_slug;
 		$this->sfid = $sfid;
 	}
-		
-	/*
-	 * Display various inputs
-	*/
-	//use wp array walker to enable hierarchical display and other options
-	public function generate_wp_dropdown($args, $name, $labels = null)
-	{
-		$elem_attr = "";
-		$returnvar = "";
-		
-		if(isset($args['elem_attr']))
-		{
-			$elem_attr .= $args['elem_attr'];
-		}
-
-		$input_class = SF_CLASS_PRE."input-select";
-		
-		$returnvar .= '<select name="'.$args['sf_name'].'[]" class="'.$input_class.'"'.$elem_attr.'>';
-		$returnvar .= $this->walk_taxonomy('select', $args);
-		$returnvar .= "</select>";
-		
-		return $returnvar;
-	}
 	
-	public function generate_wp_multiselect($args, $name, $labels = null)
-	{
-		$elem_attr = "";
-		if(isset($args['elem_attr']))
-		{
-			$elem_attr .= $args['elem_attr'];
-		}
-		$input_class = SF_CLASS_PRE."input-multiselect";
-		$returnvar = '<select multiple="multiple" name="'.$args['sf_name'].'[]" class="'.$input_class.'"'.$elem_attr.'>';
-		$returnvar .= $this->walk_taxonomy('multiselect', $args);
-		$returnvar .= "</select>";
-		
-		return $returnvar;
-	}
-	
-	public function generate_wp_list($args, $name, $labels = null)
-	{
-		$elem_attr = "";
-		if(isset($args['elem_attr']))
-		{
-			$elem_attr .= $args['elem_attr'];
-		}
-		
-		$returnvar = '<ul'.$elem_attr.'>';
-		$returnvar .= $this->walk_taxonomy('list', $args);
-		$returnvar .= "</ul>";
-		
-		return $returnvar;
-	}
-	public function generate_wp_checkbox($args, $name, $labels = null)
-	{
-		$elem_attr = "";
-		if(isset($args['elem_attr']))
-		{
-			$elem_attr .= $args['elem_attr'];
-		}
-		
-		$returnvar = '<ul'.$elem_attr.'>';
-		$returnvar .= $this->walk_taxonomy('checkbox', $args);
-		$returnvar .= "</ul>";
-		
-		return $returnvar;
-	}
-	
-	public function generate_wp_radio($args, $name, $labels = null)
-	{
-		$returnvar = '<ul>';
-		$returnvar .= $this->walk_taxonomy('radio', $args);
-		$returnvar .= "</ul>";
-		
-		return $returnvar;
-	}
-	
-	//generate generic form inputs for use elsewhere, such as post types and non taxonomy fields
-	public function generate_select($dropdata, $name, $defaults, $all_items_label = null, $elem_attr = "", $show_count = "", $hide_empty = "")
-	{
-		$returnvar = "";
-
-		$input_class = SF_CLASS_PRE."input-select";
-		
-		$returnvar .= '<select class="'.$input_class.'" name="'.$name.'[]"'.$elem_attr.'>';
-		if(isset($all_items_label))
-		{
-			if($all_items_label!="")
-			{//check to see if all items has been registered in field then use this label
-				$returnvar .= '<option class="level-0" value="">'.esc_html($all_items_label).'</option>';
-			}
-		}
-
-		foreach($dropdata as $dropdown)
-		{
-			$selected = "";
-			
-			if(isset($defaults))
-			{
-				if(is_array($defaults))
-				{
-					foreach($defaults as $defaultid)
-					{
-						if($defaultid==$dropdown->term_id)
-						{
-							$selected = ' selected="selected"';
-						}
-					}
-				}
-			}
-			
-			$show_option = 1;
-			$term_count_text = "";
-			if(($this->is_taxonomy_key($name))||($this->is_meta_value($name)))
-			{
-				global $searchandfilter;
-				$this->auto_count = $searchandfilter->get($this->sfid)->settings("enable_auto_count");
-
-				if($this->auto_count==1)
-				{
-					$show_option = 0;
-					
-					global $searchandfilter;
-					
-					$term_count = $searchandfilter->get($this->sfid)->get_count_var($name, esc_attr($dropdown->term_id));
-						
-					$term_count_text = "";
-					if($show_count==1)
-					{
-						$term_count_text = " <span class='sf-count'>($term_count)</spann>";
-					}
-					
-					if(($hide_empty!=1)||($term_count!=0))
-					{
-						$show_option = 1;
-					}
-				}
-			}
-			
-			if($show_option==1)
-			{
-				$returnvar .= '<option class="level-0" value="'.esc_attr($dropdown->term_id).'"'.$selected.'>'.esc_html($dropdown->cat_name).$term_count_text.'</option>';
-			}
-
-		}
-		$returnvar .= "</select>";
-
-		return $returnvar;
-	}
-	
-	
-	public function generate_multiselect($dropdata, $name, $defaults, $elem_attr = "", $show_count = "", $hide_empty = "")
-	{
-		$returnvar = "";
-
-		$input_class = SF_CLASS_PRE."input-multiselect";
-
-		$returnvar .= '<select multiple="multiple" class="'.$input_class.'" name="'.$name.'[]"'.$elem_attr.'>';
-		
-		foreach($dropdata as $dropdown)
-		{
-			$selected = "";
-
-			if(isset($defaults))
-			{
-				if(is_array($defaults)) //there should never be more than 1 default in a select, if there are then don't set any, user is obviously searching multiple values, in the case of a select this must be "all"
-				{
-					foreach($defaults as $defaultid)
-					{
-						if($defaultid==$dropdown->term_id)
-						{
-							$selected = ' selected="selected"';
-						}
-					}
-				}
-			}
-			
-			
-			
-			$show_option = 1;
-			$term_count_text = "";
-			if(($this->is_taxonomy_key($name))||($this->is_meta_value($name)))
-			{
-				global $searchandfilter;
-				$this->auto_count = $searchandfilter->get($this->sfid)->settings("enable_auto_count");
-
-				if($this->auto_count==1)
-				{
-					$show_option = 0;
-					
-					global $searchandfilter;
-					
-					$term_count = $searchandfilter->get($this->sfid)->get_count_var($name, esc_attr($dropdown->term_id));
-					
-
-					$term_count_text = "";
-					if($show_count==1)
-					{
-						$term_count_text = " <span class='sf-count'>($term_count)</span>";
-					}
-					
-					if(($hide_empty!=1)||($term_count!=0))
-					{
-						$show_option = 1;
-					}
-				}
-			}
-			
-			if($show_option==1)
-			{
-				$returnvar .= '<option class="level-0" value="'.esc_attr($dropdown->term_id).'"'.$selected.'>'.esc_html($dropdown->cat_name).$term_count_text.'</option>';
-			}
-
-		}
-		$returnvar .= "</select>";
-
-		return $returnvar;
-	}
-	
-	public function generate_checkbox($dropdata, $name, $defaults, $elem_attr = "", $show_count = "", $hide_empty = "")
-	{
-		$returnvar = '<ul'.$elem_attr.'>';
-		$input_class = SF_CLASS_PRE."input-checkbox";
-		
-		foreach($dropdata as $dropdown)
-		{
-			$checked = "";
-			
-			//check a default has been set
-			if(isset($defaults))
-			{
-				if(is_array($defaults))
-				{
-					foreach($defaults as $defaultid)
-					{
-						if($defaultid==$dropdown->term_id)
-						{
-							$checked = ' checked="checked"';
-						}
-					}
-				}				
-			}
-			
-			
-			
-			$show_option = 1;
-			$term_count_text = "";
-			if(($this->is_taxonomy_key($name))||($this->is_meta_value($name)))
-			{
-				global $searchandfilter;
-				$this->auto_count = $searchandfilter->get($this->sfid)->settings("enable_auto_count");
-
-				if($this->auto_count==1)
-				{
-					$show_option = 0;
-					
-					global $searchandfilter;
-					
-					$term_count = $searchandfilter->get($this->sfid)->get_count_var($name, esc_attr($dropdown->term_id));
-					
-						
-					$term_count_text = "";
-					if($show_count==1)
-					{
-						$term_count_text = " <span class='sf-count'>($term_count)</span>";
-					}
-					
-					if(($hide_empty!=1)||($term_count!=0))
-					{
-						$show_option = 1;
-					}
-				}
-			}
-			
-			if($show_option==1)
-			{
-				$input_id = SF_INPUT_ID_PRE.sanitize_html_class($name."_".$dropdown->term_id);
-				$returnvar .= '<li><input class="'.$input_class.'" id="'.$input_id.'" type="checkbox" name="'.$name.'[]" value="'.esc_attr($dropdown->term_id).'"'.$checked.'><label for="'.$input_id.'">'.esc_html($dropdown->cat_name).$term_count_text.'</label></li>';
-			}
-		}
-		
-		$returnvar .= '</ul>';
-		
-		return $returnvar;
-	}
-	
-	public function generate_radio($dropdata, $name, $defaults, $all_items_label = null, $show_count = "", $hide_empty = "")
-	{
-		$returnvar = '<ul>';
-
-		$input_class = SF_CLASS_PRE."input-radio";
-		
-		if(isset($all_items_label))
-		{
-			if($all_items_label!="")
-			{
-				$checked = "";
-				
-				if(isset($defaults))
-				{
-					if(!is_array($defaults))
-					{
-						if($defaults=="")
-						{
-							$checked = ' checked="checked"';
-						}
-					}
-				}
-				$input_id = SF_INPUT_ID_PRE.sanitize_html_class($name."_0_all_items");
-				
-				$returnvar .= '<li><input class="'.$input_class.'" id="'.$input_id.'" type="radio" name="'.$name.'[]" value=""'.$checked.'><label for="'.$input_id.'">'.esc_html($all_items_label).'</label></li>';
-			}
-		}
-		
-		foreach($dropdata as $dropdown)
-		{
-			$checked = "";
-			
-			//check a default has been set
-			if(isset($defaults))
-			{
-				if(is_array($defaults))
-				{
-					foreach($defaults as $defaultid)
-					{
-						if($defaultid==$dropdown->term_id)
-						{
-							$checked = ' checked="checked"';
-						}
-					}
-				}
-			}
-			
-
-			$show_option = 1;
-			$term_count_text = "";
-			if(($this->is_taxonomy_key($name))||($this->is_meta_value($name)))
-			{
-				global $searchandfilter;
-				$this->auto_count = $searchandfilter->get($this->sfid)->settings("enable_auto_count");
-
-				if($this->auto_count==1)
-				{
-					$show_option = 0;
-					
-					global $searchandfilter;
-					
-					$term_count = $searchandfilter->get($this->sfid)->get_count_var($name, esc_attr($dropdown->term_id));
-					
-					$term_count_text = "";
-					if($show_count==1)
-					{
-						$term_count_text = " <span class='sf-count'>($term_count)</span>";
-					}
-					
-					if(($hide_empty!=1)||($term_count!=0))
-					{
-						$show_option = 1;
-					}
-				}
-			}
-			
-			if($show_option==1)
-			{
-				$input_id = SF_INPUT_ID_PRE.sanitize_html_class($name."_".$dropdown->term_id);
-				$returnvar .= '<li><input class="'.$input_class.'" id="'.$input_id.'" type="radio" name="'.$name.'[]" value="'.esc_attr($dropdown->term_id).'"'.$checked.'><label for="'.$input_id.'">'.esc_html($dropdown->cat_name).$term_count_text.'</label></li>';
-			}
-		}
-		
-		$returnvar .= '</ul>';
-		
-		return $returnvar;
-	}
-	
-	public function generate_date($name, $defaults, $placeholder = "mm/dd/yyyy", $prefix, $postfix, $currentid = 0)
-	{
-		$returnvar = '';
-		$current_date = '';
-		//check a default has been set - upto two possible vars for array 
-
-		$input_class = SF_CLASS_PRE."input-date";
-		
-		if(isset($defaults))
-		{
-			$noselected = count($defaults);
-			
-			if(($noselected>0)&&(is_array($defaults)))
-			{
-				$current_date = $defaults[$currentid];
-			}
-		}
-
-		if($prefix!="")
-		{
-			$returnvar .= "<span class='".SF_CLASS_PRE."date-prefix'>".$prefix."</span>";
-		}
-
-		$returnvar .= '<input class="'.SF_CLASS_PRE.'datepicker '.$input_class.'" type="text" name="'.$name.'[]" value="' . esc_attr($current_date) . '" placeholder="'.$placeholder.'" />';
-
-		if($postfix!="")
-		{
-			$returnvar .= "<span class='".SF_CLASS_PRE."date-postfix'>".$postfix."</span>";
-		}
-		
-		return $returnvar;
-	}
-	
-	public function walk_taxonomy( $type = "checkbox", $args = array() )
-	{
-		$args['walker'] = new Search_Filter_Taxonomy_Walker($type, $args['sf_name']);
-		
-		$output = wp_list_categories($args);
-		if ( $output )
-			return $output;
-	}
-	
-	public function walk_author( $type = "checkbox", $args = array() ) {
-
-		$walker = new Search_Filter_Author_Walker($type, $args['name']);
-		$args['echo'] = false;
-		$output = $walker->wp_authors($type, $args);
-		
-		if ( $output )
-			return $output;
-	}
-	
-	public function generate_range_slider($field, $min, $max, $step, $smin, $smax, $value_prefix = "", $value_postfix = "")
-	{
-		$returnvar = "";
-		$input_class = SF_CLASS_PRE."input-range-number";
-
-		if($value_prefix!="")
-		{
-			$value_prefix = $value_prefix." ";
-		}
-		if($value_postfix!="")
-		{
-			$value_postfix = " ".$value_postfix;
-		}		
-		
-		if((int)$smax<(int)$smin)
-		{
-			$smax = $smin;
-		}
-		
-		$smin = (int)$smin;
-		if((int)$smax<(int)$smin)
-		{
-			$smax = $smin;
-		}
-		$smax = (int)$smax;
-		
-		$returnvar .= '<div class="meta-range" data-start-min="'.esc_attr($smin).'" data-start-max="'.esc_attr($smax).'" data-min="'.esc_attr($min).'" data-max="'.esc_attr($max).'" data-step="'.esc_attr($step).'">';
-		$returnvar .= $value_prefix.'<input name="'.$field.'[]" type="number" min="'.esc_attr($min).'" max="'.esc_attr($max).'" step="'.esc_attr($step).'" class="range-min '.$input_class.'" value="'.(int)$smin.'" />'.$value_postfix;
-		$returnvar .= ' - ';
-		$returnvar .= $value_prefix.'<input name="'.$field.'[]" type="number" min="'.esc_attr($min).'" max="'.esc_attr($max).'" step="'.esc_attr($step).'" class="range-max '.$input_class.'" value="'.(int)$smax.'" />'.$value_postfix;
-		$returnvar .= '<div class="meta-slider"></div>';
-		$returnvar .= '</div>';
-		
-		return $returnvar;
-	}
-	
-	public function generate_range_number($field, $min, $max, $step, $smin, $smax, $value_prefix = "", $value_postfix = "")
-	{
-		$returnvar = "";
-		$input_class = SF_CLASS_PRE."input-range-number";
-
-		if($value_prefix!="")
-		{
-			$value_prefix = $value_prefix." ";
-		}
-		if($value_postfix!="")
-		{
-			$value_postfix = " ".$value_postfix;
-		}
-		
-		$smin = (int)$smin;
-		if((int)$smax<(int)$smin)
-		{
-			$smax = $smin;
-		}
-		$smax = (int)$smax;
-		
-		$returnvar .= '<div class="meta-range" data-start-min="'.esc_attr($smin).'" data-start-max="'.esc_attr($smax).'" data-min="'.esc_attr($min).'" data-max="'.esc_attr($max).'" data-step="'.esc_attr($step).'">';
-		$returnvar .= $value_prefix.'<input name="'.$field.'[]" type="number" min="'.esc_attr($min).'" max="'.esc_attr($max).'" step="'.esc_attr($step).'" class="range-min '.$input_class.'" value="'.(int)$smin.'" />'.$value_postfix;
-		$returnvar .= ' - ';
-		$returnvar .= $value_prefix.'<input name="'.$field.'[]" type="number" min="'.esc_attr($min).'" max="'.esc_attr($max).'" step="'.esc_attr($step).'" class="range-max '.$input_class.'" value="'.(int)$smax.'" />'.$value_postfix;
-		$returnvar .= '</div>';
-		
-		return $returnvar;
-	}
-	public function generate_range_radio($field, $min, $max, $step, $default, $value_prefix = "", $value_postfix = "")
-	{
-		$returnvar = '<ul>';
-
-		$input_class = SF_CLASS_PRE."input-radio";
-		
-		$startval = $min;
-		$endval = $max;
-		$diff = $endval - $startval;
-		$istep = ceil($diff/$step);
-		
-		
-		for($i=0; $i<($istep); $i++)
-		{
-			$radio_value = $startval + ($i * $step);
-			$radio_top_value = ($radio_value + $step - 1);
-			
-			if($radio_top_value>$endval)
-			{
-				$radio_top_value = $endval;
-			}
-			
-			$radio_label = $value_prefix.$radio_value.$value_postfix." - ".$value_prefix.$radio_top_value.$value_postfix;
-			$radio_value = esc_attr($radio_value).'+'.esc_attr($radio_top_value);
-			
-			$checked = "";
-			if($radio_value == $default)
-			{
-				$checked = ' checked="checked"';
-			}
-
-			$input_id = SF_INPUT_ID_PRE.sanitize_html_class($name."_".$radio_value);
-
-			$returnvar .= '<li><input class="'.$input_class.'" id="'.$input_id.'" type="radio" name="'.$field.'[]" value="'.$radio_value.'"'.$checked.'><label for="'.$input_id.'">'.esc_html($radio_label).'</label></li>';
-		}
-		
-		
-		$returnvar .= '</ul>';
-		
-		return $returnvar;
-	}
-	public function generate_range_select($field, $min, $max, $step, $default, $value_prefix = "", $value_postfix = "")
-	{
-		
-		
-		$startval = $min;
-		$endval = $max;
-		$diff = $endval - $startval;
-		$istep = ceil($diff/$step);
-		
-		$input_class = SF_CLASS_PRE."input-select";
-		
-
-		$returnvar = "";
-		
-		$returnvar .= '<select class="'.$input_class.'" name="'.$field.'[]">';
-		if(isset($all_items_label))
-		{
-			if($all_items_label!="")
-			{//check to see if all items has been registered in field then use this label
-				$returnvar .= '<option class="level-0" value="">'.esc_html($all_items_label).'</option>';
-			}
-		}
-		
-		
-		for($i=0; $i<($istep); $i++)
-		{
-			$radio_value = $startval + ($i * $step);
-			$radio_top_value = ($radio_value + $step - 1);
-			
-			if($radio_top_value>$endval)
-			{
-				$radio_top_value = $endval;
-			}
-			
-			$radio_label = $value_prefix.$radio_value.$value_postfix." - ".$value_prefix.$radio_top_value.$value_postfix;
-			$radio_value = esc_attr($radio_value).'+'.esc_attr($radio_top_value);
-			
-			$selected = "";
-			if($radio_value == $default)
-			{
-				$selected = ' selected="selected"';
-			}
-			$returnvar .= '<option class="level-0" value="'.esc_attr($radio_value).'"'.$selected.'>'.esc_html($radio_label).'</option>';
-		}
-		
-		
-		$returnvar .= "</select>";
-		
-		return $returnvar;
-	}
 	
 	public function generate_range_checkbox($field, $min, $max, $step, $smin, $smax, $value_prefix = "", $value_postfix = "")
 	{
@@ -646,32 +67,858 @@ class Search_Filter_Generate_Input {
 		return $returnvar;
 	}
 	
-	public function is_meta_value($key)
+	/* finish remove */
+	
+	public function datepicker($args)
 	{
-		if(substr( $key, 0, 5 )===SF_META_PRE)
+		$returnvar = '';
+		
+		$args['attributes']['class'] = 'sf-datepicker sf-input-date';
+		
+		if(isset($args['prefix']))
 		{
-			return true;
+			if($args['prefix']!="")
+			{
+				$args['prefix'] = "<span class='".SF_CLASS_PRE."date-prefix'>".$args['prefix']."</span>";
+			}
 		}
+		if(isset($args['postfix']))
+		{
+			if($args['postfix']!="")
+			{
+				$args['postfix'] = "<span class='".SF_CLASS_PRE."date-postfix'>".$args['postfix']."</span>";
+			}
+		}
+		
+		$returnvar .= $this->text($args);
+		
+		return $returnvar;
+	}
+	
+	public function text($args)
+	{
+		
+		//init defaults & vars
+		$input_args = $this->prepare_input_args($args, "text");
+		
+		//wcag 2.0
+		$accessibility_label = "";
+		if(isset($input_args['accessibility_label']))
+		{
+			if($input_args['accessibility_label']!="")
+			{
+				$accessibility_label = $input_args['accessibility_label'];
+			}
+		}
+		
+		//now we want to put the class attribute on the LI, and remove from input
+		$input_args['attributes']['class'] .= ' '.$input_args['input_class'];
+		$input_args['attributes']['class'] = trim($input_args['attributes']['class']);
+		$input_args['attributes']['type'] = $input_args['type'];
+		$input_args['attributes']['value'] = $input_args['value'];
+		$input_args['attributes']['title'] = $accessibility_label;
+		
+		//filter the input arguments before the html is generated - allowing almost all options to be modified
+		if(has_filter('sf_input_object_pre')) {
+			$input_args = apply_filters('sf_input_object_pre', $input_args, $this->sfid);
+		}
+		
+		
+		//prepare html
+		$attibutes_html = $this->convert_attributes_to_html($input_args['attributes']);
+		
+		$prefix = "";
+		$postfix = "";
+		
+		if(isset($input_args['prefix']))
+		{
+			if($input_args['prefix']!="")
+			{
+				$prefix = $input_args['prefix'];
+			}
+		}
+		if(isset($input_args['postfix']))
+		{
+			if($input_args['postfix']!="")
+			{
+				$postfix = $input_args['postfix'];
+			}
+		}
+		
+		ob_start();
+		
+		?>
+		<?php echo $prefix; ?><label><?php if($accessibility_label!=""){ ?><span class="screen-reader-text"><?php echo $accessibility_label; ?></span><?php } ?><input<?php echo $attibutes_html; ?>></label><?php echo $postfix; ?>
+		<?php
+		
+		$output = ob_get_clean();
+		
+		return $output;
+	}
+	
+	
+	public function select($args)
+	{
+		//init defaults & vars
+		$input_args = $this->prepare_input_args($args, "select");
+		
+		//wcag 2.0
+		//$accessibility_label = __("Choose an option:", $this->plugin_slug);
+		$accessibility_label = "";
+		if(isset($input_args['accessibility_label']))
+		{
+			if($input_args['accessibility_label']!="")
+			{
+				$accessibility_label = $input_args['accessibility_label'];
+			}
+		}
+		
+		$input_args['attributes']['title'] = $accessibility_label;
+		
+		//now we want to put the class attribute on the LI, and remove from input
+		$input_args['attributes']['class'] .= ' '.$input_args['input_class'];
+		$input_args['attributes']['class'] = trim($input_args['attributes']['class']);
+		unset($input_args['input_class']);//don't want this visible to users
+		
+		//filter the input arguments before the html is generated - allowing almost all options to be modified
+		if(has_filter('sf_input_object_pre')) {
+			$input_args = apply_filters('sf_input_object_pre', $input_args, $this->sfid);
+		}
+		
+		//prepare html
+		$attibutes_html = $this->convert_attributes_to_html($input_args['attributes']);
+		
+		$prefix = "";
+		$postfix = "";
+		
+		if(isset($input_args['prefix']))
+		{
+			if($input_args['prefix']!="")
+			{
+				$prefix = $input_args['prefix'];
+			}
+		}
+		if(isset($input_args['postfix']))
+		{
+			if($input_args['postfix']!="")
+			{
+				$postfix = $input_args['postfix'];
+			}
+		}
+		
+		ob_start();
+		
+		?>
+		<?php echo $prefix; ?><label>
+		<?php if($accessibility_label!=""){ ?><span class="screen-reader-text"><?php echo $accessibility_label; ?></span><?php } ?>
+		<select<?php echo $attibutes_html; ?>>
+			
+			<?php
+			
+			foreach($input_args['options'] as $option)
+			{
+				//check a default has been set and set it
+				if(!isset($option->attributes))
+				{
+					$option->attributes = array(
+						'class' => '',
+						'id'	=> ''
+					);
+				}
+				
+				if($this->is_option_selected($option, $input_args['defaults']))
+				{
+					$option->attributes['selected'] = 'selected';
+				}
+				
+				//create the attributes
+				$option_attibutes_html = $this->convert_attributes_to_html($option->attributes);
+				
+				//add padding to labels for anything hierarchical
+				$label_pad = '';
+				if(isset($option->depth))
+				{
+					$label_pad = str_repeat('&nbsp;', $option->depth * 3);
+				}				
+				$option_label = $label_pad.$option->label;
+				
+			?>
+			<option<?php echo $option_attibutes_html; ?> value="<?php echo esc_attr($option->value); ?>"><?php echo $option_label; ?></option>
+			<?php
+			}
+			?>
+		</select>
+		</label><?php echo $postfix; ?>
+		<?php
+		
+		$output = ob_get_clean();
+		
+		return $output;
+	}
+	
+	
+	public function checkbox($args)
+	{
+		//init defaults & vars
+		$input_args = $this->prepare_input_args($args, "checkbox");
+				
+		$input_name = $input_args['attributes']['name'];
+		unset($input_args['attributes']['name']);
+		
+		//filter the input arguments before the html is generated - allowing almost all options to be modified
+		if(has_filter('sf_input_object_pre')) {
+			$input_args = apply_filters('sf_input_object_pre', $input_args, $this->sfid);
+		}
+		
+		//prepare html
+		$attibutes_html = $this->convert_attributes_to_html($input_args['attributes']);
+		
+		ob_start();
+		
+		?>
+		<ul<?php echo $attibutes_html; ?>>
+			
+			<?php
+			
+			$last_option_depth = 0;
+			
+			$option_count = count($input_args['options']);
+			$current_depth = 0;
+			
+			$is_li_open = array();
+			//echo "<ul>";
+			for($i=0; $i<$option_count; $i++)
+			{
+				$option = &$input_args['options'][$i];
+				
+				if(!isset($option->attributes))
+				{
+					$option->attributes = array(
+						'class' => '',
+						'id'	=> ''
+					);
+				}
+				//check a default has been set and set it
+				$option->attributes['type'] = "checkbox";
+				$option->attributes['value'] = $option->value;
+				$option->attributes['name'] = $input_name;
+				
+				if($this->is_option_selected($option, $input_args['defaults']))
+				{
+					$option->attributes['checked'] = 'checked';
+				}
+				
+				//now we want to put the class attribute on the LI, and remove from input
+				$option_class = $option->attributes['class'];
+				$option->attributes['class'] = $input_args['input_class'];
+				
+				$input_id = $this->generate_input_id($input_name."_".$option->value);
+				$option->attributes['id'] = $input_id;
+				
+				//create the attributes
+				$input_attibutes_html = $this->convert_attributes_to_html($option->attributes);
+				$option_label = $option->label;
+				
+				echo '<li class="'.$option_class.'"><input '.$input_attibutes_html.'><label class="sf-label-checkbox" for="'.$input_id.'">'.$option_label.'</label>';
+				
+				if(isset($option->depth))
+				{//then we do depth calculations
+					
+					$current_depth = $option->depth;
+					
+					$close_li = true;
+					$open_child_list = false;
+					$close_ul = false;
+					
+					$next_depth = -1;
+					
+					if(isset($input_args['options'][$i+1]))
+					{
+						$next_option = $input_args['options'][$i+1];
+						$next_depth = $next_option->depth;
+					}
+					
+					if($next_depth!=-1)
+					{
+						if($next_depth!=$current_depth)
+						{//there is a change in depth
+							
+							if($next_depth>$current_depth)
+							{//then we need to open a child list
+								//and, not close the current li
+								$open_child_list = true;
+								$close_li = false;
+							}
+							else
+							{
+								$close_ul = true;
+							}
+						}
+					}
+					
+					if($open_child_list)
+					{
+						echo '<ul class="children">';
+					}
+					if($close_li)
+					{
+						echo "</li>";
+					}
+					if($close_ul)
+					{
+						$diff = $current_depth - $next_depth;
+						echo str_repeat("</ul></li>", $diff);
+					}
+				}				
+			}
+			
+			?>
+		</ul>
+		<?php
+		
+		$output = ob_get_clean();
+		
+		return $output;
+	}
+	
+	public function radio($args)
+	{
+		//init defaults & vars
+		$input_args = $this->prepare_input_args($args, "radio");
+				
+		$input_name = $input_args['attributes']['name'];
+		unset($input_args['attributes']['name']);
+		
+		//filter the input arguments before the html is generated - allowing almost all options to be modified
+		if(has_filter('sf_input_object_pre')) {
+			$input_args = apply_filters('sf_input_object_pre', $input_args, $this->sfid);
+		}
+		
+		//prepare html
+		$attibutes_html = $this->convert_attributes_to_html($input_args['attributes']);
+		
+		ob_start();
+		
+		?>
+		<ul<?php echo $attibutes_html; ?>>
+			
+			<?php
+			
+			$last_option_depth = 0;
+			
+			$option_count = count($input_args['options']);
+			$current_depth = 0;
+			
+			$is_li_open = array();
+			//echo "<ul>";
+			for($i=0; $i<$option_count; $i++)
+			{
+				$option = &$input_args['options'][$i];
+				
+				if(!isset($option->attributes))
+				{
+					$option->attributes = array(
+						'class' => '',
+						'id'	=> ''
+					);
+				}
+				
+				//check a default has been set and set it
+				$option->attributes['type'] = "radio";
+				$option->attributes['value'] = $option->value;
+				$option->attributes['name'] = $input_name;
+				
+				//echo $args['name']. " | ".implode(", ", $input_args['defaults'])."<br />";
+				if(($args['name']=="_sfm_edd_price_min")||($args['name']=="_sfm_edd_price_max"))
+				{
+					/*echo '<pre>';
+					var_dump($input_args['defaults']);
+					echo '</pre>';*/
+				}
+				if($this->is_option_selected($option, $input_args['defaults']))
+				{
+					$option->attributes['checked'] = 'checked';
+				}
+				else
+				{
+					if(isset($option->attributes['checked']))
+					{
+						unset($option->attributes['checked']);
+					}
+				}
+				
+				//now we want to put the class attribute on the LI, and remove from input
+				$option_class = $option->attributes['class'];
+				$option->attributes['class'] = $input_args['input_class'];
+				
+				$input_id = $this->generate_input_id($input_name."_".$option->value);
+				$option->attributes['id'] = $input_id;
+				
+				//create the attributes
+				$input_attibutes_html = $this->convert_attributes_to_html($option->attributes);
+				$option_label = $option->label;
+				
+				echo '<li class="'.$option_class.'"><input '.$input_attibutes_html.'><label class="sf-label-radio" for="'.$input_id.'">'.$option_label.'</label>';
+				
+				if(isset($option->depth))
+				{//then we do depth calculations
+					
+					$current_depth = $option->depth;
+					
+					$close_li = true;
+					$open_child_list = false;
+					$close_ul = false;
+					
+					$next_depth = -1;
+					
+					if(isset($input_args['options'][$i+1]))
+					{
+						$next_option = $input_args['options'][$i+1];
+						$next_depth = $next_option->depth;
+					}
+					
+					if($next_depth!=-1)
+					{
+						if($next_depth!=$current_depth)
+						{//there is a change in depth
+							
+							if($next_depth>$current_depth)
+							{//then we need to open a child list
+								//and, not close the current li
+								$open_child_list = true;
+								$close_li = false;
+							}
+							else
+							{
+								$close_ul = true;
+							}
+						}
+					}
+					
+					if($open_child_list)
+					{
+						echo '<ul class="children">';
+					}
+					if($close_li)
+					{
+						echo "</li>";
+					}
+					if($close_ul)
+					{
+						$diff = $current_depth - $next_depth;
+						echo str_repeat("</ul></li>", $diff);
+					}
+				}				
+			}
+			
+			?>
+		</ul>
+		<?php
+		
+		$output = ob_get_clean();
+		
+		return $output;
+	}
+	
+	private function generate_input_id($unique_name)
+	{
+		return SF_CLASS_PRE."input-".md5($unique_name);
+	}
+	
+	//this just some basic stuff like adding a name attribute to a field and the basic CSS class that needs to be added
+	private function is_option_selected($option, $defaults)
+	{
+		//first grab the comparison value from this option
+		$select_value = ""; //selected value allows another value for matching occur, or "selected status" to be applied.
+		if(isset($option->selected_value))
+		{
+			$select_value = $option->selected_value;
+		}
+		else
+		{
+			$select_value = $option->value;
+		}
+		
+		$no_selected_options = count($defaults);
+
+		if($no_selected_options>0)
+		{
+			if(in_array($select_value, $defaults))
+			{
+				return true;
+			}
+		}
+		
 		return false;
 	}
 	
-	public function is_taxonomy_key($key)
+	
+	
+	public function range_slider($args)
 	{
-		if(substr( $key, 0, 5 )===SF_TAX_PRE)
+		$field_name = $args['name'];
+		
+		$args = $this->prepare_range_args($args, "slider");
+		
+		if($args['number_display_values_as']=="text")
 		{
-			return true;
+			$input_class = 'sf-text-number';
+			$value_min_html = $args['prefix'].'<span class="sf-range-min '.$input_class.'">'.$args['default_min'].'</span>'.$args['postfix'];
+			$value_max_html = $args['prefix'].'<span class="sf-range-max '.$input_class.'">'.$args['default_max'].'</span>'.$args['postfix'];
 		}
-		return false;
+		else
+		{
+			//setup input/text fields
+			
+			//setup vars in common with both fields
+			if(($args['decimal_places']==0)&&($args['thousand_seperator']=="")) //if there is no formatting to display, then we can use number input type - a bit cooler
+			{
+				$input_type = "number";
+			}
+			else
+			{
+				$input_type = "text";	
+			}
+			
+			$accessibility_label = "";
+			if(isset($args['accessibility_label']))
+			{
+				$accessibility_label = $args['accessibility_label'];
+			}
+			
+			$text_args = array(
+				'name'						=> $args['name'],
+				'value'						=> '',
+				'accessibility_label'		=> $accessibility_label,
+				'type'						=> $input_type,
+				'attributes'				=> array(
+						'class' => 'sf-input-range-number'
+				)
+			);
+			
+			if($input_type=="number")
+			{
+				$text_args['attributes']['min'] = $args['range_min'];
+				$text_args['attributes']['max'] = $args['range_max'];
+				$text_args['attributes']['step'] = $args['range_step'];
+			}
+			
+			$text_args['prefix'] = $args['prefix'];
+			$text_args['postfix'] = $args['postfix'];
+			
+			//now setup the min / max vars for the fields
+			$text_field_min = $text_args;
+			$text_field_min['value'] = $args['default_min'];
+			$text_field_min['attributes']['class'] .= ' sf-range-min';
+			
+			$text_field_max = $text_args;
+			$text_field_max['value'] = $args['default_max'];
+			$text_field_max['attributes']['class'] .= ' sf-range-max';
+			
+			$value_min_html = $this->text($text_field_min);
+			$value_max_html = $this->text($text_field_max);
+		}
+		
+		//prepare html
+		$attibutes_html = $this->convert_attributes_to_html($args['attributes']);
+		
+		ob_start();
+		
+		?>
+		<div <?php echo $attibutes_html; ?>>
+		
+			<?php echo $value_min_html; ?><span class="sf-range-values-seperator"><?php echo $args['number_values_seperator']; ?></span><?php echo $value_max_html; ?>
+			
+			<div class="meta-slider"></div>
+		</div>
+		<?php
+		
+		$output = ob_get_clean();
+		
+		return $output;
 	}
-}
-
-if ( ! class_exists( 'Search_Filter_Taxonomy_Walker' ) )
-{
-	require_once( plugin_dir_path( __FILE__ ) . 'class-search-filter-taxonomy-walker.php' );
-}
-
-if ( ! class_exists( 'Search_Filter_Author_Walker' ) )
-{
-	require_once( plugin_dir_path( __FILE__ ) . 'class-search-filter-author-walker.php' );
+	
+	public function range_radio($args)
+	{
+		$output = "";
+		
+		$field_name = $args['name'];
+		
+		$args = $this->prepare_range_args($args, "radio");
+		
+		$args['attributes']['class'] .= ' sf-meta-range-radio-fromto';
+		//create the input fields
+		$input_type = "radio";
+		$radio_args = array(
+			'name'			=> $args['name'],
+			'value'			=> '',
+			'options'		=> $args['options'],
+			'type'			=> $input_type,
+			'attributes'	=> array(
+					'class' => 'sf-input-range-radio'
+			)
+		);
+				
+		$radio_args['prefix'] = $args['prefix'];
+		$radio_args['postfix'] = $args['postfix'];
+		
+		//now setup the min / max vars for the fields
+		$radio_field_min = $radio_args;
+		$radio_field_min['name'] = $args['name'].'_min';
+		$radio_field_min['attributes']['class'] .= ' sf-range-min';
+		$radio_field_min['defaults'] = array($args['default_min']);
+		
+		$radio_field_max = $radio_args;
+		$radio_field_max['name'] = $args['name'].'_max';
+		$radio_field_max['attributes']['class'] .= ' sf-range-max';
+		$radio_field_max['defaults'] = array($args['default_max']);
+		
+		$value_min_html = $this->radio($radio_field_min);
+		$value_max_html = $this->radio($radio_field_max);
+		
+		//prepare html
+		$attibutes_html = $this->convert_attributes_to_html($args['attributes']);
+		ob_start();
+		
+		?>
+		<div <?php echo $attibutes_html; ?>>
+		
+			<?php echo $value_min_html; ?><span class="sf-range-values-seperator"><?php echo $args['number_values_seperator']; ?></span><?php echo $value_max_html; ?>
+			
+		</div>
+		<?php
+		
+		$output = ob_get_clean();
+		
+		return $output;
+	}
+	
+	public function range_select($args)
+	{
+		$output = "";
+		
+		$field_name = $args['name'];
+		
+		$args = $this->prepare_range_args($args, "select");
+		
+		$args['attributes']['class'] .= ' sf-meta-range-select-fromto';
+		
+		//create the input fields
+		$input_type = "select";
+		
+		$accessibility_label = "";
+		if(isset($args['accessibility_label']))
+		{
+			$accessibility_label = $args['accessibility_label'];
+		}
+		
+		$select_args = array(
+			'name'			=> $args['name'],
+			'value'			=> '',
+			'accessibility_label'			=> $accessibility_label,
+			'options'		=> $args['options'],
+			'type'			=> $input_type,
+			'attributes'	=> array(
+					'class' => 'sf-input-range-select'
+			)
+		);
+				
+		$select_args['prefix'] = $args['prefix'];
+		$select_args['postfix'] = $args['postfix'];
+		
+		//now setup the min / max vars for the fields
+		$select_field_min = $select_args;
+		$select_field_min['name'] = $args['name'].'_min';
+		$select_field_min['attributes']['class'] .= ' sf-range-min';
+		$select_field_min['defaults'] = array($args['default_min']);
+		
+		$select_field_max = $select_args;
+		$select_field_max['name'] = $args['name'].'_max';
+		$select_field_max['attributes']['class'] .= ' sf-range-max';
+		$select_field_max['defaults'] = array($args['default_max']);
+		
+		$value_min_html = $this->select($select_field_min);
+		$value_max_html = $this->select($select_field_max);
+		
+		//prepare html
+		$attibutes_html = $this->convert_attributes_to_html($args['attributes']);
+		ob_start();
+		
+		?>
+		<div <?php echo $attibutes_html; ?>>
+		
+			<?php echo $value_min_html; ?><span class="sf-range-values-seperator"><?php echo $args['number_values_seperator']; ?></span><?php echo $value_max_html; ?>
+			
+		</div>
+		<?php
+		
+		$output = ob_get_clean();
+		
+		return $output;
+	}
+	
+	public function range_number($args)
+	{
+		$output = "";
+		
+		$field_name = $args['name'];
+		
+		$args = $this->prepare_range_args($args, "number");
+		
+		//create the input fields
+		$input_type = "number";
+		
+		$accessibility_label = "";
+		if(isset($args['accessibility_label']))
+		{
+			$accessibility_label = $args['accessibility_label'];
+		}
+		
+		$text_args = array(
+			'name'			=> $args['name'],
+			'value'			=> '',
+			'accessibility_label'			=> $accessibility_label,
+			'type'			=> $input_type,
+			'attributes'	=> array(
+					'class' => 'sf-input-range-number',
+					'min'	=> $args['range_min'],
+					'max'	=> $args['range_max'],
+					'step'	=> $args['range_step']
+			)
+		);
+				
+		$text_args['prefix'] = $args['prefix'];
+		$text_args['postfix'] = $args['postfix'];
+		
+		//now setup the min / max vars for the fields
+		$text_field_min = $text_args;
+		$text_field_min['value'] = $args['default_min'];
+		$text_field_min['attributes']['class'] .= ' sf-range-min';
+		
+		$text_field_max = $text_args;
+		$text_field_max['value'] = $args['default_max'];
+		$text_field_max['attributes']['class'] .= ' sf-range-max';
+		
+		$value_min_html = $this->text($text_field_min);
+		$value_max_html = $this->text($text_field_max);
+		
+		
+		//prepare html
+		$attibutes_html = $this->convert_attributes_to_html($args['attributes']);
+		ob_start();
+		
+		?>
+		<div <?php echo $attibutes_html; ?>>
+		
+			<?php echo $value_min_html; ?><span class="sf-range-values-seperator"><?php echo $args['number_values_seperator']; ?></span><?php echo $value_max_html; ?>
+			
+		</div>
+		<?php
+		
+		$output = ob_get_clean();
+		
+		return $output;
+		
+	}
+	
+	private function prepare_range_args($args, $type)
+	{
+		
+		//ensure that min is not bigger than max (causes errors in noUIslider):
+		if($args['default_max']<$args['default_min'])
+		{
+			$args['default_max'] = $args['default_min'];
+		}
+		
+		if(!isset($args['attributes']))
+		{
+			$args['attributes'] = array();
+		}
+		
+		$args['attributes']['data-start-min'] = $args['default_min'];
+		$args['attributes']['data-start-max'] = $args['default_max'];
+		$args['attributes']['data-min'] = $args['range_min'];
+		$args['attributes']['data-max'] = $args['range_max'];
+		$args['attributes']['data-step'] = $args['range_step'];
+		$args['attributes']['data-decimal-places'] = $args['decimal_places'];
+		$args['attributes']['data-thousand-seperator'] = $args['thousand_seperator'];
+		$args['attributes']['data-display-values-as'] = $args['number_display_values_as'];
+		$args['attributes']['data-sf-field-name'] = $args['name'];
+		$args['attributes']['class'] = 'sf-meta-range sf-meta-range-'.$type;
+		
+		$args['prefix'] = "";
+		$args['postfix'] = "";
+		
+		if(isset($args['range_value_prefix']))
+		{
+			if($args['range_value_prefix']!="")
+			{
+				$args['prefix'] = "<span class='".SF_CLASS_PRE."range-prefix'>".$args['range_value_prefix']."</span>";
+			}
+		}
+		
+		if(isset($args['range_value_postfix']))
+		{
+			if($args['range_value_postfix']!="")
+			{
+				$args['postfix'] = "<span class='".SF_CLASS_PRE."range-postfix'>".$args['range_value_postfix']."</span>";
+			}
+		}
+		
+		return $args;
+	}
+	
+	
+	private function prepare_input_args($args, $type)
+	{
+		//init defaults
+		$default_args = array(
+			'name'					=> '',
+			'defaults'				=> array(),
+			'options'				=> array(),
+			'attributes'			=> array(),
+			'accessibility_label'	=> ''
+		);
+		
+		$input_args = array_replace($default_args, $args); //replace defaults with $args
+		
+		
+		$input_args['attributes']['name'] = $input_args['name'].'[]'; //setup name attribute
+		
+		//add required class to attributes list
+		if(!isset($input_args['attributes']['class']))
+		{
+			$input_args['attributes']['class'] = '';
+		}
+		//$input_args['attributes']['class'] .= ' '.SF_CLASS_PRE."input-".$type;
+		
+		if(!isset($input_args['type']))
+		{
+			$input_args['type'] = $type;
+		}
+		
+		$input_args['input_class'] = SF_CLASS_PRE."input-".$input_args['type'];
+		
+		//$input_args['attributes']['class'] = trim($input_args['attributes']['class']);
+		
+		return $input_args;
+	}
+	
+	
+	public function convert_attributes_to_html($attributes)
+	{
+		$attibutes_html = '';
+		
+		if(is_array($attributes))
+		{
+			foreach($attributes as $attribute_name => $attribute_val)
+			{
+				$attibutes_html .= ' '.$attribute_name.'="'.esc_attr($attribute_val).'"';
+			}
+		}
+		
+		return $attibutes_html;
+	}
+	
 }
 

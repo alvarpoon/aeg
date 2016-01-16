@@ -72,7 +72,7 @@
 					
 					var popup_hd_str = "";
 					popup_hd_str += '<div class="sf-thickbox-title">';
-					popup_hd_str += '<div class=".sf-ajax-window-title"></div>';
+					popup_hd_str += '<div class="sf-ajax-window-title"></div>';
 					popup_hd_str += '<div class="sf-thickbox-title-inner">Add Options</div>';
 					popup_hd_str += '<div class="sf-close-ajax-window">';
 					popup_hd_str += '<a href="#" id="TB_closeWindowButton" name="TB_closeWindowButton"></a>';
@@ -687,6 +687,56 @@
 						setPostMetaStartKey($(this));
 					});
 					
+					
+					/* number */
+					
+					// start off by showing/hiding correct fields
+					
+					//decimals toggle
+					var $number_is_decimal = item.find('.number_is_decimal');
+					var $number_decimal_places = item.find('.number_decimal_places');
+					checkboxToggleDeps($number_is_decimal, $number_decimal_places);
+					
+					$number_is_decimal.on("change",function(){
+						checkboxToggleDeps($(this), $number_decimal_places);
+					});
+					
+					//min range toggle
+					var $range_min_detect = item.find('.range_min_detect');
+					var $range_min = item.find('.range_min');
+					checkboxToggleDeps($range_min_detect, $range_min, true);
+					
+					$range_min_detect.on("change",function(){
+						checkboxToggleDeps($(this), $range_min, true);
+					});
+					
+					//max range toggle
+					var $range_max_detect = item.find('.range_max_detect');
+					var $range_max = item.find('.range_max');
+					checkboxToggleDeps($range_max_detect, $range_max, true);
+					
+					$range_max_detect.on("change",function(){
+						checkboxToggleDeps($(this), $range_max, true);
+					});
+					
+					//input type field
+					var $number_input_type_field = item.find('.sf_number_input_type select');
+					
+					showHideFieldsMetaNumber($number_input_type_field.val());
+					$number_input_type_field.change(function(e)
+					{
+						var input_type = $(this).val();
+						showHideFieldsMetaNumber(input_type);
+					});
+					
+					var $sf_display_input_as = item.find('.sf_display_input_as select');
+					showHideFieldsMetaNumberDisplayInputAs($sf_display_input_as.val());
+					$sf_display_input_as.change(function(e)
+					{
+						var display_input_as = $(this).val();
+						showHideFieldsMetaNumberDisplayInputAs(display_input_as);
+					});
+					
 					/* choice */
 					
 					var $input_type_field = item.find('.sf_input_type select');
@@ -700,6 +750,26 @@
 						showHideFields(input_type);
 					});
 					
+					var $input_type_field = item.find('.sf_input_type select');
+					
+					// start off by showing/hiding correct fields
+					showHideFields($input_type_field.val());
+					
+					$input_type_field.change(function(e)
+					{
+						var input_type = $(this).val();
+						showHideFields(input_type);
+					});
+					
+					var $choice_get_options_field = item.find('.sf_choice_get_options select');
+					
+					// start off by showing/hiding correct fields
+					showHideFieldsMetaChoiceOptions($choice_get_options_field.val());
+					$choice_get_options_field.change(function(e)
+					{
+						var input_type = $(this).val();
+						showHideFieldsMetaChoiceOptions(input_type);
+					});
 					
 					/* date */
 					var $date_input_type = item.find('.sf_date_input select');
@@ -1150,10 +1220,12 @@
 				{
 					var $use_same_toggle = $this;
 					var $use_same_parent = $this.closest(".sf_meta_keys");
+					var $compare_mode = $use_same_parent.parent().find(".sf_compare_mode");
 					var $end_key_select = $use_same_parent.find(".meta_key");
 					var $start_key_select = $use_same_parent.prev().find(".start_meta_key");
 					
 					
+					//$compare_mode.css("border", "1px solid #f00");
 					//$end_key_select.css("border", "1px solid #0f0");
 					//$use_same_parent.hide();
 					
@@ -1161,10 +1233,12 @@
 					{
 						$end_key_select.val($start_key_select.val());
 						$end_key_select.prop("disabled", true);
+						$compare_mode.hide();
 					}
 					else
 					{
 						$end_key_select.prop("disabled", false);
+						$compare_mode.show();
 					}
 					
 					/*
@@ -1228,6 +1302,74 @@
 
 				}
 				
+				function checkboxToggleDeps($self, $deps, reverse)
+				{
+					var reverse_dir = false;
+					if(typeof(reverse)!="undefined")
+					{
+						reverse_dir = reverse;
+					}
+					
+					var $inputs = $deps;
+					
+					if($self.is(":checked"))
+					{
+						//enable all fields
+						$inputs.each(function(){
+						
+							var $input = $(this);
+							
+							if(!reverse_dir)
+							{
+								enableInput($input);
+							}
+							else
+							{
+								disableInput($input);
+							}
+							
+						});
+					}
+					else
+					{
+						//disable all fields
+						$inputs.each(function(){
+						
+							var $input = $(this);
+							
+							if(!reverse_dir)
+							{
+								disableInput($input);
+							}
+							else
+							{
+								enableInput($input);
+							}
+							
+						});
+						
+					}
+					
+				}
+				
+				function showHideFieldsMetaNumber(input_type)
+				{
+					var $number_container = item.find(".sf_number");
+					$number_container.attr('data-number-input-type', input_type);
+				}
+				
+				function showHideFieldsMetaChoiceOptions(option_type)
+				{
+					var $choice_container = item.find(".sf_choice");
+					$choice_container.attr('data-choice-get-options', option_type);
+				}
+				
+				function showHideFieldsMetaNumberDisplayInputAs(display_input_as)
+				{
+					var $number_container = item.find(".sf_number");
+					$number_container.attr('data-display-input-as', display_input_as);
+				}
+				
 				function showHideFields(input_type)
 				{
 					if(input_type=="select")
@@ -1236,6 +1378,7 @@
 						item.find(".sf_drill_down").show();
 						item.find(".sf_all_items_label").show();
 						item.find(".sf_make_combobox").show();
+						item.find(".sf_accessibility_label").show();
 					}
 					else if(input_type=="checkbox")
 					{
@@ -1243,6 +1386,7 @@
 						item.find(".sf_drill_down").hide();
 						item.find(".sf_all_items_label").hide();
 						item.find(".sf_make_combobox").hide();
+						item.find(".sf_accessibility_label").hide();
 					}
 					else if(input_type=="radio")
 					{
@@ -1250,6 +1394,7 @@
 						item.find(".sf_drill_down").hide();
 						item.find(".sf_make_combobox").hide();
 						item.find(".sf_all_items_label").show();
+						item.find(".sf_accessibility_label").hide();
 					}
 					else if(input_type=="multiselect")
 					{
@@ -1257,6 +1402,7 @@
 						item.find(".sf_drill_down").hide();
 						item.find(".sf_all_items_label").hide();
 						item.find(".sf_make_combobox").show();
+						item.find(".sf_accessibility_label").show();
 						
 						if(item.find(".sf_make_combobox input").prop("checked"))
 						{
@@ -1272,22 +1418,6 @@
 					{
 						item.find(".sf_date_end_meta_key").show();
 					}
-					else if(input_type=="range-slider")
-					{
-
-					}
-					else if(input_type=="range-number")
-					{
-
-					}
-					else if(input_type=="range-radio")
-					{
-
-					}
-					else if(input_type=="range-checkbox")
-					{
-
-					}
 					
 				}
 				function showHideFieldsAuthor(input_type)
@@ -1297,24 +1427,28 @@
 						//item.find(".sf_operator").hide();
 						item.find(".sf_all_items_label").show();
 						item.find(".sf_make_combobox").show();
+						item.find(".sf_accessibility_label").show();
 					}
 					else if(input_type=="checkbox")
 					{
 						//item.find(".sf_operator").show();
 						item.find(".sf_all_items_label").hide();
 						item.find(".sf_make_combobox").hide();
+						item.find(".sf_accessibility_label").hide();
 					}
 					else if(input_type=="radio")
 					{
 						//item.find(".sf_operator").hide();
 						item.find(".sf_all_items_label").show();
 						item.find(".sf_make_combobox").hide();
+						item.find(".sf_accessibility_label").hide();
 					}
 					else if(input_type=="multiselect")
 					{
 						//item.find(".sf_operator").show();
 						item.find(".sf_all_items_label").hide();
 						item.find(".sf_make_combobox").show();
+						item.find(".sf_accessibility_label").show();
 						
 						if(item.find(".sf_make_combobox input").prop("checked"))
 						{
@@ -1710,6 +1844,9 @@
 	
 		function initSetupField()
 		{
+			var $enable_auto_count = $(".setup .sf_tab_content_settings .enable_auto_count");
+			
+			
 			/* display results - shortcode/archive */
 			var $results_toggle = $(".setup .display_results_as");
 			var $template_table = $('.setup .sf_tab_content_template .template_options_table');
@@ -1738,12 +1875,20 @@
 				$template_sect.show();
 				$tpl_archive_rows.hide();
 			}
-			else if((val=="archive")||(val=="post_type_archive"))
+			else if(val=="archive")
 			{
 				$template_table.removeClass("template_shortcode_options");
 				$template_table.addClass("template_archive_options");
 				$selectors_results_div.hide();
 				$template_sect.show();
+				$tpl_archive_rows.show();
+			}
+			else if(val=="post_type_archive")
+			{
+				$template_table.removeClass("template_shortcode_options");
+				$template_table.addClass("template_archive_options");
+				$selectors_results_div.hide();
+				$template_sect.hide();
 				$tpl_archive_rows.show();
 			}
 			else
@@ -1832,6 +1977,12 @@
 				updateScrollToPos($scroll_to_pos);
 			});
 			
+			autoCountToggle($enable_auto_count);
+			$enable_auto_count.on("change",function(){
+				autoCountToggle($(this));
+				updateScrollToPos($scroll_to_pos);
+			});
+			
 			/* scroll to pos */
 			var $scroll_to_pos = $(".setup .scroll_to_pos");
 			
@@ -1845,13 +1996,23 @@
 			
 			/* sort by */
 			var $default_sort_by = $('.setup .default_sort_by');
-			var $sort_by_meta_container = $('.setup .sort_by_meta_container');
+			var $sort_by_meta_container_default = $('.setup .sort_by_meta_container_default');
 			$default_sort_by.change(function(e)
 			{
-				handleDefaultSortBy($(this), $sort_by_meta_container);
+				handleDefaultSortBy($(this), $sort_by_meta_container_default);
 			});
 			
-			handleDefaultSortBy($default_sort_by, $sort_by_meta_container);
+			handleDefaultSortBy($default_sort_by, $sort_by_meta_container_default);
+			
+			
+			var $secondary_sort_by = $('.setup .secondary_sort_by');
+			var $sort_by_meta_container_secondary = $('.setup .sort_by_meta_container_secondary');
+			$secondary_sort_by.change(function(e)
+			{
+				handleDefaultSortBy($(this), $sort_by_meta_container_secondary);
+			});
+			
+			handleDefaultSortBy($secondary_sort_by, $sort_by_meta_container_secondary);
 			
 				
 		}
@@ -1882,6 +2043,32 @@
 				}
 			}
 			
+			
+		}
+		function autoCountToggle($self)
+		{
+			var $inputs = $self.closest("tr").find(".auto_count_refresh_mode");
+			
+			if($self.is(":checked"))
+			{
+				//enable all fields
+				$inputs.each(function(){
+				
+					var $input = $(this);
+					enableInput($input);
+					
+				});
+			}
+			else
+			{
+				//disable all fields
+				$inputs.each(function(){
+				
+					var $input = $(this);
+					disableInput($input);
+				});
+				
+			}
 			
 		}
 		function ajaxToggle($self)

@@ -3,8 +3,8 @@ Contributors: DesignsAndCode
 Donate link: 
 Tags: posts, custom posts, products, category, filter, taxonomy, post meta, custom fields, search, wordpress, post type, post date, author
 Requires at least: 3.5
-Tested up to: 4.3
-Stable tag: 2.0.3
+Tested up to: 4.4
+Stable tag: 2.1.0
 
 Search and Filtering for posts, products and custom posts. Allow your users to Search & Filter by taxonomies, custom fields and more.
 
@@ -56,6 +56,47 @@ Great for searching in your online shop, tested with: WooCommerce and WP eCommer
 
 
 == Changelog ==
+
+= 2.1.0 =
+
+* Notice - depth classes for hierarchical fields fields have renamed to avoid conflicts - from `.level-0` to `.sf-level-0`
+* Notice - properly prefix range & min / max classes = from `.range-min`, `.range-max` and `.meta-range`  to `.sf-range-min`, `.sf-range-max` and `.sf-meta-range`
+* New - sync meta fields - when using "number" or "choice" type meta fields, the values can now be auto detected - values can also be sorted
+* New - sync ACF fields - use above in choice fields with auto detection - S&F can now retreive built in ACF labels for values too
+* New - added support for ordering by multiple fields (the default posts order)
+* New - added support for ordering posts by Post Type
+* New - lots of improvements to post meta fields (number) more UI options and input types
+* New - added support for decimals and number formatting in post meta (number) fields
+* New - new compare options for date range and number fields - great for date ranges and bookings/promotional systems
+* New - added sort by relevance option for Relevanssi under the Advanced tab
+* New - added options to control the display of sticky posts (under the Posts tab)
+* New - Settings page
+* New - Settings - control caching speed & background processes
+* New - Settings - added settings to lazyload JS and an option to load jQuery language files for the datepicker
+* New - accessibility - WCAG 2.0 compliant - some html restructuring (mostly adding in labels) and added screen reader text option to all text/number input fields and selects
+* New - filter - allows users to filter any field in the search form and most of the options
+* New - added counts to the active query class
+* Improvement - authors now use slugs instead of IDs in the URL
+* Improvement - updated Chosen & noUiSlider to their latest versions
+* Improvement - show internal taxonomy names as well as labels throughout admin UI
+* Improvement - support for WooCommerce shop when it is set to category display
+* Improvement - speed updates/optimisations to the cache and auto count
+* Improvement - better admin notices & warnings
+* Fix - issues with WPML and loading the correct taxonomies etc
+* Fix - issues with caching and the attachment post type
+* Fix - an issue where getting counts for taxonomies was occuring twice
+* Fix - URL Encoding issue with meta fields
+* Fix - an issue when using multiple search forms on a single page & pagination not working correctly
+* Fix - removed an error message which was showing whenever the cache was restarting - it was unnecessary
+* Fix - whitespace being trimmed from textareas in certain field types
+* Fix - some pagination issues when using post type archive
+* Fix - do not enable auto count by default
+* Fix - Post Type archive display method now properly uses the Posts Page (as defined under `settings` -> `reading`) where applicable when the post type is set to `post`
+* Fix - a bug where html entities were matched when searching in chosen comboboxes such as `nbsp`
+* Fix - an admin bug where selecting Post Type Archive as the results method would show the wrong options after saving
+* Fix - a few admin UI bugs
+* Fix - a bug with the ajax start/end events
+* WP 4.4 compat - tested with 2016 theme
 
 = 2.0.3 =
 
@@ -122,7 +163,7 @@ Great for searching in your online shop, tested with: WooCommerce and WP eCommer
 * Fix - Admin - function definition in wrong scope causing errors in strict mode on some browsers
 * Removed - .postform classes that have crept back into build - but added classes and IDs on every input element
 * Removed - the global $sf_form_data - changed to $searchandfilter
-* Notice - you should now longer use `pre_get_posts` to modify queries, there is a new filter which takes an array of arguments `sf_edit_query_args` which must be used to also update count number and other non main queries
+* Notice - you should no longer use `pre_get_posts` to modify queries, there is a new filter which takes an array of arguments `sf_edit_query_args` which must be used to also update count number and other non main queries
 * In progress - support for PolyLang - testing so far seems good
 
 = 1.4.3.1 =

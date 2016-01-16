@@ -164,6 +164,7 @@ class Search_Filter_Posts_Admin {
 		$settings['inherit_current_author_archive'] = "";
 		$settings['inherit_current_date_archive'] = "";
 		$settings['use_relevanssi'] = "";
+		$settings['use_relevanssi_sort'] = "";
 		$settings['treat_child_posts_as_parent'] = "";
 		$settings['use_woocommerce'] = "";
 		$settings['force_is_search'] = "";
@@ -180,6 +181,7 @@ class Search_Filter_Posts_Admin {
 		$settings['field_relation'] = "and";
 		$settings['meta_relation'] = ""; /* todo */
 		$settings['default_sort_by'] = "";
+		$settings['sticky_posts'] = "";
 		$settings['default_sort_dir'] = "";
 		$settings['settings_post_meta'] = "";
 		
@@ -225,7 +227,9 @@ class Search_Filter_Posts_Admin {
 		
 		if(isset($_POST['template_name_manual']))
 		{
-			$settings['template_name_manual'] = $this->sanitize_template_path($_POST['template_name_manual']);
+			//$settings['template_name_manual'] = $this->sanitize_template_path($_POST['template_name_manual']);
+			//$settings['template_name_manual'] = sanitize_file_name($_POST['template_name_manual']); //this removes slashes
+			$settings['template_name_manual'] = esc_attr($_POST['template_name_manual']); //this removes slashes
 		}
 		
 		if(isset($_POST['page_slug']))
@@ -376,6 +380,11 @@ class Search_Filter_Posts_Admin {
 		{
 			$settings['use_relevanssi'] = $this->post_data_validation->sanitize_checkbox($_POST['use_relevanssi']);
 		}
+		if(isset($_POST['use_relevanssi_sort']))
+		{
+			$settings['use_relevanssi_sort'] = $this->post_data_validation->sanitize_checkbox($_POST['use_relevanssi_sort']);
+		}
+		
 		if(isset($_POST['treat_child_posts_as_parent']))
 		{
 			$settings['treat_child_posts_as_parent'] = $this->post_data_validation->sanitize_checkbox($_POST['treat_child_posts_as_parent']);
@@ -464,10 +473,14 @@ class Search_Filter_Posts_Admin {
 			$settings['field_relation'] = sanitize_key($_POST['field_relation']);
 		}
 		
-		
+		/* ORDER PARAMETERS */
 		if(isset($_POST['default_sort_by']))
 		{
 			$settings['default_sort_by'] = sanitize_text_field($_POST['default_sort_by']);
+		}
+		if(isset($_POST['sticky_posts']))
+		{
+			$settings['sticky_posts'] = sanitize_text_field($_POST['sticky_posts']);
 		}
 		
 		if(isset($_POST['default_sort_dir']))
@@ -479,10 +492,33 @@ class Search_Filter_Posts_Admin {
 			$settings['default_meta_key'] = sanitize_text_field($_POST['default_meta_key']);
 		}
 		
+		
 		if(isset($_POST['default_sort_type']))
 		{
 			$settings['default_sort_type'] = sanitize_text_field($_POST['default_sort_type']);
 		}
+		
+		if(isset($_POST['secondary_sort_by']))
+		{
+			$settings['secondary_sort_by'] = sanitize_text_field($_POST['secondary_sort_by']);
+		}
+		
+		if(isset($_POST['secondary_sort_dir']))
+		{
+			$settings['secondary_sort_dir'] = sanitize_text_field($_POST['secondary_sort_dir']);
+		}
+		if(isset($_POST['secondary_meta_key']))
+		{
+			$settings['secondary_meta_key'] = sanitize_text_field($_POST['secondary_meta_key']);
+		}
+		
+		if(isset($_POST['secondary_sort_type']))
+		{
+			$settings['secondary_sort_type'] = sanitize_text_field($_POST['secondary_sort_type']);
+		}
+		
+		
+		
 		
 		if(isset($_POST['settings_taxonomies']))
 		{
@@ -751,10 +787,11 @@ class Search_Filter_Posts_Admin {
 			'inherit_current_date_archive'			=> '',
 			
 			'use_relevanssi'						=> '',
+			'use_relevanssi_sort'					=> '',
 			'treat_child_posts_as_parent'			=> '',
 			//'is_woocommerce'						=> '',
 			'force_is_search'						=> '',
-			'ajax_target'							=> '#content',
+			'ajax_target'							=> '#main',
 			'results_url'							=> '',
 			'ajax_links_selector'					=> '.pagination a',
 			'auto_submit'							=> '',
@@ -772,10 +809,19 @@ class Search_Filter_Posts_Admin {
 			'results_per_page'						=> get_option('posts_per_page'),
 			'exclude_post_ids'						=> '',
 			'field_relation'						=> 'and',
+			
+			'sticky_posts'							=> '',
+			
 			'default_sort_by'						=> '',
 			'default_sort_dir'						=> '',
 			'default_meta_key'						=> '',
 			'default_sort_type'						=> '',
+			
+			'secondary_sort_by'						=> '',
+			'secondary_sort_dir'					=> '',
+			'secondary_meta_key'					=> '',
+			'secondary_sort_type'					=> '',
+			
 			'post_status' 							=> array(
 														"publish" => "",
 														"pending" => "",
@@ -933,13 +979,15 @@ class Search_Filter_Posts_Admin {
 		return $this->post_meta_keys;
 	}
 	
-	function display_meta_box_field($type, $widget_data = array())
+	function display_meta_box_field($type, $widget_data = array(), $object = array())
 	{
 		if($type=="search")
 		{
 			$defaults = array(
-				'heading'				=> '',
-				'placeholder'			=> __("Search &hellip;", $this->plugin_slug),
+				'heading'					=> '',
+				'placeholder'				=> __("Search &hellip;", $this->plugin_slug),
+				'accessibility_label'		=> '',
+				
 				'type'					=> $type
 			);
 			
@@ -954,6 +1002,7 @@ class Search_Filter_Posts_Admin {
 				'input_type'			=> '',
 				'heading'				=> '',
 				'all_items_label'		=> '',
+				'accessibility_label'	=> '',
 				'operator'				=> '',
 				'show_count'			=> '1',
 				'hide_empty'			=> '',
@@ -979,6 +1028,7 @@ class Search_Filter_Posts_Admin {
 				'input_type'			=> '',
 				'heading'				=> '',
 				'all_items_label'		=> '',
+				'accessibility_label'	=> '',
 				'operator'				=> '',
 				'show_count'			=> '1',
 				'hide_empty'			=> '',
@@ -1004,6 +1054,7 @@ class Search_Filter_Posts_Admin {
 				'input_type'			=> '',
 				'heading'				=> '',
 				'all_items_label'		=> '',
+				'accessibility_label'	=> '',
 				'operator'				=> '',
 				'show_count'			=> '1',
 				'hide_empty'			=> '',
@@ -1029,6 +1080,7 @@ class Search_Filter_Posts_Admin {
 				'input_type'			=> '',
 				'heading'				=> '',
 				'all_items_label'		=> '',
+				'accessibility_label'	=> '',
 				'show_count'			=> '',
 				'hide_empty'			=> '',
 				'order_by'				=> '',
@@ -1046,6 +1098,7 @@ class Search_Filter_Posts_Admin {
 			$defaults = array(
 				'input_type'			=> '',
 				'heading'				=> '',
+				'accessibility_label'	=> '',
 				'date_format'			=> 'd/m/Y',
 				'type'					=> $type,
 
@@ -1086,6 +1139,11 @@ class Search_Filter_Posts_Admin {
 				
 				'choice_heading'			=> '',
 				'choice_meta_key'			=> '',
+				'choice_get_option_mode'	=> 'auto',
+				'choice_order_option_by'	=> 'value',
+				'choice_order_option_dir'	=> 'asc',
+				'choice_order_option_type'	=> 'alphabetic',
+				'choice_is_acf'				=> '',
 				
 				'number_heading'			=> '',
 				'number_start_meta_key'		=> '',
@@ -1107,18 +1165,33 @@ class Search_Filter_Posts_Admin {
 				'date_use_dropdown_month'	=> '',
 				'date_use_dropdown_year'	=> '',
 				
+				'range_min_detect'					=> '',
+				'range_max_detect'					=> '',
 				'range_min'					=> '0',
 				'range_max'					=> '1000',
 				'range_step'				=> '10',
+				
+				'thousand_seperator'		=> '',
+				'decimal_places'			=> '0',
+				'number_decimal_places'		=> '2',
+				'number_values_seperator'	=> ' - ',
+				'number_display_values_as'	=> 'textinput',
+				'number_display_input_as'	=> 'singlefield',
+			
 				'range_value_prefix'		=> '',
 				'range_value_postfix'		=> '',
 				
 				'date_output_format'		=> 'd/m/Y',
 				'date_input_format'			=> 'timestamp',
+				'date_compare_mode'			=> 'userrange',
+				'number_compare_mode'		=> 'userrange',
 				
-				'all_items_label'			=> '',
-				'operator'					=> '',
-
+				'all_items_label'				=> '',
+				'date_accessibility_label'		=> '',
+				'number_accessibility_label'	=> '',
+				'choice_accessibility_label'	=> '',
+				'all_items_label_number'		=> '',
+				'operator'						=> '',
 				
 				'meta_options'				=> array(),
 				
@@ -1127,6 +1200,17 @@ class Search_Filter_Posts_Admin {
 			
 			$values = array_replace($defaults, $widget_data);
 			
+			
+			//legacy - any search forms without the get option mode set, must be set to manual (because the are from previous versions)
+			if(!empty($object))
+			{
+				if((get_post_status($object->ID)!="auto-draft")&&(!isset($widget_data['choice_get_option_mode'])))
+				{
+					$values['choice_get_option_mode'] = "manual";
+					
+				}
+			}
+			
 			include( ( plugin_dir_path( dirname( __FILE__ ) ) ) . 'views/fields/post-meta.php' );
 		}
 		else if($type=="author")
@@ -1134,6 +1218,7 @@ class Search_Filter_Posts_Admin {
 			$defaults = array(
 				'input_type'				=> '',
 				'heading'					=> '',
+				'accessibility_label'		=> '',
 				'optioncount'				=> '',
 				'exclude_admin'				=> '',
 				'show_fullname'				=> '',
@@ -1185,6 +1270,7 @@ class Search_Filter_Posts_Admin {
 				'input_type'				=> '',
 				'heading'					=> '',
 				'all_items_label'			=> '',
+				'accessibility_label'		=> '',
 				'sort_options'				=> array(),
 				'type'						=> $type
 			);

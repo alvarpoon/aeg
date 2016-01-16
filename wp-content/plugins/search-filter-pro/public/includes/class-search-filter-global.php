@@ -17,6 +17,7 @@ class Search_Filter_Global
 	private $results_ids = array();
 	private $sf_queries;
 	private $post_cache;
+	private $pagination_init;
 	
 	private $data;
 	
@@ -24,11 +25,14 @@ class Search_Filter_Global
 	{
 		$this->plugin_slug = $plugin_slug;
 		$this->post_cache = new Search_Filter_Post_Cache();
+		$this->pagination_init = false;
 		
 		add_action('search_filter_prep_query', array($this, 'set'), 10);
-		add_action('search_filter_archive_query', array($this, 'do_query'), 10);
+		add_action('search_filter_archive_query', array($this, 'do_query'), 10);//legacy
+		add_action('search_filter_do_query', array($this, 'do_query'), 10);
 		add_action('search_filter_setup_pagination', array($this, 'setup_pagination'), 10);
 		add_action('search_filter_update_post_cache', array($this, 'update_cache'), 10);
+		add_action('search_filter_pagination_init', array($this, 'set_pagination_init'), 10);
 		
 		$this->data = new stdClass();
 	}
@@ -87,6 +91,16 @@ class Search_Filter_Global
 	public function update_cache($postID)
 	{		
 		$this->post_cache->update_post_cache($postID);
+	}
+	
+	public function set_pagination_init()
+	{		
+		$this->pagination_init = true;
+	}
+	
+	public function has_pagination_init()
+	{		
+		return $this->pagination_init;
 	}
 }
 

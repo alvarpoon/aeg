@@ -97,9 +97,9 @@ class Search_Filter_Register_Widget extends WP_Widget
 						<?php //
 							$custom_posts = new WP_Query('post_type=search-filter-widget&post_status=publish&posts_per_page=-1');
 							
-							if ( function_exists('icl_object_id') )
+							if ( Search_Filter_Helper::has_wpml() )
 							{
-								$formid = icl_object_id($formid, 'search-filter-widget', true, ICL_LANGUAGE_CODE);
+								$formid = Search_Filter_Helper::wpml_object_id($formid, 'search-filter-widget', true, ICL_LANGUAGE_CODE);
 							}
 							
 							//var_dump($custom_posts);

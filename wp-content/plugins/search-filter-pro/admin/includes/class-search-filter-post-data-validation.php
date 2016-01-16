@@ -84,6 +84,7 @@ class Search_Filter_Post_Data_Validation {
 		$clean_widget['type'] = sanitize_text_field($widget_data['type']);
 		$clean_widget['heading'] = sanitize_text_field($widget_data['heading']);
 		$clean_widget['placeholder'] = sanitize_text_field($widget_data['placeholder']);
+		$clean_widget['accessibility_label'] = sanitize_text_field($widget_data['accessibility_label']);
 		
 		return $clean_widget;
 	}
@@ -101,6 +102,7 @@ class Search_Filter_Post_Data_Validation {
 			'hide_empty'			=> '',
 			'hierarchical'			=> '',
 			'include_children'		=> '',
+			'accessibility_label'	=> '',
 			'drill_down'			=> '',
 			'order_by'				=> '',
 			'order_dir'				=> '',
@@ -117,6 +119,7 @@ class Search_Filter_Post_Data_Validation {
 		$clean_widget['input_type'] = sanitize_key($widget_data['input_type']);
 		
 		$clean_widget['heading'] = sanitize_text_field($widget_data['heading']);
+		$clean_widget['accessibility_label'] = sanitize_text_field($widget_data['accessibility_label']);
 		$clean_widget['all_items_label'] = sanitize_text_field($widget_data['all_items_label']);
 		
 		$clean_widget['show_count'] = $this->sanitize_checkbox($widget_data['show_count']);
@@ -156,6 +159,8 @@ class Search_Filter_Post_Data_Validation {
 			'all_items_label'		=> '',
 			'show_count'			=> '',
 			'hide_empty'			=> '',
+			'accessibility_label'	=> '',
+			
 			'order_by'				=> '',
 			'order_dir'				=> '',
 			'combo_box'				=> ''
@@ -174,6 +179,7 @@ class Search_Filter_Post_Data_Validation {
 		
 		$clean_widget['heading'] = sanitize_text_field($widget_data['heading']);
 		$clean_widget['all_items_label'] = sanitize_text_field($widget_data['all_items_label']);
+		$clean_widget['accessibility_label'] = sanitize_text_field($widget_data['accessibility_label']);
 		
 		$clean_widget['combo_box'] = $this->sanitize_checkbox($widget_data['combo_box']);
 		
@@ -195,7 +201,8 @@ class Search_Filter_Post_Data_Validation {
 		$defaults = array(
 			'input_type'			=> '',
 			'heading'				=> '',
-			'date_format'			=> ''
+			'date_format'			=> '',
+			'accessibility_label'	=> ''
 			
 		);
 
@@ -205,6 +212,8 @@ class Search_Filter_Post_Data_Validation {
 		
 		$clean_widget['input_type'] = sanitize_key($widget_data['input_type']);
 		$clean_widget['heading'] = sanitize_text_field($widget_data['heading']);
+		$clean_widget['accessibility_label'] = sanitize_text_field($widget_data['accessibility_label']);
+		
 		$clean_widget['date_format'] = sanitize_text_field($widget_data['date_format']);
 
 		
@@ -236,6 +245,7 @@ class Search_Filter_Post_Data_Validation {
 			'hide_empty'				=> '',
 			'operator'					=> '',
 			'all_items_label'			=> '',
+			'accessibility_label'		=> '',
 			'exclude'					=> '',
 			'combo_box'					=> ''
 		);
@@ -248,6 +258,7 @@ class Search_Filter_Post_Data_Validation {
 		
 		$clean_widget['heading'] = sanitize_text_field($widget_data['heading']);
 		$clean_widget['all_items_label'] = sanitize_text_field($widget_data['all_items_label']);
+		$clean_widget['accessibility_label'] = sanitize_text_field($widget_data['accessibility_label']);
 		
 		$clean_widget['optioncount'] = $this->sanitize_checkbox($widget_data['optioncount']);
 		$clean_widget['exclude_admin'] = $this->sanitize_checkbox($widget_data['exclude_admin']);
@@ -281,10 +292,18 @@ class Search_Filter_Post_Data_Validation {
 			'choice_heading'			=> '',
 			'choice_meta_key'			=> '',
 			
+			'choice_get_option_mode'	=> 'auto',
+			'choice_order_option_by'	=> 'value',
+			'choice_order_option_dir'	=> 'asc',
+			'choice_order_option_type'	=> 'alphabetic',
+			'choice_is_acf'				=> '',
+			'choice_accessibility_label'	=> '',
+			
 			'number_heading'			=> '',
 			'number_start_meta_key'		=> '',
 			'number_end_meta_key'		=> '',
 			'number_use_same_toggle'	=> '',
+			'number_accessibility_label'	=> '',
 			
 			'date_heading'				=> '',
 			'date_start_meta_key'		=> '',
@@ -299,6 +318,7 @@ class Search_Filter_Post_Data_Validation {
 			'date_to_placeholder'		=> '',
 			'date_use_dropdown_year'	=> '',
 			'date_use_dropdown_month'	=> '',
+			'date_accessibility_label'	=> '',
 			
 			'number_input_type'			=> '',
 			'number_is_decimal'			=> '',
@@ -308,17 +328,30 @@ class Search_Filter_Post_Data_Validation {
 			'hide_empty'				=> '',
 			'date_input_type'			=> '',
 			
+			'range_min_detect'					=> '',
+			'range_max_detect'					=> '',
 			'range_min'					=> '0',
 			'range_max'					=> '1000',
 			'range_step'				=> '10',
+			
+			'thousand_seperator'		=> '',
+			'decimal_places'			=> '0',
+			'number_decimal_places'		=> '2',
+			'number_values_seperator'	=> ' - ',
+			'number_display_values_as'	=> 'textinput',
+			'number_display_input_as'	=> 'singlefield',
+			
 			'range_value_prefix'		=> '',
 			'range_value_postfix'		=> '',
 			
 			'date_output_format'		=> 'd/m/Y',
 			'date_input_format'			=> 'timestamp',
+			'date_compare_mode'			=> 'userrange',
+			'number_compare_mode'		=> 'userrange',
 			
 			'operator'					=> '',
 			'all_items_label'			=> '',
+			'all_items_label_number'	=> '',
 			
 			'meta_options'				=> array()
 		);
@@ -347,11 +380,20 @@ class Search_Filter_Post_Data_Validation {
 		
 		$clean_widget['choice_meta_key'] = sanitize_text_field($widget_data['choice_meta_key']);
 		
+		$clean_widget['choice_accessibility_label'] = sanitize_text_field($widget_data['choice_accessibility_label']);
+		$clean_widget['choice_get_option_mode'] = sanitize_key($widget_data['choice_get_option_mode']);
+		$clean_widget['choice_order_option_by'] = sanitize_key($widget_data['choice_order_option_by']);
+		$clean_widget['choice_order_option_dir'] = sanitize_key($widget_data['choice_order_option_dir']);
+		$clean_widget['choice_order_option_type'] = sanitize_key($widget_data['choice_order_option_type']);
+		$clean_widget['choice_is_acf'] = $this->sanitize_checkbox($widget_data['choice_is_acf']);
+		
+		$clean_widget['date_accessibility_label'] = sanitize_text_field($widget_data['date_accessibility_label']);
 		$clean_widget['date_meta_key'] = sanitize_text_field($widget_data['date_meta_key']);
 		$clean_widget['date_start_meta_key'] = sanitize_text_field($widget_data['date_start_meta_key']);
 		$clean_widget['date_end_meta_key'] = sanitize_text_field($widget_data['date_end_meta_key']);
 		$clean_widget['date_use_same_toggle'] = $this->sanitize_checkbox($widget_data['date_use_same_toggle']);
 		
+		$clean_widget['number_accessibility_label'] = sanitize_text_field($widget_data['number_accessibility_label']);
 		$clean_widget['number_start_meta_key'] = sanitize_text_field($widget_data['number_start_meta_key']);
 		$clean_widget['number_end_meta_key'] = sanitize_text_field($widget_data['number_end_meta_key']);
 		$clean_widget['number_use_same_toggle'] = $this->sanitize_checkbox($widget_data['number_use_same_toggle']);
@@ -374,61 +416,146 @@ class Search_Filter_Post_Data_Validation {
 		}
 		
 
-		$clean_widget['date_from_prefix'] = sanitize_text_field($widget_data['date_from_prefix']);
-		$clean_widget['date_from_postfix'] = sanitize_text_field($widget_data['date_from_postfix']);
+		$clean_widget['date_from_prefix'] = $this->sanitize_text_field_kws($widget_data['date_from_prefix']);
+		$clean_widget['date_from_postfix'] = $this->sanitize_text_field_kws($widget_data['date_from_postfix']);
 		$clean_widget['date_from_placeholder'] = sanitize_text_field($widget_data['date_from_placeholder']);
-		$clean_widget['date_to_prefix'] = sanitize_text_field($widget_data['date_to_prefix']);
-		$clean_widget['date_to_postfix'] = sanitize_text_field($widget_data['date_to_postfix']);
+		$clean_widget['date_to_prefix'] = $this->sanitize_text_field_kws($widget_data['date_to_prefix']);
+		$clean_widget['date_to_postfix'] = $this->sanitize_text_field_kws($widget_data['date_to_postfix']);
 		$clean_widget['date_to_placeholder'] = sanitize_text_field($widget_data['date_to_placeholder']);
 
 		$clean_widget['date_use_dropdown_month'] = $this->sanitize_checkbox($widget_data['date_use_dropdown_month']);
 		$clean_widget['date_use_dropdown_year'] = $this->sanitize_checkbox($widget_data['date_use_dropdown_year']);
 		
+		$clean_widget['decimal_places'] = (int)$widget_data['decimal_places'];
+		if($clean_widget['decimal_places']>5)
+		{
+			$clean_widget['decimal_places'] = 5;
+		}
+		else if($clean_widget['decimal_places']<0)
+		{
+			$clean_widget['decimal_places'] = 0;
+		}
 		
-		$clean_widget['range_min'] = (int)$widget_data['range_min'];
-		$clean_widget['range_max'] = (int)$widget_data['range_max'];
-		$clean_widget['range_step'] = (int)$widget_data['range_step'];
+		$clean_widget['number_decimal_places'] = (int)$widget_data['number_decimal_places'];
+		if($clean_widget['number_decimal_places']>5)
+		{
+			$clean_widget['number_decimal_places'] = 5;
+		}
+		else if($clean_widget['number_decimal_places']<0)
+		{
+			$clean_widget['number_decimal_places'] = 0;
+		}
+		$clean_widget['thousand_seperator'] = $this->sanitize_text_field_kws($widget_data['thousand_seperator']);
+		$clean_widget['number_values_seperator'] = $this->sanitize_text_field_kws($widget_data['number_values_seperator']);
+		$clean_widget['number_display_values_as'] = sanitize_text_field($widget_data['number_display_values_as']);
+		$clean_widget['number_display_input_as'] = sanitize_text_field($widget_data['number_display_input_as']);
 		
-		$clean_widget['range_value_prefix'] = sanitize_text_field($widget_data['range_value_prefix']);
-		$clean_widget['range_value_postfix'] = sanitize_text_field($widget_data['range_value_postfix']);
+		$clean_widget['range_min_detect'] = $this->sanitize_checkbox($widget_data['range_min_detect']);
+		$clean_widget['range_max_detect'] = $this->sanitize_checkbox($widget_data['range_max_detect']);
+		
+		//convert all numeric data to correct format based on decimal places and `is_decimal`
+		$range_min = $widget_data['range_min'];
+		$range_max = $widget_data['range_max'];
+		$range_step = $widget_data['range_step'];
+		$decimal_point = '.';
+		
+		if($clean_widget['number_is_decimal']==0)
+		{//if data is not actually decimal, its really only cosmetic to display the the decimal places - so remove all decimals to reset them to 0 on the next `number_format` call
+			$range_min = number_format( $range_min, 0, $decimal_point, '' );
+			$range_max = number_format( $range_max, 0, $decimal_point, '' );
+			$range_step = number_format( $range_step, 0, $decimal_point, '' );
+			
+		}
+		else
+		{//also remove any data in extra decimal places
+			$range_min = number_format( $range_min, $clean_widget['number_decimal_places'], $decimal_point, '' );
+			$range_max = number_format( $range_max, $clean_widget['number_decimal_places'], $decimal_point, '' );
+			$range_step = number_format( $range_step, $clean_widget['number_decimal_places'], $decimal_point, '' );
+		}
+		
+		$clean_widget['range_min'] = number_format( $range_min, $clean_widget['decimal_places'], $decimal_point, '' );
+		$clean_widget['range_max'] = number_format( $range_max, $clean_widget['decimal_places'], $decimal_point, '' );
+		$clean_widget['range_step'] = number_format( $range_step, $clean_widget['decimal_places'], $decimal_point, '' );
+		
+		
+		$clean_widget['range_value_prefix'] = $this->sanitize_text_field_kws($widget_data['range_value_prefix']);
+		$clean_widget['range_value_postfix'] = $this->sanitize_text_field_kws($widget_data['range_value_postfix']);
 		
 		$clean_widget['date_input_format'] = sanitize_text_field($widget_data['date_input_format']);
+		$clean_widget['date_compare_mode'] = sanitize_text_field($widget_data['date_compare_mode']);
+		$clean_widget['number_compare_mode'] = sanitize_text_field($widget_data['number_compare_mode']);
+		
 		$clean_widget['date_output_format'] = sanitize_text_field($widget_data['date_output_format']);
 		
 		$clean_widget['all_items_label'] = sanitize_text_field($widget_data['all_items_label']);
+		$clean_widget['all_items_label_number'] = sanitize_text_field($widget_data['all_items_label_number']);
 		$clean_widget['operator'] = sanitize_key($widget_data['operator']);
 		
 		$clean_widget['meta_options'] = array();
 		$so_count = 0;
 		
-		if(isset($widget_data['meta_options']))
+		if($clean_widget['choice_get_option_mode']=="manual")
 		{
-			foreach($widget_data['meta_options'] as $meta_option)
+			if(isset($widget_data['meta_options']))
 			{
-				
-				$clean_widget['meta_options'][$so_count] = array();
-				
-				foreach($meta_option as $key=>$val)
+				foreach($widget_data['meta_options'] as $meta_option)
 				{
 					
-					if($key=='option_value')
+					$clean_widget['meta_options'][$so_count] = array();
+					
+					foreach($meta_option as $key=>$val)
 					{
-						$clean_widget['meta_options'][$so_count][$key] = sanitize_text_field($val);
-					}
-					else if($key=='option_label')
-					{
-						$clean_widget['meta_options'][$so_count][$key] = sanitize_text_field($val);
+						
+						if($key=='option_value')
+						{
+							$clean_widget['meta_options'][$so_count][$key] = sanitize_text_field($val);
+						}
+						else if($key=='option_label')
+						{
+							$clean_widget['meta_options'][$so_count][$key] = sanitize_text_field($val);
+						}
+						
 					}
 					
+					$so_count++;
 				}
-				
-				$so_count++;
 			}
 		}
-		
 		return $clean_widget;
 	}
-	
+	function sanitize_text_field_kws( $str ) {
+		$filtered = wp_check_invalid_utf8( $str );
+
+		if ( strpos($filtered, '<') !== false ) {
+			$filtered = wp_pre_kses_less_than( $filtered );
+			// This will strip extra whitespace for us.
+			$filtered = wp_strip_all_tags( $filtered, true );
+		} else {
+			$filtered = ( preg_replace('/[\r\n\t ]+/', ' ', $filtered) );
+		}
+
+		$found = false;
+		while ( preg_match('/%[a-f0-9]{2}/i', $filtered, $match) ) {
+			$filtered = str_replace($match[0], '', $filtered);
+			$found = true;
+		}
+
+		if ( $found ) {
+			// Strip out the whitespace that may now exist after removing the octets.
+			$filtered = trim( preg_replace('/ +/', ' ', $filtered) );
+		}
+
+		/**
+		 * Filter a sanitized text field string.
+		 *
+		 * @since 2.9.0
+		 *
+		 * @param string $filtered The sanitized string.
+		 * @param string $str      The string prior to being sanitized.
+		 */
+		return apply_filters( 'sanitize_text_field', $filtered, $str );
+	}
+
 	private function clean_sort_order_widget($widget_data)
 	{
 		$clean_widget = array();
@@ -441,6 +568,7 @@ class Search_Filter_Post_Data_Validation {
 			'sort_dir'					=> '',
 			'sort_label'				=> '',*/
 			'input_type'				=> '',
+			'accessibility_label'		=> '',
 			'heading'					=> '',
 			'all_items_label'			=> '',
 			'sort_options'				=> array()
@@ -458,6 +586,7 @@ class Search_Filter_Post_Data_Validation {
 		
 		$clean_widget['heading'] = sanitize_text_field($widget_data['heading']);
 		$clean_widget['all_items_label'] = sanitize_text_field($widget_data['all_items_label']);
+		$clean_widget['accessibility_label'] = sanitize_text_field($widget_data['accessibility_label']);
 		
 		$clean_widget['sort_options'] = array();
 		$so_count = 0;

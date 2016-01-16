@@ -6,8 +6,8 @@ Tags: registration, profile, user registration, custom field registration, custo
 custom registration, custom registration form, custom registration page, extra user fields, registration page, user custom fields, user listing, user login, user registration form, front-end login, 
 front-end register, front-end registration, frontend edit profile, edit profileregistration, customize profile, user fields, builder, profile builder, custom fields, avatar
 Requires at least: 3.6
-Tested up to: 4.3.1
-Stable tag: 2.2.7
+Tested up to: 4.4.1
+Stable tag: 2.2.8
 
 
 Login, registration and edit profile shortcodes for the front-end. Also you can chose what fields should be displayed or add custom ones.
@@ -97,6 +97,10 @@ This plugin only adds/removes fields in the front-end. The default information-f
 
 
 == Changelog ==
+
+= 2.2.8 =
+Translation updates
+Changed User Registered date and time according to timezone selected in WordPress settings
 
 = 2.2.7 =
 Translation updates
@@ -702,3 +706,4 @@ Changes to the ReadMe File
 
 = 1.0 =
 Added the posibility of displaying/hiding default WordPress information-fields, and to modify basic layout.
+

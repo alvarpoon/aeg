@@ -28,6 +28,7 @@
 					<option value="author"<?php $this->set_selected($values['sort_by'], "author"); ?>><?php _e("Author", $this->plugin_slug); ?></option>
 					<option value="title"<?php $this->set_selected($values['sort_by'], "title"); ?>><?php _e("Title", $this->plugin_slug); ?></option>
 					<option value="name"<?php $this->set_selected($values['sort_by'], "name"); ?>><?php _e("Name (Post Slug)", $this->plugin_slug); ?></option>
+					<option value="type"<?php $this->set_selected($values['sort_by'], "type"); ?>><?php _e("Type (Post Type)", $this->plugin_slug); ?></option>
 					<option value="date"<?php $this->set_selected($values['sort_by'], "date"); ?>><?php _e("Date", $this->plugin_slug); ?></option>
 					<option value="modified"<?php $this->set_selected($values['sort_by'], "modified"); ?>><?php _e("Last Modified Date", $this->plugin_slug); ?></option>
 					<option value="parent"<?php $this->set_selected($values['sort_by'], "parent"); ?>><?php _e("Parent ID", $this->plugin_slug); ?></option>

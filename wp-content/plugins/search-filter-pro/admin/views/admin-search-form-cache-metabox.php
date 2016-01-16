@@ -12,8 +12,9 @@
 
 <div id="cache-info" class="widgets-search-filter-draggables ui-search-filter-sortable setup" data-allow-expand="0">
 	<p class="description-inline notice-building notice-rc-error" style="background-color:#FFDCD6;padding:10px;border:1px solid #F2C7B4;">
-		<?php _e("<strong>Notice</strong>: you must leave this page open to complete caching<br /><br /><em>Running background processes failed in this environment.</em>", $this->plugin_slug); ?>			
+		<?php _e("<strong>Notice</strong>: Running background processes is either disabled or has failed in this environment.<br /><br />Therefore you must leave this page open to complete caching.", $this->plugin_slug); ?>			
 	</p>
+	
 	<?php
 		global $post;
 		
@@ -131,6 +132,7 @@
 		<p class="description-inline notice-stalled">
 			<?php _e("<strong>Caching paused: </strong> attempting to resume...", $this->plugin_slug); ?>	
 		</p>
+		
 		<p class="description-inline notice-building notice-alert">
 			<?php _e("Search results will only contain posts when caching has completed.", $this->plugin_slug); ?>			
 		</p>
@@ -166,6 +168,9 @@
 		<p class="description-inline">
 			<?php _e("Changes have been made which require the cache to be rebuilt.", $this->plugin_slug); ?>
 			
+		</p>
+		<p class="description-inline notice-building notice-please-wait" style="display:none;">
+			<?php _e("Please wait a moment...", $this->plugin_slug); ?>
 		</p>
 	</div>
 

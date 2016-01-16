@@ -25,7 +25,7 @@
 				{
 					if(isset($widget['type']))
 					{
-						$this->display_meta_box_field($widget['type'], $widget);
+						$this->display_meta_box_field($widget['type'], $widget, $object);
 					}
 				}
 			}

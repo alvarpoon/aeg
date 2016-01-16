@@ -25,6 +25,27 @@ class Search_Filter_Post_Cache {
 		$this->table_name_options = $wpdb->prefix . 'options';
 		$this->option_name = "search-filter-cache";
 		
+		$cache_speed = get_option( 'search_filter_cache_speed' );
+		
+		if(empty($cache_speed))
+		{
+			$cache_speed = "medium";
+		}
+		
+		if($cache_speed=="slow")
+		{
+			$this->batch_size = 10;
+		}
+		else if($cache_speed=="medium")
+		{
+			$this->batch_size = 20;
+		}
+		else if($cache_speed=="fast")
+		{
+			$this->batch_size = 40;
+		}
+		
+		
 		/* ajax */
 		add_action( 'wp_ajax_cache_progress', array($this, 'cache_progress') ); //get progress
 		add_action( 'wp_ajax_cache_restart', array($this, 'cache_restart') ); //get progress
@@ -129,7 +150,7 @@ class Search_Filter_Post_Cache {
 		$cache_json = $this->cache_options;
 		
 		unset($cache_json['cache_list']);
-		echo json_encode($cache_json);
+		echo wp_json_encode($cache_json);
 		
 		if($this->cache_options['rc_status']=="")
 		{//then we need to test for a remote connection
@@ -210,6 +231,8 @@ class Search_Filter_Post_Cache {
 			   'orderby' 					=> "ID",
 			   'order' 						=> "ASC",
 			   
+			   'post_status' 				=> array("publish", "pending", "draft", "future", "private"),
+			   
 			   'suppress_filters' 			=> true,
 			   
 			   /* speed improvements */
@@ -218,6 +241,12 @@ class Search_Filter_Post_Cache {
 			   'update_post_term_cache' 	=> false
 			   
 			);
+			
+			if(in_array('attachment', $this->incl__post_types))
+			{
+				array_push($query_args['post_status'], "inherit");
+			}
+			
 			
 			if(has_filter('sf_edit_cache_query_args')) {
 				$query_args = apply_filters('sf_edit_cache_query_args', $query_args, $this->sfid);
@@ -432,7 +461,8 @@ class Search_Filter_Post_Cache {
 				}
 				
 				$post_id = $cache_list[$i];
-				$this->update_post_cache($post_id, "", false);
+				$this->update_post_cache($post_id, "");
+				//$this->update_post_cache($post_id, "", false); - don't update the term cache
 				
 				$this->cache_options['current_post_index'] = $i+1;
 			}
@@ -458,14 +488,23 @@ class Search_Filter_Post_Cache {
 				
 				//now its finished we also need to update the OTHER table... :/
 				
-				if($this->cache_options['rc_status']=="connect_success")
+				/*if($this->cache_options['rc_status']=="connect_success")
 				{
 					$this->wp_remote_build_term_results(array("process_id" => $this->cache_options['process_id'])); //make new async request
 				}
 				else
 				{
 					$this->build_term_results($this->cache_options['process_id']);
-				}
+				}*/
+				
+				// if we're updating the term cache after every post then we just finish:
+				
+				$this->cache_options['process_id'] = 0;
+				$this->cache_options['status'] = "finished";
+				$this->cache_options['locked'] = false;
+			
+				$this->cache_options['cache_list'] = array();
+				$this->update_cache_options( $this->cache_options );
 				
 			}
 			else
@@ -487,7 +526,7 @@ class Search_Filter_Post_Cache {
 		}
 		else if($this->cache_options['status']=="termcache")
 		{
-			$this->build_term_results($this->cache_options['process_id']);
+			//$this->build_term_results($this->cache_options['process_id']);
 			
 		}
 		else if($this->cache_options['status']!="finished")
@@ -545,42 +584,53 @@ class Search_Filter_Post_Cache {
 		$remote_call = $this->wp_remote_post_with_cookie($url);//run in the background - calls refresh cache below
 	}
 	public function can_wp_remote_post()
-	{
-		$args = array();
-		$args['timeout'] = 5;
+	{	
+		//check first to see if a user has bypassed this
+		$cache_use_background_processes = get_option( 'search_filter_cache_use_background_processes' );
 		
-		$query_args = array("action" => "test_remote_connection");
-		$url = add_query_arg($query_args, admin_url( 'admin-ajax.php' ));
+		if($cache_use_background_processes!=1)
+		{
+			$this->cache_options['rc_status'] = "user_bypass";
+		}
+		else
+		{
+			$args = array();
+			$args['timeout'] = 5;
 			
-		$remote_call = wp_remote_post($url, $args);
-		//$this->cache_options['rc_status'] = "routing_error";
-		
-		if ( is_wp_error( $remote_call ) ) {
-			$error_message = $remote_call->get_error_message();
-			$this->cache_options['rc_status'] = "connect_error";
+			$query_args = array("action" => "test_remote_connection");
+			$url = add_query_arg($query_args, admin_url( 'admin-ajax.php' ));
 			
-		} else {
 			
-			$success = false;
+			$remote_call = wp_remote_post($url, $args);
+			//$this->cache_options['rc_status'] = "routing_error";
 			
-			if(isset($remote_call['body']))
-			{
-				$body = trim($remote_call['body']);
-				if($body=="test_success")
+			if ( is_wp_error( $remote_call ) ) {
+				$error_message = $remote_call->get_error_message();
+				$this->cache_options['rc_status'] = "connect_error";
+				
+			} else {
+				
+				$success = false;
+				
+				if(isset($remote_call['body']))
 				{
-					$success = true;
+					$body = trim($remote_call['body']);
+					if($body=="test_success")
+					{
+						$success = true;
+					}
 				}
+				
+				if($success)
+				{
+					$this->cache_options['rc_status'] = "connect_success";
+				}
+				else
+				{//a response was received but not the one we wanted
+					$this->cache_options['rc_status'] = "routing_error";
+				}
+				
 			}
-			
-			if($success)
-			{
-				$this->cache_options['rc_status'] = "connect_success";
-			}
-			else
-			{//a response was received but not the one we wanted
-				$this->cache_options['rc_status'] = "routing_error";
-			}
-			
 		}
 		
 		$this->update_cache_options( $this->cache_options );				
@@ -693,8 +743,6 @@ class Search_Filter_Post_Cache {
 		{
 			$search_form_fields = $this->get_fields_meta($search_form->ID);
 			
-			//var_dump($search_form_fields);
-			
 			foreach($search_form_fields as $key => $field)
 			{
 				$valid_filter_types = array("tag", "category", "taxonomy", "post_meta");
@@ -719,7 +767,6 @@ class Search_Filter_Post_Cache {
 		$filters = array_unique($filters);
 		
 		//now we have all the filters, get the filter terms/options
-		//var_dump($filters);
 		
 		$time_start = microtime(true);
 		
@@ -733,10 +780,8 @@ class Search_Filter_Post_Cache {
 			{
 				$source = "post_meta";
 			}
-			//echo "<h2>$filter</h2>";
+			
 			$terms = $this->get_filter_terms($filter, $source);
-			//echo "<pre>";
-			//var_dump($terms);
 			
 			$filter_o = array("source"=>$source);
 			
@@ -897,7 +942,7 @@ class Search_Filter_Post_Cache {
 				{
 					if(($search_form_fields[$it]))
 					{
-						//var_dump($search_form_fields[$it]);
+						
 						foreach($search_form_fields[$it] as $search_form_field)
 						{
 							if($search_form_field['type']=="post_meta")
@@ -1039,8 +1084,6 @@ class Search_Filter_Post_Cache {
 			}
 			
 		}
-		//var_dump($new_cache_data);
-		//var_dump($current_cache_data);
 		
 		
 		/*update_option( $this->option_name, $cache_options, false );
@@ -1058,8 +1101,8 @@ class Search_Filter_Post_Cache {
 		else
 		{//just trigger a rebuild of the terms - this should be done anytime someone changes a field which has terms (tag, cat, tax, meta)
 			//need to improve to be "smarter"
-			
-			if($this->cache_options['status']!="inprogress")
+			 
+			/*if($this->cache_options['status']!="inprogress")
 			{// don't do anything if there it is already running, because the terms will be updated anyway when it finishes
 		
 				$this->cache_options['process_id'] = time();
@@ -1067,7 +1110,7 @@ class Search_Filter_Post_Cache {
 				$this->cache_options['status'] = "termcache";
 				update_option( $this->option_name, $this->cache_options, false );
 				$this->wp_remote_build_term_results(array("process_id" => $this->cache_options['process_id'])); //make new async request
-			}
+			}*/
 			
 		}
 		

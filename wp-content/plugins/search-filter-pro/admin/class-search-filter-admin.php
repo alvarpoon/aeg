@@ -26,7 +26,7 @@ function search_filter_plugin_updater() {
 	
 	// setup the updater
 	$edd_updater = new EDD_SL_Plugin_Updater( SEARCH_FILTER_STORE_URL, SEARCH_FILTER_PRO_BASE_PATH, array( 
-			'version' 	=> '2.0.3',				// current version number
+			'version' 	=> '2.1.0',				// current version number
 			'license' 	=> $license_key, 		// license key (used get_option above to retrieve from DB)
 			'item_name' => SEARCH_FILTER_ITEM_NAME, 	// name of this plugin
 			'author' 	=> 'Ross Morsali',  // author of this plugin
@@ -119,6 +119,7 @@ class Search_Filter_Admin {
 		 * http://codex.wordpress.org/Plugin_API#Hooks.2C_Actions_and_Filters
 		 */
 		add_action( 'admin_notices', array( $this, 'action_display_welcome_header' ) );
+		$this->admin_notices = new Search_Filter_Admin_Notices($this->plugin_slug);
 		
 		add_action('admin_head', array($this,'action_setup_screens'));
 		
@@ -160,6 +161,7 @@ class Search_Filter_Admin {
 		unset( $columns['date'] );
 		$columns['shortcode'] = __( 'Shortcode', $this->plugin_slug );
 		$columns['fields'] = __( 'Fields List', $this->plugin_slug );
+		$columns['displaymethod'] = __( 'Results Method', $this->plugin_slug );
 		$columns['date'] = __( 'Date', $this->plugin_slug );
 		
 		return $columns;
@@ -167,12 +169,12 @@ class Search_Filter_Admin {
 
 	function custom_sf_column( $column, $post_id ) {
 		
+		$settings = (get_post_meta( $post_id, '_search-filter-settings', true ));
+		
 		switch ( $column ) {
 
 			case 'shortcode' :
 				echo '[searchandfilter id="'.$post_id.'"]'; 
-				
-				$settings = (get_post_meta( $post_id, '_search-filter-settings', true ));
 				
 				if(is_array($settings))
 				{
@@ -233,6 +235,57 @@ class Search_Filter_Admin {
 					}
 					
 				}
+				break;
+			case 'displaymethod' :
+				
+				if(is_array($settings))
+				{
+					$display_results_as = "";
+					
+					if(isset($settings['display_results_as']))
+					{
+						$display_results_as = $settings['display_results_as'];
+					}
+					
+					if($display_results_as=="archive")
+					{
+						$results_label = __("As an Archive", $this->plugin_slug);
+					}
+					else if($display_results_as=="post_type_archive")
+					{
+						$post_type = "";
+						if(isset($settings['post_types']))
+						{
+							if(count($settings['post_types'])==1)
+							{
+								$post_types = array_keys($settings['post_types']);
+								
+								$post_type_object = get_post_type_object( $post_types[0] );
+								
+								if(isset($post_type_object->label))
+								{
+									$post_type = $post_type_object->label;
+								}
+							}
+						}
+						$results_label = sprintf(__("Post Type Archive: <strong>%s</strong>", $this->plugin_slug), $post_type);
+					}
+					else if($display_results_as=="shortcode")
+					{
+						$results_label = __("Using a Shortcode", $this->plugin_slug);
+					}
+					else if($display_results_as=="custom_woocommerce_store")
+					{
+						$results_label = __("WooCommerce Shop", $this->plugin_slug);
+					}
+					else if($display_results_as=="custom_edd_store")
+					{
+						$results_label = __("EDD Downloads Page", $this->plugin_slug);
+					}
+					
+					echo $results_label;
+				}
+				
 				break;
 
 		}
@@ -345,11 +398,21 @@ class Search_Filter_Admin {
 		
 		$this->plugin_screen_hook_suffix[] = add_submenu_page(
 			$parent_slug,
+			__( 'Search &amp; Filter Settings', $this->plugin_slug ),
 			__( 'Settings', $this->plugin_slug ),
-			__( 'License Settings', $this->plugin_slug ),
 			'manage_options',
 			$this->plugin_slug."-settings",
 			array( $this, 'display_plugin_settings_admin_page' )
+		);
+
+
+		$this->plugin_screen_hook_suffix[] = add_submenu_page(
+			$parent_slug,
+			__( 'License', $this->plugin_slug ),
+			__( 'License', $this->plugin_slug ),
+			'manage_options',
+			$this->plugin_slug."-licence-settings",
+			array( $this, 'display_plugin_license_settings_admin_page' )
 		);
 		
 		/*$this->plugin_screen_hook_suffix[] = add_submenu_page(
@@ -397,19 +460,58 @@ class Search_Filter_Admin {
 	public function display_plugin_settings_admin_page()
 	{
 		
-		$license 	= get_option( 'search_filter_license_key' );
-		$status 	= get_option( 'search_filter_license_status' );
+		$cache_speed 								= get_option( 'search_filter_cache_speed' );
+		$cache_use_manual 							= get_option( 'search_filter_cache_use_manual' );
+		$cache_use_background_processes 			= get_option( 'search_filter_cache_use_background_processes' );
+		
+		$load_jquery_i18n 							= get_option( 'search_filter_load_jquery_i18n' );
+		$lazy_load_js 								= get_option( 'search_filter_lazy_load_js' );
+		
+		if(empty($cache_speed))
+		{
+			$cache_speed = "medium";
+		}
+		
+		if($cache_use_background_processes===false)
+		{
+			$cache_use_background_processes = 1;
+		}
 		
 		include_once( 'views/admin-settings.php' );
 	}
+	
+	public function display_plugin_license_settings_admin_page()
+	{
+		
+		$license 	= get_option( 'search_filter_license_key' );
+		$status 	= get_option( 'search_filter_license_status' );
+		
+		include_once( 'views/admin-license-settings.php' );
+	}
+	
 	
 		
 		
 	function search_filter_register_option() {
 		// creates our settings in the options table
 		register_setting('search_filter_license', 'search_filter_license_key', array($this, 'edd_sanitize_license') );
+
+		register_setting('search_filter_settings', 'search_filter_cache_speed', array($this, 'sf_sanitize_options') );
+		register_setting('search_filter_settings', 'search_filter_cache_use_manual', array($this, 'sf_sanitize_options') );
+		register_setting('search_filter_settings', 'search_filter_cache_use_background_processes', array($this, 'sf_sanitize_options') );
+		register_setting('search_filter_settings', 'search_filter_load_jquery_i18n', array($this, 'sf_sanitize_options') );
+		register_setting('search_filter_settings', 'search_filter_lazy_load_js', array($this, 'sf_sanitize_options') );
 	}
 	
+	function sf_sanitize_options( $new )
+	{		
+		//$old = get_option( 'search_filter_license_key' );
+		/*if( $old && $old != $new ) {
+			delete_option( 'search_filter_license_status' ); // new license has been entered, so must reactivate
+		}*/
+		return $new;
+	}
+
 	function edd_sanitize_license( $new )
 	{		
 		$old = get_option( 'search_filter_license_key' );
@@ -755,7 +857,7 @@ class Search_Filter_Admin {
 					<a class="welcome-panel-close handle-dismiss-button" data-target="#search-filter-welcome-panel" href="#"><?php printf(__('Dismiss', $this->plugin_slug)); ?></a>
 					
 					<div class="welcome-panel-content">
-						<h3><?php _e( 'Welcome to Search &amp; Filter', $this->plugin_slug ); ?></h3>
+						<h2><?php _e( 'Welcome to Search &amp; Filter', $this->plugin_slug ); ?></h2>
 						<p class="about-description"><?php _e( 'Build a custom UI for Searching &amp; Filtering your posts.', $this->plugin_slug ); ?></p>
 						<div class="welcome-panel-column-container">
 							<div class="welcome-panel-column">
@@ -832,7 +934,7 @@ class Search_Filter_Admin {
 		?>
 		<div class="error">
 			<p>
-				<?php _e( '<strong>Caching Error: </strong> The caching tables are missing - ', $this->plugin_slug ); ?>
+				<?php _e( '<strong>Search &amp; Filter Error: </strong> The caching tables are missing - ', $this->plugin_slug ); ?>
 				<a href="<?php echo admin_url( 'admin-ajax.php?action=search_filter_build_cache_table' ); ?>"><?php _e( 'click here to create them', $this->plugin_slug ); ?></a>
 			</p>
 		</div>
@@ -1033,6 +1135,49 @@ class Search_Filter_Admin {
 		return $messages;
 	}
 	
+	function set_selected($desired_value, $current_value, $echo = true)
+	{
+		if($desired_value==$current_value)
+		{
+			if($echo==true)
+			{
+				echo ' selected="selected"';
+			}
+			else
+			{
+				return ' selected="selected"';
+			}
+		}
+	}
+	
+	function set_radio($desired_value, $current_value, $echo = true)
+	{
+		if($desired_value==$current_value)
+		{
+			if($echo==true)
+			{
+				echo ' checked="checked"';
+			}
+			else
+			{
+				return ' checked="checked"';
+			}
+		}
+	}
+	
+	function set_checked($current_value)
+	{
+		if($current_value!="")
+		{
+			echo ' checked="checked"';
+		}
+	}
+	
+}
+
+if ( ! class_exists( 'Search_Filter_Admin_Notices' ) )
+{
+	require_once( plugin_dir_path( __FILE__ ) . 'includes/class-search-filter-admin-notices.php' );
 }
 
 if ( ! class_exists( 'Search_Filter_Widgets_Admin' ) )

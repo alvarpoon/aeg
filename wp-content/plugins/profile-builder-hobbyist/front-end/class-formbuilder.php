@@ -468,6 +468,15 @@ class Profile_Builder_Form_Creator{
                     $userdata['role'] = $this->args['role'];
 
                 $userdata = wp_unslash( $userdata );
+
+				// change User Registered date and time according to timezone selected in WordPress settings
+				$wppb_get_date = wppb_get_date_by_timezone();
+
+				if( isset( $wppb_get_date ) ) {
+					$userdata['user_registered'] = $wppb_get_date;
+				}
+
+				// insert user to database
                 $user_id = wp_insert_user( $userdata );
             }
 		

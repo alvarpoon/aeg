@@ -1,0 +1,69 @@
+<?php
+
+/**
+ * Fired during plugin activation
+ *
+ * @link       http://www.designsandcode.com
+ * @since      1.0.0
+ *
+ * @package   
+ * @subpackage 
+ */
+
+class Search_Filter_Helper {
+
+	/**
+	 * Short Description. (use period)
+	 *
+	 * Long Description.
+	 *
+	 * @since    1.0.0
+	 */
+	public function __construct()
+	{
+		
+		
+	}	
+	
+	public static function has_wpml()
+	{
+		//filter is for WPML v 3.5 and over
+		//keep icl_object as a check for older WPML and also other plugins which declare the same functions for compatibility
+		if(has_filter('wpml_object_id')||(function_exists('icl_object_id')))
+		{
+			return true;			
+		}
+		
+		return false;
+	}
+	
+	public static function wpml_object_id($id = 0, $type = '', $return_original = '', $lang_code = '')
+	{
+		$lang_id = 0;
+		
+		if(has_filter('wpml_object_id'))
+		{
+			if($lang_code!="")
+			{
+				$lang_id = apply_filters( 'wpml_object_id', $id, $type, $return_original, $lang_code );
+			}
+			else
+			{
+				$lang_id = apply_filters( 'wpml_object_id', $id, $type, $return_original );
+			}
+		}
+		else if(function_exists('icl_object_id'))
+		{
+			if($lang_code!="")
+			{
+				$lang_id = icl_object_id($id, $type, $return_original, $lang_code);
+			}
+			else
+			{
+				$lang_id = icl_object_id($id, $type, $return_original);
+			}
+		}
+		
+		return $lang_id;
+	}
+}

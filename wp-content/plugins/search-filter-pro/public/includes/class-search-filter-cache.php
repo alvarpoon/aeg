@@ -70,7 +70,6 @@ class Search_Filter_Cache {
 	
 	private function filter_query_inherited_defaults($args)
 	{
-		//var_dump($searchform);
 		if(isset($this->form_settings['inherit_current_post_type_archive']))
 		{
 			if($this->form_settings['inherit_current_post_type_archive']=="1")
@@ -185,17 +184,49 @@ class Search_Filter_Cache {
 				if($this->form_fields[$filter_name]['date_input_type']=="daterange")
 				{
 					$range = true;
+					
+					//$_filter_name = SF_META_PRE.$this->form_fields[$filter_name]['compare_mode'];
+					$compare_mode = "userrange";
+					
+					if(isset($this->form_fields[$filter_name]["date_compare_mode"]))
+					{
+						$compare_mode = $this->form_fields[$filter_name]["date_compare_mode"];
+					}
+					
+					$this->filters[$filter_name]['compare_mode'] = $compare_mode;
 				}
 			}
 			else if($this->filters[$filter_name]['type'] == "number")
 			{
 				$range = true;
 
-				$this->filters[$filter_name]['is_decimal'] = 1;
+				$this->filters[$filter_name]['is_decimal'] = 0;
 				if(isset($this->form_fields[$filter_name]["number_is_decimal"]))
 				{
-					$this->filters[$filter_name]['is_decimal'] = $this->form_fields[$filter_name]["number_is_decimal"];
+					
+					if($this->form_fields[$filter_name]["number_is_decimal"]==1)
+					{
+						$decimal_places = 2;
+						
+						if(isset($this->form_fields[$filter_name]["number_decimal_places"]))
+						{
+							$decimal_places = $this->form_fields[$filter_name]["number_decimal_places"];
+						}
+						
+						$this->filters[$filter_name]['decimal_places'] = $decimal_places;
+					}
+					
+					
+					
 				}
+				$compare_mode = "userrange";
+					
+				if(isset($this->form_fields[$filter_name]["number_compare_mode"]))
+				{
+					$compare_mode = $this->form_fields[$filter_name]["number_compare_mode"];
+				}
+				
+				$this->filters[$filter_name]['compare_mode'] = $compare_mode;
 			}
 			
 			$this->filters[$filter_name]['is_range'] = $range;
@@ -281,8 +312,6 @@ class Search_Filter_Cache {
 					
 					$this->filters[$filter_name]['is_active'] = true;
 					
-					
-					
 				}
 			}
 			else
@@ -323,9 +352,9 @@ class Search_Filter_Cache {
 			{
 				$filter_terms = array();
 				$filter_terms[0] = new stdClass();
-				$filter_terms[0]->field_value = "min";
-				$filter_terms[1] = new stdClass();
-				$filter_terms[1]->field_value = "max";
+				$filter_terms[0]->field_value = "value";
+				//$filter_terms[1] = new stdClass();
+				//$filter_terms[1]->field_value = "max";
 			}
 			else
 			{
@@ -343,18 +372,20 @@ class Search_Filter_Cache {
 			{
 				foreach($filter_terms as $filter_term)
 				{
-					$term_name = $filter_term->field_value;
-					
-					$this->filters[$filter_name]['terms'][$term_name] = array();
-
 					if($this->filters[$filter_name]['source']=="taxonomy")
 					{//then we will have IDs - so we need to convert back to slug
 						
 						$term = get_term( $filter_term->field_value, $this->filters[$filter_name]['taxonomy_name'] );
 						$term_name = $term->slug;
+						
+						$this->filters[$filter_name]['terms'][$term_name] = array();
 						$this->filters[$filter_name]['terms'][$term_name]['term_id'] = $term->term_id;
 					}
-					
+					else
+					{
+						$term_name = $filter_term->field_value;
+						$this->filters[$filter_name]['terms'][$term_name] = array();
+					}
 					
 					//all the IDs used for setting up queries & counts
 					$this->filters[$filter_name]['terms'][$term_name]['cache_result_ids'] = array();
@@ -381,6 +412,7 @@ class Search_Filter_Cache {
 		$active_terms = array();
 		if(($source=="taxonomy")||($format=="simple")||($format=="date"))
 		{
+			
 			if (strpos(esc_attr($value),',') !== false)
 			{
 				$operator = "OR";
@@ -457,16 +489,15 @@ class Search_Filter_Cache {
 			{
 				$operator = "OR";
 				$ochar = "-,-";
-				$active_terms = explode($ochar, esc_attr($value));
 			}
 			else
 			{
 				$operator = "AND";
 				$ochar = "-+-";
-				$active_terms = explode($ochar, esc_attr(urlencode($value)));
-				$active_terms = array_map( 'urldecode', ($active_terms) );
+				$replacechar = "- -";
+				$value = str_replace($replacechar, $ochar, $value);
 			}
-			
+			$active_terms = explode($ochar, esc_attr($value));
 		
 		}
 		
@@ -631,8 +662,11 @@ class Search_Filter_Cache {
 		$parent_convert_ids = array();
 		
 		$cache_term_results = array();
+			
 		foreach($field_terms_results as $term_result)
 		{
+			$setup_term = true;
+			
 			if(!isset($cache_term_results[$term_result->field_name]))
 			{
 				$cache_term_results[$term_result->field_name] = array();
@@ -643,34 +677,50 @@ class Search_Filter_Cache {
 			if($this->is_taxonomy_key($term_result->field_name))
 			{
 				//convert ID to slug
+				//$term_id_postfix = $field_value;
 				$taxonomy_name = substr($term_result->field_name, strlen(SF_TAX_PRE));
-				$term = get_term( $term_result->field_value, $taxonomy_name );
-				$field_value = $term->slug;
-			}
-			
-			$cache_term_results[$term_result->field_name][$field_value] = explode(",", $term_result->result_ids);
-			
-			//then convert any IDs to parent IDs instead
-			if($treat_child_posts_as_parent)
-			{				
-				if($this->is_meta_value($term_result->field_name))
+				$term = get_term( $term_result->field_value, $taxonomy_name, 'OBJECT', false);
+				$field_value = $term->slug;//.$term_id_postfix;
+				
+				
+				
+				if(Search_Filter_Helper::has_wpml())
 				{
-					$parent_convert_ids = array_merge($parent_convert_ids, $cache_term_results[$term_result->field_name][$field_value]);
-					
-					/*
-					$field_terms_results = $wpdb->get_results(
-						"
-						SELECT post_id, post_parent_id
-						FROM $this->table_name
-						WHERE field_name = '$filter_name' 
-							AND cast(field_value AS UNSIGNED) $compare_operator $filter_value
-						"
-					);
-					*/
+					//do not even add the term to the list if its in the wrong language
+					if($term_result->field_value!=$term->term_id)
+					{
+						//this means WPML changed teh ID to current language ID, which means we just want to skip over this completely
+						//echo "\ntax name: $taxonomy_name | field_value: ".$term_result->field_value. " | term id: ".$term->term_id."\n";
+						$setup_term = false;
+					}
 				}
 			}
-			//echo $term_result->field_name. " | ".$field_value."\n";
-			//var_dump($cache_term_results[$term_result->field_name][$field_value]);
+			
+			
+			if($setup_term)
+			{
+				$cache_term_results[$term_result->field_name][$field_value] = explode(",", $term_result->result_ids);
+				
+				//then convert any IDs to parent IDs instead
+				if($treat_child_posts_as_parent)
+				{				
+					if($this->is_meta_value($term_result->field_name))
+					{
+						$parent_convert_ids = array_merge($parent_convert_ids, $cache_term_results[$term_result->field_name][$field_value]);
+						
+						/*
+						$field_terms_results = $wpdb->get_results(
+							"
+							SELECT post_id, post_parent_id
+							FROM $this->table_name
+							WHERE field_name = '$filter_name' 
+								AND cast(field_value AS UNSIGNED) $compare_operator $filter_value
+							"
+						);
+						*/
+					}
+				}
+			}
 		}
 		
 		if($treat_child_posts_as_parent)
@@ -754,16 +804,18 @@ class Search_Filter_Cache {
 				}
 			}
 		}
-		
+		//echo "\n\n\n------------------------------------------------------------\n\n\n";
 		foreach($this->filters as $filter_name => $filter)
 		{
 			$field_terms = $this->filters[$filter_name]["terms"];
 			
 			if($filter['type']=="choice")
 			{
-				$cached_term_results = array();
+				
 				foreach($field_terms as $term_name => $tval)
 				{
+					$cached_term_results = array();
+					
 					if(isset($cache_term_results[$filter_name]))
 					{
 						if(isset($cache_term_results[$filter_name][$term_name]))
@@ -771,6 +823,7 @@ class Search_Filter_Cache {
 							$cached_term_results = $cache_term_results[$filter_name][$term_name];
 						}
 					}
+					
 					$this->filters[$filter_name]['terms'][$term_name]['cache_result_ids'] = $cached_term_results;
 				}
 
@@ -842,6 +895,33 @@ class Search_Filter_Cache {
 			else if($filter['is_range']==true)
 			{
 				
+				$start_field_name = $filter_name;
+				$end_field_name = $filter_name; //start / end keys are the same
+				
+				if($filter['type']=="number")
+				{
+					if(isset($this->form_fields[$filter_name]['number_use_same_toggle']))
+					{
+						if($this->form_fields[$filter_name]['number_use_same_toggle']!=1)
+						{
+							$end_field_name = SF_META_PRE.$this->form_fields[$filter_name]['number_end_meta_key'];
+						}
+					}							
+				}
+				else if($filter['type']=="date")
+				{
+					if(isset($this->form_fields[$filter_name]['date_use_same_toggle']))
+					{
+						if($this->form_fields[$filter_name]['date_use_same_toggle']!=1)
+						{
+							$end_field_name = SF_META_PRE.$this->form_fields[$filter_name]['date_end_meta_key'];
+						}
+					}							
+				}
+				
+				$this->filters[$filter_name]['terms']["value"]['cache_result_ids'] = $this->get_cache_number_range_ids($start_field_name, $end_field_name, $this->filters[$filter_name]);
+				
+				/*
 				foreach($field_terms as $term_name => $tval)
 				{
 					$_filter_name = $filter_name;
@@ -872,11 +952,9 @@ class Search_Filter_Cache {
 							}							
 						}
 					}
-					
 					$this->filters[$filter_name]['terms'][$term_name]['cache_result_ids'] = $this->get_cache_number_range_ids($_filter_name, $term_name, $this->filters[$filter_name]);
 					
-					
-				}
+				}*/
 				
 			}
 			else
@@ -947,8 +1025,10 @@ class Search_Filter_Cache {
 				}
 				else if($filter['is_range']==true)
 				{
-					$filter_term_ids["min"] = $filter['terms']["min"]['cache_result_ids'];
-					$filter_term_ids["max"] = $filter['terms']["max"]['cache_result_ids'];
+					/*$filter_term_ids["min"] = $filter['terms']["min"]['cache_result_ids'];
+					$filter_term_ids["max"] = $filter['terms']["max"]['cache_result_ids'];*/
+					
+					$filter_term_ids["value"] = $filter['terms']["value"]['cache_result_ids'];
 				}
 				else
 				{
@@ -992,8 +1072,10 @@ class Search_Filter_Cache {
 					}
 					else if($filter['is_range']==true) /* date range and number */
 					{
-						$filter_term_ids["min"] = $filter['terms']["min"]['cache_result_ids'];
-						$filter_term_ids["max"] = $filter['terms']["max"]['cache_result_ids'];
+						/*$filter_term_ids["min"] = $filter['terms']["min"]['cache_result_ids'];
+						$filter_term_ids["max"] = $filter['terms']["max"]['cache_result_ids'];*/
+						
+						$filter_term_ids["value"] = $filter['terms']["value"]['cache_result_ids'];
 						
 						//$this->filters[$filter_name]['cached_result_ids'] = $this->combine_result_arrays($filter_term_ids, $filter['term_operator']);
 					}
@@ -1157,9 +1239,162 @@ class Search_Filter_Cache {
 		}
 		return $field_term_ids;
 	}
-	public function get_cache_number_range_ids($filter_name, $filter_value, $filter) {
+	public function get_cache_number_range_ids($start_field_name, $end_field_name, $filter) {
+		global $wpdb;
+		
+		$field_term_ids = array();
+		
+		//check there are acutally 2 values - a min and max selected
+		if(count($filter['active_values'])!=2)
+		{
+			return $field_term_ids;
+		}
+		
+		$min_value = (int)$filter['active_values'][0];
+		$max_value = (int)$filter['active_values'][1];
+		
+		if($min_value>$max_value)
+		{
+			return $field_term_ids; //don't allow min value to be larger than max - treat as incorrect / no results
+		}
+		
+		if($start_field_name==$end_field_name) //then we are using a range against a single date
+		{
+			$filter['compare_mode'] = "userrange"; //not possible for another compare mode - single field name means its a single result we are comparing against, not a range.
+		}
+		
+		//figure out if decimal or not
+		$cast_type = 'UNSIGNED';
+		
+		if(isset($filter['decimal_places']))
+		{
+			$decimal_places = 0;
+			$decimal_places = (int)$filter['decimal_places'];
+			
+			if($decimal_places>5)
+			{
+				$decimal_places = 5; //limit to 5
+			}
+			
+			if($decimal_places>0)
+			{
+				$cast_type = 'DECIMAL(12,'.$decimal_places.')';
+			}
+		}
+		
+		//post meta start/end must be within user selection
+		if($filter['compare_mode']=="userrange")
+		{
+			/*$field_terms_results = $wpdb->get_results( 
+				"
+				SELECT post_id, post_parent_id FROM $this->table_name WHERE 
+					(field_name = '$start_field_name' AND cast(field_value AS $cast_type) >= cast($min_value as $cast_type)) AND
+					(field_name = '$end_field_name' AND cast(field_value AS $cast_type) <= cast($max_value as $cast_type))
+				"
+			);*/
+			
+			
+			$field_terms_results = $wpdb->get_results( 
+				"
+				SELECT post_id, post_parent_id, field_value_min, field_value_max FROM
+					(SELECT min_table.post_id as post_id, min_table.post_parent_id as post_parent_id, min_table.field_value as field_value_min, max_table.field_value as field_value_max 
+					FROM (SELECT post_id, post_parent_id, field_value FROM $this->table_name WHERE field_name = '$start_field_name') AS min_table
+					LEFT JOIN (SELECT post_id, field_value FROM $this->table_name WHERE field_name = '$end_field_name') AS max_table 
+					ON min_table.post_id = max_table.post_id) as range_table
+				WHERE 
+				cast(field_value_min AS $cast_type) >= cast($min_value as $cast_type) AND
+				cast(field_value_max AS $cast_type) <= cast($max_value as $cast_type)
+				
+				"
+			);
+		}
+		else if($filter['compare_mode']=="metarange")
+		{
+			
+			$field_terms_results = $wpdb->get_results( 
+				"
+				SELECT post_id, post_parent_id, field_value_min, field_value_max FROM
+					(SELECT min_table.post_id as post_id, min_table.post_parent_id as post_parent_id, min_table.field_value as field_value_min, max_table.field_value as field_value_max 
+					FROM (SELECT post_id, post_parent_id, field_value FROM $this->table_name WHERE field_name = '$start_field_name') AS min_table
+					LEFT JOIN (SELECT post_id, field_value FROM $this->table_name WHERE field_name = '$end_field_name') AS max_table 
+					ON min_table.post_id = max_table.post_id) as range_table
+				WHERE 
+				cast(field_value_min AS $cast_type) <= cast($min_value as $cast_type) AND
+				cast(field_value_max AS $cast_type) >= cast($max_value as $cast_type)
+				"
+			);
+			
+			
+			
+		}
+		else if($filter['compare_mode']=="overlap")
+		{
+			$field_terms_results = $wpdb->get_results( 
+				"
+				SELECT post_id, post_parent_id, field_value_min, field_value_max FROM
+					(SELECT min_table.post_id as post_id, min_table.post_parent_id as post_parent_id, min_table.field_value as field_value_min, max_table.field_value as field_value_max 
+					FROM (SELECT post_id, post_parent_id, field_value FROM $this->table_name WHERE field_name = '$start_field_name') AS min_table
+					LEFT JOIN (SELECT post_id, field_value FROM $this->table_name WHERE field_name = '$end_field_name') AS max_table 
+					ON min_table.post_id = max_table.post_id) as range_table
+				WHERE 
+				(
+					cast(field_value_min AS $cast_type) <= cast($min_value as $cast_type) AND
+					cast(field_value_max AS $cast_type) >= cast($min_value as $cast_type)
+				)
+				OR
+				(
+					cast(field_value_min AS $cast_type) <= cast($max_value as $cast_type) AND
+					cast(field_value_max AS $cast_type) >= cast($max_value as $cast_type)
+				)
+				OR
+				(
+					cast(field_value_min AS $cast_type) >= cast($min_value as $cast_type) AND
+					cast(field_value_max AS $cast_type) <= cast($max_value as $cast_type)
+				)
+				
+				"
+			);
+			
+			//var_dump($field_terms_results);
+		}
+		
+		$treat_child_posts_as_parent = false;
+		if(isset($this->form_settings["treat_child_posts_as_parent"]))
+		{
+			$treat_child_posts_as_parent = (bool)$this->form_settings["treat_child_posts_as_parent"];
+		}
+		
+		foreach($field_terms_results as $field_terms_result)
+		{
+		
+			if(!$treat_child_posts_as_parent)
+			{
+				array_push($field_term_ids, $field_terms_result->post_id);
+			}
+			else
+			{
+				if($field_terms_result->post_parent_id==0)
+				{//this is not a child page - its the parent
+					array_push($field_term_ids, $field_terms_result->post_id);
+				}
+				else
+				{
+					array_push($field_term_ids, $field_terms_result->post_parent_id);
+				}
+			}
+		}
+		//var_dump($start_field_name);
+		//var_dump($end_field_name);
+		//var_dump($filter);
+		//test for speed
+		
+		return $field_term_ids;
+		
+	}
+	public function get_cache_number_range_ids_old($filter_name, $filter_value, $filter) {
 		
 		global $wpdb;
+		
 		
 		//test for speed
 		
@@ -1354,16 +1589,18 @@ class Search_Filter_Cache {
 			}
 		}
 		
+		$count = 0;
+		
+		
 		$this->filter_ids_extra = $final_filtered_ids['extra_ids'];
 		
 		$post__in = $this->combine_result_arrays($final_filtered_ids, "and");
 		
 		
-		
 		if(has_filter('sf_edit_query_args_after_custom_filter')) {
 			$this->query_args = apply_filters('sf_edit_query_args_after_custom_filter', $this->query_args, $this->sfid);
 		}
-
+		
 		
 		//now remove excluded post IDs from the included IDs as these overwrite the excluded posts types too
 		if(isset($this->query_args['post__not_in']))
@@ -1578,7 +1815,7 @@ class Search_Filter_Cache {
 		   'order' 						=> "",
 		   //'post__in'      				=> $this->post__in,
 		   
-		   'suppress_filters' 			=> true,
+		   'suppress_filters' 			=> false,
 		   
 		   /* speed improvements */
 		   'no_found_rows' 				=> true,
@@ -1630,7 +1867,8 @@ class Search_Filter_Cache {
 		   'meta_key' 					=> "",
 		   'order' 						=> "",
 		   
-		   'suppress_filters' 			=> true,
+		   'suppress_filters' 			=> false, //should normally be true - but we need for WPML to apply lang to query
+		   //'lang'						=> ICL_LANGUAGE_CODE,
 		   
 		   /* speed improvements */
 		   'no_found_rows' 				=> true,

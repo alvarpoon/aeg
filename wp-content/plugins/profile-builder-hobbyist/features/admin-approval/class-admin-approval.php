@@ -108,9 +108,9 @@ class wpp_list_approved_unapproved_users extends PB_WP_List_Table {
      **************************************************************************/
     function column_username($item){
 		global $current_user;
-		
+
 		$GRavatar = get_avatar( $item['email'], 32, '' );
-		$user = get_user_by( 'email', $item['email'] );
+		$user = get_user_by( 'ID', $item['ID'] );
 		$currentUser =  wp_get_current_user();
 		$wppb_nonce = wp_create_nonce( '_nonce_'.$current_user->ID.$user->ID);
 		

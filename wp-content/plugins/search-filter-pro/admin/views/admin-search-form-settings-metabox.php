@@ -163,7 +163,7 @@
 						
 						<p class="description" style="font-style:normal;">
 							<label>
-								<input class="checkbox auto_count_refresh_mode" type="checkbox" id="auto_count_refresh_mode" name="auto_count_refresh_mode"<?php $this->set_checked($values['auto_count_refresh_mode']); ?>> 
+								<input class="checkbox auto_count_refresh_mode" type="checkbox" id="auto_count_refresh_mode" name="auto_count_refresh_mode"<?php $this->set_checked($values['auto_count_refresh_mode']); ?><?php if($values['enable_auto_count']!=1){ echo ' disabled="disabled"'; } ?>> 
 								<?php _e("Update the Search Form on user interaction", $this->plugin_slug); ?>
 							</label>
 						</p>
@@ -228,6 +228,9 @@
 								<p>
 									<em><?php _e("* Templates must use the <a href='http://codex.wordpress.org/The_Loop' target='_blank'>The Loop</a> and not a custom query", $this->plugin_slug ); ?></em>
 								</p>
+								<p>
+									<a href="http://www.designsandcode.com/documentation/search-filter-pro/search-results/as-an-archive/" target="_blank"><?php _e("View the Archive setup instructions", $this->plugin_slug ); ?></a>
+								</p>
 							</div>
 							<div class="display_result_txt" id="display_result_post_type_archive_txt">
 								<p>
@@ -235,6 +238,9 @@
 								</p>
 								<p>
 									<em><?php _e("* Templates must use the <a href='http://codex.wordpress.org/The_Loop' target='_blank'>The Loop</a> and not a custom query", $this->plugin_slug ); ?></em>
+								</p>
+								<p>
+									<a href="http://www.designsandcode.com/documentation/search-filter-pro/search-results/as-a-post-type-archive/" target="_blank"><?php _e("View the Post Type Archive setup instructions", $this->plugin_slug ); ?></a>
 								</p>
 							</div>
 							<div class="display_result_txt" id="display_result_shortcode_txt">
@@ -244,15 +250,24 @@
 								<p>
 									<em><?php _e("* You can find your results shortcode in the <strong>Shortcodes</strong> box on this page", $this->plugin_slug ); ?></em>
 								</p>
+								<p>
+									<a href="http://www.designsandcode.com/documentation/search-filter-pro/search-results/using-a-shortcode/" target="_blank"><?php _e("View the Shortcode setup instructions", $this->plugin_slug ); ?></a>
+								</p>
 							</div>
 							<div class="display_result_txt" id="display_result_custom_woocommerce_store_txt">
 								<p>
 									<?php _e("Let WooCommerce handle the display of results and direct all searches to the shop page.", $this->plugin_slug ); ?>
 								</p>
+								<p>
+									<a href="http://www.designsandcode.com/documentation/search-filter-pro/3rd-party/woocommerce/" target="_blank"><?php _e("View the WooCommerce setup instructions", $this->plugin_slug ); ?></a>
+								</p>
 							</div>
 							<div class="display_result_txt" id="display_result_custom_edd_store_txt">
 								<p>
 									<?php _e("Let Easy Digital Downloads handle the display of results - simply supply the full URL of a page containing your downloads shortcode.", $this->plugin_slug ); ?>
+								</p>
+								<p>
+									<a href="http://www.designsandcode.com/documentation/search-filter-pro/3rd-party/easy-digital-downloads/" target="_blank"><?php _e("View the Easy Digital Downloads setup instructions", $this->plugin_slug ); ?></a>
 								</p>
 							</div>
 						</div>
@@ -475,11 +490,29 @@
 				<td>
 					<input class="" id="exclude_post_ids" name="exclude_post_ids" type="text" size="20" value="<?php echo esc_attr($values['exclude_post_ids']); ?>">
 				</td>
+			</tr><tr>
+				<td>
+					<label for="sticky_posts">
+					<?php _e("Sticky Posts:", $this->plugin_slug ); ?>
+					</label>
+				</td>
+				<td>
+					<fieldset class="sitem">
+						
+						<select name="sticky_posts" class="sticky_posts" id="sticky_posts">
+							<option value=""><?php _e("Default", $this->plugin_slug); ?></option>
+							<option value="exclude"<?php $this->set_selected($values['sticky_posts'], "exclude"); ?>><?php _e("Exclude", $this->plugin_slug); ?></option>
+							<option value="ignore"<?php $this->set_selected($values['sticky_posts'], "ignore"); ?>><?php _e("Ignore", $this->plugin_slug); ?></option>
+							
+						</select>
+						
+					</fieldset>
+				</td>
 			</tr>
 			<tr>
 				<td>
 					<label for="default_sort_by">
-					<?php _e("Default Sort Order:", $this->plugin_slug ); ?>
+					<?php _e("Default Order:", $this->plugin_slug ); ?>
 					</label>
 				</td>
 				<td>
@@ -491,6 +524,7 @@
 							<option value="author"<?php $this->set_selected($values['default_sort_by'], "author"); ?>><?php _e("Author", $this->plugin_slug); ?></option>
 							<option value="title"<?php $this->set_selected($values['default_sort_by'], "title"); ?>><?php _e("Title", $this->plugin_slug); ?></option>
 							<option value="name"<?php $this->set_selected($values['default_sort_by'], "name"); ?>><?php _e("Name (Post Slug)", $this->plugin_slug); ?></option>
+							<option value="type"<?php $this->set_selected($values['default_sort_by'], "type"); ?>><?php _e("Type (Post Type)", $this->plugin_slug); ?></option>
 							<option value="date"<?php $this->set_selected($values['default_sort_by'], "date"); ?>><?php _e("Date", $this->plugin_slug); ?></option>
 							<option value="modified"<?php $this->set_selected($values['default_sort_by'], "modified"); ?>><?php _e("Last Modified Date", $this->plugin_slug); ?></option>
 							<option value="parent"<?php $this->set_selected($values['default_sort_by'], "parent"); ?>><?php _e("Parent ID", $this->plugin_slug); ?></option>
@@ -508,10 +542,10 @@
 					</fieldset>
 				</td>
 			</tr>
-			<tr class="sort_by_meta_container">
+			<tr class="sort_by_meta_container_default">
 				<td>
 					<label for="default_meta_key">
-					<?php _e("Sort By Meta Key:", $this->plugin_slug ); ?>
+					<?php  _e("Choose Meta Key:", $this->plugin_slug );  ?>
 					</label>
 				</td>
 				<td>
@@ -528,8 +562,68 @@
 						?> 
 					
 						<select name='default_sort_type' data-field-template-id='default_sort_type'>
-							<option value="numeric"<?php $this->set_selected($values['default_sort_type'], "numeric"); ?>><?php _e("numeric", $this->plugin_slug); ?></option>
-							<option value="alphabetic"<?php $this->set_selected($values['default_sort_type'], "alphabetic"); ?>><?php _e("alphabetic", $this->plugin_slug); ?></option>
+							<option value="numeric"<?php $this->set_selected($values['default_sort_type'], "numeric"); ?>><?php _e("Numerical", $this->plugin_slug); ?></option>
+							<option value="alphabetic"<?php $this->set_selected($values['default_sort_type'], "alphabetic"); ?>><?php _e("Alphabetical", $this->plugin_slug); ?></option>
+						</select>
+					</fieldset>
+				</td>
+			</tr>
+			
+			<tr>
+				<td>
+					<label for="secondary_sort_by" style="white-space: nowrap;">
+					<?php _e("Secondary Sort Order:", $this->plugin_slug ); ?> <span class="hint--top hint--info" data-hint="<?php _e("only works with WordPress 4.2 and up", $this->plugin_slug); ?>"><i class="dashicons dashicons-info"></i></span>
+					</label>
+				</td>
+				<td>
+					<fieldset class="sitem">
+						
+						<select name="secondary_sort_by" class="secondary_sort_by" id="secondary_sort_by">
+							<option value="0"><?php _e("None", $this->plugin_slug); ?></option>
+							<option value="ID"<?php $this->set_selected($values['secondary_sort_by'], "ID"); ?>><?php _e("Post ID", $this->plugin_slug); ?></option>
+							<option value="author"<?php $this->set_selected($values['secondary_sort_by'], "author"); ?>><?php _e("Author", $this->plugin_slug); ?></option>
+							<option value="title"<?php $this->set_selected($values['secondary_sort_by'], "title"); ?>><?php _e("Title", $this->plugin_slug); ?></option>
+							<option value="name"<?php $this->set_selected($values['secondary_sort_by'], "name"); ?>><?php _e("Name (Post Slug)", $this->plugin_slug); ?></option>
+							<option value="type"<?php $this->set_selected($values['secondary_sort_by'], "type"); ?>><?php _e("Type (Post Type)", $this->plugin_slug); ?></option>
+							<option value="date"<?php $this->set_selected($values['secondary_sort_by'], "date"); ?>><?php _e("Date", $this->plugin_slug); ?></option>
+							<option value="modified"<?php $this->set_selected($values['secondary_sort_by'], "modified"); ?>><?php _e("Last Modified Date", $this->plugin_slug); ?></option>
+							<option value="parent"<?php $this->set_selected($values['secondary_sort_by'], "parent"); ?>><?php _e("Parent ID", $this->plugin_slug); ?></option>
+							<option value="rand"<?php $this->set_selected($values['secondary_sort_by'], "rand"); ?>><?php _e("Random Order", $this->plugin_slug); ?></option>
+							<option value="comment_count"<?php $this->set_selected($values['secondary_sort_by'], "comment_count"); ?>><?php _e("Comment Count", $this->plugin_slug); ?></option>
+							<option value="menu_order"<?php $this->set_selected($values['secondary_sort_by'], "menu_order"); ?>><?php _e("Menu Order", $this->plugin_slug); ?></option>
+							<option value="meta_value"<?php $this->set_selected($values['secondary_sort_by'], "meta_value"); ?>><?php _e("Meta Value", $this->plugin_slug); ?></option>
+						</select>
+					
+						<select name="secondary_sort_dir" class="meta_key" id="secondary_sort_dir">
+							<option value="desc"<?php $this->set_selected($values['secondary_sort_dir'], "desc"); ?>><?php _e("Descending", $this->plugin_slug); ?></option>
+							<option value="asc"<?php $this->set_selected($values['secondary_sort_dir'], "asc"); ?>><?php _e("Ascending", $this->plugin_slug); ?></option>
+						</select>
+						
+					</fieldset>
+				</td>
+			</tr>
+			<tr class="sort_by_meta_container_secondary">
+				<td>
+					<label for="secondary_meta_key">
+					<?php _e("Choose Meta Key:", $this->plugin_slug ); ?>
+					</label>
+				</td>
+				<td>
+					<fieldset>
+						<?php
+							$all_meta_keys = $this->get_all_post_meta_keys();
+							echo '<select name="secondary_meta_key" class="meta_key" id="secondary_meta_key">';
+							foreach($all_meta_keys as $v)
+							{						
+								echo '<option value="'.$v.'"'.$this->set_selected($values['secondary_meta_key'], $v, false).'>'.$v."</option>";
+							}
+							echo '</select> ';
+							
+						?> 
+					
+						<select name='secondary_sort_type' data-field-template-id='secondary_sort_type'>
+							<option value="numeric"<?php $this->set_selected($values['secondary_sort_type'], "numeric"); ?>><?php _e("Numerical", $this->plugin_slug); ?></option>
+							<option value="alphabetic"<?php $this->set_selected($values['secondary_sort_type'], "alphabetic"); ?>><?php _e("Alphabetical", $this->plugin_slug); ?></option>
 						</select>
 					</fieldset>
 				</td>
@@ -548,6 +642,7 @@
 					<td>
 						&nbsp;
 					</td>
+					
 					<td>
 						<strong><?php _e("Comma Seperated IDs", $this->plugin_slug ); ?></strong>
 					</td>
@@ -577,9 +672,10 @@
 							echo '<tr>';
 							echo "<td>";
 							echo '<label for="'.$taxonomy->name.'_include_exclude">';
-							echo $taxonomy->label;
+							echo $taxonomy->label.' <span class="label_taxonomy_name">('.$taxonomy->name.')';
 							echo '</label>';
 							echo "</td>";
+							
 							echo "<td>";
 							
 							
@@ -608,12 +704,12 @@
 							{
 								$ids_array = array_map("intval" , explode(",", $tval));
 								
-								if(function_exists('icl_object_id'))
+								if(Search_Filter_Helper::has_wpml())
 								{
 									$res = array();
 									foreach ($ids_array as $id)
 									{
-										$xlat = icl_object_id($id, $taxonomy->name,false);
+										$xlat = Search_Filter_Helper::wpml_object_id($id, $taxonomy->name, false);
 										if(!is_null($xlat)) $res[] = $xlat;
 									}
 									$ids_array = $res;
@@ -676,7 +772,7 @@
 				<tr>
 					<td colspan="2">
 						
-						<p><strong>Advanced / Miscellaneous Settings</strong></p>
+						<p><strong><?php _e("Advanced / Miscellaneous Settings", $this->plugin_slug ); ?></strong></p>
 					</td>
 				</tr>
 				<?php
@@ -686,10 +782,30 @@
 					?>
 					<tr>
 						<td>
-							<label for="use_relevanssi"><?php _e("Use Relevanssi in searches?", $this->plugin_slug ); ?></label>
+							<label for="use_relevanssi"><?php _e("Relevanssi", $this->plugin_slug ); ?></label>
 						</td>
 						<td>
-							<input class="checkbox use_relevanssi" type="checkbox" id="use_relevanssi" name="use_relevanssi"<?php $this->set_checked($values['use_relevanssi']); ?>> 
+							<p class="description" style="font-style:normal;">
+								<label for="use_relevanssi">
+									<input class="checkbox use_relevanssi" type="checkbox" id="use_relevanssi" name="use_relevanssi"<?php $this->set_checked($values['use_relevanssi']); ?>> 
+									<?php _e("Enable", $this->plugin_slug ); ?>
+								</label>
+							</p>
+							
+						</td>
+					</tr>
+					<tr>
+						<td>
+							<label for="use_relevanssi_sort"><?php _e("", $this->plugin_slug ); ?></label>
+						</td>
+						<td>
+							<p class="description" style="font-style:normal;">
+								<label for="use_relevanssi_sort">
+									<input class="checkbox use_relevanssi_sort" type="checkbox" id="use_relevanssi_sort" name="use_relevanssi_sort"<?php $this->set_checked($values['use_relevanssi_sort']); ?>>
+									<?php _e("Sort Results By relevance?", $this->plugin_slug ); ?>
+								</label>
+							</p>
+							<p class="description"><?php _e("When a Search Term has been entered results will be ordered by relevance instead of the default sort order", $this->plugin_slug ); ?></p>
 							<!-- <input type="hidden" name="maintain_state" id="auto_submit_hidden" class="auto_submit_hidden" value="1"> -->
 						</td>
 					</tr>

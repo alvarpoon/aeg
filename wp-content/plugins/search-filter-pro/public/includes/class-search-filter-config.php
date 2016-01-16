@@ -35,7 +35,7 @@ class Search_Filter_Config
 			if(!isset($this->query))
 			{
 				$this->query = new Search_Filter_Query($this->sfid, $this->form_data['settings'], $this->form_data['fields_assoc'], $this->get_filters());
-				$this->current_query = new Search_Filter_Active_Query($this->sfid, $this->form_data['settings'], $this->form_data['fields_assoc']);
+				$this->current_query = new Search_Filter_Active_Query($this->plugin_slug, $this->sfid, $this->form_data['settings'], $this->form_data['fields_assoc']);
 			}
 			
 		}
@@ -176,7 +176,7 @@ class Search_Filter_Config
 				
 			}
 		}
-			
+		
 		return $filters;
 	}
 	

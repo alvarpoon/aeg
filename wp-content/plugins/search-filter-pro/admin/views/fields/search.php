@@ -34,6 +34,10 @@
 			<p class="item-container">
 				<label for="{0}[{1}][placeholder]"><?php _e("Placeholder text", $this->plugin_slug); ?><span class="hint--top hint--info" data-hint="<?php _e("text that appears in the search box before the use starts typing", $this->plugin_slug); ?>"><i class="dashicons dashicons-info"></i></span><br /><input class="" id="{0}[{1}][placeholder]" name="{0}[{1}][placeholder]" type="text" value="<?php echo esc_attr($values['placeholder']); ?>"></label>
 			</p>
+			<p class="item-container sf_accessibility_label">
+				<label for="{0}[{1}][accessibility_label]"><?php _e("Add screen reader text?", $this->plugin_slug); ?><span class="hint--top hint--info" data-hint="<?php _e("adds hidden text that will be read by screen readers - complies with WCAG 2.0", $this->plugin_slug); ?>"><i class="dashicons dashicons-info"></i></span><br />
+				<input class="" id="{0}[{1}][accessibility_label]" name="{0}[{1}][accessibility_label]" type="text" value="<?php echo esc_attr($values['accessibility_label']); ?>"></label>
+			</p>
 			<div class="clear"></div>
 		</div>
 		

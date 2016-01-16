@@ -43,6 +43,8 @@ class Search_Filter_Query {
 	public $count_data					= array();
 	public $cache						= array();
 	public $pagination_filter_type		= "";
+	public $sort_type 					= "";
+	public $add_meta_sort				= array();
 	
 	
 	public function __construct($sfid, $settings, $fields, $filters)
@@ -64,23 +66,21 @@ class Search_Filter_Query {
 			 */
 			
 			global $searchandfilter;
-			
-			//echo $this->form_settings['display_results_as'];
-			
+						
 			if(isset($this->form_settings['display_results_as']))
 			{
 				if($this->form_settings['display_results_as']=="custom_edd_store")
 				{
 					add_action( 'edd_downloads_query', array( $this, 'setup_edd_query' ), 200 );
 				}
-				else
+				else if($this->form_settings['display_results_as']=="archive")
 				{
 					add_action( 'pre_get_posts', array( $this, 'setup_archive_query' ), 200 );
 				}			
 			}
 			
 			add_filter( 'sf_edit_query_args', array( $this, 'sf_filter_query_args' ), 10, 2);
-			add_action( 'parse_query', array($this, 'disable_canonical_redirect' ));
+			add_action( 'parse_query', array($this, 'disable_canonical_redirect' )); //for shortcode methods
 			
 			//$this->init($sfid);
 		}
@@ -99,8 +99,50 @@ class Search_Filter_Query {
 		query_posts($args);
 	}
 	
-	function setup_archive_query($query)
+	public function hook_setup_archive_query()
 	{
+		add_action( 'pre_get_posts', array( $this, 'setup_archive_query' ), 200 );
+	}
+	
+	public function setup_custom_query($query)
+	{
+		global $searchandfilter;
+		$searchform = $searchandfilter->get($this->sfid);
+		
+		remove_filter( 'template_redirect', 'redirect_canonical' );
+		$this->prep_query();
+		
+		if(!$searchandfilter->has_pagination_init())
+		{
+			add_filter('get_pagenum_link', array($this, 'pagination_fix_pagenum'), 100);
+			add_filter('paginate_links', array($this, 'pagination_fix_paginate'), 100); 
+			
+			do_action("search_filter_pagination_init");
+		}
+					
+		//convert already init args and set under pre_get_posts
+		foreach ($this->query_args as $key => $val)
+		{
+			$query->set($key, $val);
+		}
+		
+		$force_is_search = $searchform->settings("force_is_search");
+		if($force_is_search==1)
+		{
+			$query->set('is_search', true);
+			$query->is_search = true;
+		}
+	}
+	
+	public function setup_archive_query($query, $is_custom_query = false)
+	{
+		if(!$is_custom_query)
+		{
+			if(!$query->is_main_query())
+			{
+				return;
+			}
+		}
 		
 		global $searchandfilter;
 		
@@ -140,16 +182,27 @@ class Search_Filter_Query {
 				{
 					$filter_query = true;
 				}
+				else if(($post_type=="post")&&(is_home()))
+				{//this then works on the blog page (is_home) set in `settings -> reading -> "a static page" -> posts page
+					$filter_query = true;
+				}
 			}
 		}
 			
 		if(($filter_query) && ( !is_admin() ))
 		{
+			remove_filter( 'template_redirect', 'redirect_canonical' );
 			$this->prep_query();
 			
-			add_filter('get_pagenum_link', array($this, 'pagination_fix_pagenum'), 100);
-			add_filter('paginate_links', array($this, 'pagination_fix_paginate'), 100); 
-			
+			global $searchandfilter;
+			if(!$searchandfilter->has_pagination_init())
+			{
+				add_filter('get_pagenum_link', array($this, 'pagination_fix_pagenum'), 100);
+				add_filter('paginate_links', array($this, 'pagination_fix_paginate'), 100); 
+				
+				do_action("search_filter_pagination_init");
+			}
+						
 			//convert already init args and set under pre_get_posts
 			foreach ($this->query_args as $key => $val)
 			{
@@ -180,8 +233,13 @@ class Search_Filter_Query {
 		
 		$this->prep_query();
 		
-		add_filter('get_pagenum_link', array($this, 'pagination_fix_pagenum'), 100);
-		add_filter('paginate_links', array($this, 'pagination_fix_paginate'), 100); 
+		if(!$searchandfilter->has_pagination_init())
+		{
+			add_filter('get_pagenum_link', array($this, 'pagination_fix_pagenum'), 100);
+			add_filter('paginate_links', array($this, 'pagination_fix_paginate'), 100); 
+			
+			do_action("search_filter_pagination_init");
+		}
 		
 		$args = array_merge($args, $this->query_args);
 		
@@ -190,8 +248,13 @@ class Search_Filter_Query {
 	
 	public function setup_pagination()
 	{
-		add_filter('get_pagenum_link', array($this, 'pagination_fix_pagenum'), 100);
-		add_filter('paginate_links', array($this, 'pagination_fix_paginate'), 100); 
+		if(!$searchandfilter->has_pagination_init())
+		{
+			add_filter('get_pagenum_link', array($this, 'pagination_fix_pagenum'), 100);
+			add_filter('paginate_links', array($this, 'pagination_fix_paginate'), 100); 
+			
+			do_action("search_filter_pagination_init");
+		}
 		
 	}
 	/* ***************************** */
@@ -206,6 +269,21 @@ class Search_Filter_Query {
 			$this->has_prep_query = true;
 			//apply filter logic from cache, and `sf_edit_query_args` filter
 			$this->query_args = $this->cache->filter_query_args($this->query_args);
+						
+			
+			if(has_filter('sf_apply_filter_sort_post__in')) {
+				
+				//only apply anything here if there has been no custom user sort
+				if($this->sort_type == "default")
+				{
+					$post__in = apply_filters('sf_apply_filter_sort_post__in', $this->query_args['post__in'], $this->query_args, $this->sfid);
+					
+					$this->query_args['post__in'] = $post__in;
+					
+					//if this filter exists, we want a custom sort on post__in
+					$this->query_args['orderby'] = "post__in";
+				}
+			}
 			
 			$this->add_permalink_filters();
 			
@@ -298,6 +376,8 @@ class Search_Filter_Query {
 		if(isset($_GET['sf_paged']))
 		{
 			$sfpaged = (int)$_GET['sf_paged'];
+			global $paged;
+			$paged = $sfpaged;
 		}
 		
 		//regular paged value - normally found when loading the page (non ajax)
@@ -307,8 +387,7 @@ class Search_Filter_Query {
 		/* to do - make sure its ajax/shortcode request */
 		//if(is_admin()) //is_admin is a great way to test if this is in an ajax call
 		//{
-			global $paged;
-			$paged = $sfpaged;
+			
 	//	}
 		
 		
@@ -323,14 +402,12 @@ class Search_Filter_Query {
 		$args = $this->filter_query_inherited_defaults($args);
 		
 		
-		//var_dump($args);
-		
 		return $args;
 	}
 	
 	private function filter_query_inherited_defaults($args)
 	{
-		//var_dump($searchform);
+		
 		if(isset($this->form_settings['inherit_current_post_type_archive']))
 		{
 			
@@ -429,8 +506,6 @@ class Search_Filter_Query {
 			
 			$args['post_type'] = $post_types_filter; //here we set the post types that we want WP to search
 			
-			$this->rel_query_args['post_types'] = $post_types_filter;
-			
 		}
 		else
 		{
@@ -463,6 +538,7 @@ class Search_Filter_Query {
 		}
 		
 		
+		
 		return $args;
 	}
 	
@@ -478,12 +554,12 @@ class Search_Filter_Query {
 			$authors = explode(",",esc_attr($_GET['authors']));
 			foreach ($authors as &$author)
 			{
-				$author = (int)$author;
+				$the_author = get_user_by('slug', esc_attr($author));
+				//var_dump($the_author);
+				$author = (int)$the_author->ID;
 			}
 			
 			$args['author'] = implode(",", $authors); //here we set the post types that we want WP to search
-			
-			$this->rel_query_args['authors'] = $authors;
 		}
 		
 		return $args;
@@ -500,6 +576,8 @@ class Search_Filter_Query {
 			
 			$sort_order_arr = explode("+",esc_attr(urlencode($_GET['sort_order'])));
 			$sort_arr_length = count($sort_order_arr);
+			
+			$this->sort_type = "user";
 			
 			//check both elems in arr exist - field name [0] and direction [1]
 			if($sort_arr_length>=2)
@@ -539,6 +617,136 @@ class Search_Filter_Query {
 		}
 		else
 		{
+			$this->sort_type = "default";
+			
+			global $searchandfilter;
+			$searchform = $searchandfilter->get($this->sfid);
+			
+			$sort_arr = array(); //this contains all the options from the settings in array format
+			
+			$default_sort_order = array(
+				
+				'sort_by' => $searchform->settings('default_sort_by'),
+				'sort_dir' => strtoupper($searchform->settings('default_sort_dir')),
+				'meta_key' => $searchform->settings('default_meta_key'),
+				'sort_type' => $searchform->settings('default_sort_type'),
+			);
+			
+			$secondary_sort_order = array(
+				
+				'sort_by' => $searchform->settings('secondary_sort_by'),
+				'sort_dir' => strtoupper($searchform->settings('secondary_sort_dir')),
+				'meta_key' => $searchform->settings('secondary_meta_key'),
+				'sort_type' => $searchform->settings('secondary_sort_type'),
+			);
+			
+			array_push($sort_arr, $default_sort_order);
+			array_push($sort_arr, $secondary_sort_order);
+			
+			
+			$order_by = array();
+			
+			foreach($sort_arr as $sort_order)
+			{
+				if(isset($sort_order['sort_by']))
+				{
+					if($sort_order['sort_by']!="0")
+					{	
+						if($sort_order['sort_by']=="meta_value")
+						{
+							$order_by[$sort_order['meta_key']] = $sort_order['sort_dir'];
+							
+							//array_push($this->add_meta_sort, array($sort_order['meta_key'] => $sort_order['sort_type']));
+							
+							//$this->add_meta_sort
+							
+							$meta_type = ( $sort_order['sort_type'] == "numeric" ) ? 'NUMERIC' : 'CHAR';
+							
+							$meta_query = array(
+								
+								'key'		=> $sort_order['meta_key'],
+								'type'		=> $meta_type,
+								'compare'	=> 'EXISTS'
+							);				
+						
+							
+							if(!isset($args['meta_query']))
+							{
+								$args['meta_query'] = array();
+							}
+							
+							$args['meta_query'][$sort_order['meta_key']] = $meta_query;
+						}
+						else
+						{
+							$order_by[$sort_order['sort_by']] = $sort_order['sort_dir'];
+						}						
+					}
+				}
+			}
+			
+			$args['orderby'] = $order_by;
+			
+		}
+		
+		
+		return $args;
+	}
+	
+	/*function filter_query_sort_order($args)
+	{
+		global $wp_query;
+		
+	
+		if(isset($_GET['sort_order']))
+		{
+			$search_all = false;
+			
+			$sort_order_arr = explode("+",esc_attr(urlencode($_GET['sort_order'])));
+			$sort_arr_length = count($sort_order_arr);
+			
+			$this->sort_type = "user";
+			
+			//check both elems in arr exist - field name [0] and direction [1]
+			if($sort_arr_length>=2)
+			{
+				$sort_order_arr[1] = strtoupper($sort_order_arr[1]);
+				if(($sort_order_arr[1]=="ASC")||($sort_order_arr[1]=="DESC"))
+				{
+					if($this->is_meta_value($sort_order_arr[0]))
+					{
+						$sort_by = "meta_value";
+						if(isset($sort_order_arr[2]))
+						{
+							if($sort_order_arr[2]=="num")
+							{
+								$sort_by = "meta_value_num";
+							}
+						}
+						$meta_key = substr($sort_order_arr[0], strlen(SF_META_PRE));
+						
+						$args['orderby'] = $sort_by;
+						$args['order'] = $sort_order_arr[1];
+						$args['meta_key'] = $meta_key;
+					}
+					else
+					{
+						$sort_by = $sort_order_arr[0];
+						if($sort_by=="id")
+						{
+							$sort_by = "ID";
+						}
+						
+						$args['orderby'] = $sort_by;
+						$args['order'] = $sort_order_arr[1];
+					}
+				}
+			}
+		}
+		else
+		{
+			$this->sort_type = "default";
+			
 			global $searchandfilter;
 			$searchform = $searchandfilter->get($this->sfid);
 			
@@ -574,10 +782,9 @@ class Search_Filter_Query {
 				}
 			}
 		}
-	
 		
 		return $args;
-	}
+	}*/
 	
 	
 	function filter_query_post_date($args)
@@ -698,7 +905,12 @@ class Search_Filter_Query {
 		return $rdate;
 	}
 	
-	function the_results()
+	function get_query_object()
+	{
+		return $this->the_results(true);
+	}
+	
+	function the_results($get_query = false)
 	{
 		global $searchandfilter;
 		
@@ -722,10 +934,21 @@ class Search_Filter_Query {
 			add_filter('the_permalink', array($this, 'maintain_search_settings'));
 		}*/
 		
-		add_filter('get_pagenum_link', array($this, 'pagination_fix_pagenum'), 100);
-		add_filter('paginate_links', array($this, 'pagination_fix_paginate'), 100); 
+		if(!$searchandfilter->has_pagination_init())
+		{
+			add_filter('get_pagenum_link', array($this, 'pagination_fix_pagenum'), 100);
+			add_filter('paginate_links', array($this, 'pagination_fix_paginate'), 100); 
+			
+			do_action("search_filter_pagination_init");
+		}
 		
 		$query = new WP_Query($args);
+		
+		if($get_query)
+		{
+			return $query;
+		}
+		
 		
 		ob_start();
 		
@@ -925,17 +1148,17 @@ class Search_Filter_Query {
 	function filter_settings($args)
 	{
 		global $searchandfilter;
-		
+		$searchform = $searchandfilter->get($this->sfid);
 		//posts per page
-		$args['posts_per_page'] = $searchandfilter->get($this->sfid)->settings('results_per_page') == "" ? get_option('posts_per_page') : $searchandfilter->get($this->sfid)->settings('results_per_page');
+		$args['posts_per_page'] = $searchform->settings('results_per_page') == "" ? get_option('posts_per_page') : $searchform->settings('results_per_page');
 		
 		//post status
-		if($searchandfilter->get($this->sfid)->settings('post_status')!="")
+		if($searchform->settings('post_status')!="")
 		{
-			$post_status = $searchandfilter->get($this->sfid)->settings('post_status');
+			$post_status = $searchform->settings('post_status');
 			$args['post_status'] = array_map("esc_attr", array_keys($post_status));
 			
-			$post_types = $searchandfilter->get($this->sfid)->settings('post_types');
+			$post_types = $searchform->settings('post_types');
 			if($post_types!="")
 			{
 				if(array_key_exists('attachment', $post_types))
@@ -946,18 +1169,47 @@ class Search_Filter_Query {
 		}
 		
 		//exclude post ids
-		if($searchandfilter->get($this->sfid)->settings('exclude_post_ids')!="")
+		if($searchform->settings('exclude_post_ids')!="")
 		{
-			$exclude_post_ids = $searchandfilter->get($this->sfid)->settings('exclude_post_ids');
+			$exclude_post_ids = $searchform->settings('exclude_post_ids');
 			$args['post__not_in'] = array_map("intval" , explode(",", $exclude_post_ids));
 		}
 		
-		//include/exclude taxonomies
-		if($searchandfilter->get($this->sfid)->settings('taxonomies_settings')!="")
+		
+		if($searchform->settings('sticky_posts')!="")
 		{
-			if(is_array($searchandfilter->get($this->sfid)->settings('taxonomies_settings')))
+			$sticky_posts = $searchform->settings('sticky_posts');
+			
+			if($sticky_posts=="exclude")
 			{
-				foreach ($searchandfilter->get($this->sfid)->settings('taxonomies_settings') as $key => $val)
+				$sticky_post_ids = get_option( 'sticky_posts' );
+				
+				if(!empty($sticky_post_ids))
+				{
+					if(!isset($args['post__not_in']))
+					{
+						$args['post__not_in'] = $sticky_post_ids;
+					}
+					else if(is_array($args['post__not_in']))
+					{
+						$args['post__not_in'] = array_merge($args['post__not_in'], $sticky_post_ids);
+					}
+				}
+				
+			}
+			else if($sticky_posts=="ignore")
+			{
+				$args['ignore_sticky_posts'] = 1;
+			}
+			
+		}
+		
+		//include/exclude taxonomies
+		if($searchform->settings('taxonomies_settings')!="")
+		{
+			if(is_array($searchform->settings('taxonomies_settings')))
+			{
+				foreach ($searchform->settings('taxonomies_settings') as $key => $val)
 				{
 					
 					if($key == "category")
@@ -1032,12 +1284,12 @@ class Search_Filter_Query {
 		}
 		
 		
-		if($searchandfilter->get($this->sfid)->settings('settings_post_meta')!="")
+		if($searchform->settings('settings_post_meta')!="")
 		{
 			//$args['meta_query']
-			if(is_array($searchandfilter->get($this->sfid)->settings('settings_post_meta')))
+			if(is_array($searchform->settings('settings_post_meta')))
 			{
-				foreach($searchandfilter->get($this->sfid)->settings('settings_post_meta') as $post_meta)
+				foreach($searchform->settings('settings_post_meta') as $post_meta)
 				{					
 					$compare_val = "";
 					if($post_meta['meta_compare']=="e")
@@ -1147,12 +1399,12 @@ class Search_Filter_Query {
 	
 	function lang_object_ids($ids_array, $type)
 	{
-		if(function_exists('icl_object_id'))
+		if(Search_Filter_Helper::has_wpml())
 		{
 			$res = array();
 			foreach ($ids_array as $id)
 			{
-				$xlat = icl_object_id($id,$type,false);
+				$xlat = Search_Filter_Helper::wpml_object_id($id,$type,false);
 				if(!is_null($xlat)) $res[] = $xlat;
 			}
 			return $res;

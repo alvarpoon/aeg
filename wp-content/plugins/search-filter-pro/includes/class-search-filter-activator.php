@@ -18,7 +18,7 @@
  * @since      1.0.0
  * @package    Pdf_Creator
  * @subpackage Pdf_Creator/includes
- * @author     Ross Morsali <ross@designsandcode.com>
+ * @author     Ross Morsali
  */
 class Search_Filter_Activator {
 

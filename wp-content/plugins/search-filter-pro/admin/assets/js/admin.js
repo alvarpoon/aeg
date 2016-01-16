@@ -15,7 +15,8 @@
 		{
 			$metabox_prefs = $('#screen-meta #screen-options-wrap h5').after('<div class="metabox-prefs"><label for="welcome-hide" class="handle-custom-prefs"><input  data-target="#search-filter-welcome-panel" name="welcome-hide" type="checkbox" id="welcome-hide" value="welcome">Welcome</label><br class="clear" /></div>');
 		}
-		$metabox_prefs.find('.clear').before('<label for="welcome-hide" class="handle-custom-prefs"><input  data-target="#search-filter-welcome-panel" name="welcome-hide" type="checkbox" id="welcome-hide" value="welcome">Welcome</label>');
+		
+		$metabox_prefs.find("legend").after('<label for="welcome-hide" class="handle-custom-prefs"><input  data-target="#search-filter-welcome-panel" name="welcome-hide" type="checkbox" id="welcome-hide" value="welcome">Welcome</label>');
 		
 		//initialise checked state by seeing if the target has hidden class
 		$metabox_prefs.find(".handle-custom-prefs input[type=checkbox]").each(function()
@@ -71,7 +72,7 @@
 			
 			//add user feedback that the element has been hidden and can be shown again by adding flicker effect to the screen options button 
 			//$screen_options_link.css('background-color', '#f00');
-			if($screen_options_wrap.css("display")=="none")
+			/*if($screen_options_wrap.css("display")=="none")
 			{//don't run if the screen options are open
 			
 				$screen_options_link.delay(200).queue(function(next){
@@ -81,7 +82,7 @@
 					$(this).removeClass('highlight');
 					next();
 				});
-			}
+			}*/
 				
 			//run ajax to set option
 			$.post( ajaxurl, {show: "0", action: meta_prefs_action_name});
@@ -148,10 +149,14 @@
 				{
 					$cache_views.hide();
 					
+					$('#cache-info .notice-rc-error').hide();
+					$('#cache-info .cache-metabox .notice-please-wait').hide();
 					
 					if((data.restart==true)&&(data.status!="ready"))
 					{
 						$cache_view["restart"].show();
+						$('#cache-info .notice-rc-error').hide();
+						$('#cache-info .cache-metabox .notice-please-wait').show();
 					}
 					else
 					{
@@ -184,16 +189,19 @@
 							$('#cache-info .cache-metabox .notice-building').hide();
 						}
 					}
-					
-					$('#cache-info .notice-rc-error').hide();
+										
 					if(data.rc_status!="connect_success")
 					{//then this install can't initiate a remote connection
 						has_rc_error = true;
 						
-						if((data.status == "inprogress")||(data.status == "termcache")||((data.restart==true)&&(data.status!="ready")))
+						if(((data.status == "inprogress")||(data.status == "termcache"))&& (!data.restart))
 						{
 							//console.log(data);
 							$('#cache-info .notice-rc-error').show();
+						}
+						else if((data.restart==true)&&(data.status!="ready"))
+						{
+							$('#cache-info .cache-metabox .notice-please-wait').show();
 						}
 					}
 					else

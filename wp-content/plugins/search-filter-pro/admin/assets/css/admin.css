@@ -40,9 +40,9 @@ a
 
 .welcome-panel .welcome-panel-close {
     position: absolute;
-    top: 5px;
+    top: 12px;
     right: 10px;
-    padding: 20px 15px 0 3px;
+    padding: 8px 15px 0 5px;
     font-size: 13px;
     text-decoration: none;
     line-height: 1;
@@ -172,7 +172,8 @@ div.sf-cache-notice {
 {
 	display:none;
 }
-#cache-info .cache-metabox .notice-alert
+#cache-info .cache-metabox .notice-alert,
+#cache-info .notice-please-wait
 {
 	background-color:#FFFDD6;
 	padding:10px;
@@ -283,13 +284,21 @@ div.sf-cache-notice {
 	width:auto;
 }
 
+.widget .item-container.child-columns-w p
+{
+	width: 150px;
+	float:left;
+	
+}
+
 .widget .item-container.child-columns p
 {
 	width: 110px;
 	padding-right:10px;
 	float:left;
 }
-.widget .child-columns input, .widget .child-columns select
+.widget .child-columns input[type="text"], .widget .child-columns select,
+.widget .child-columns-w input[type="text"], .widget .child-columns-w select
 {
 	width: 81px;
 }
@@ -453,7 +462,18 @@ ul.sort_options_list li.sort-option-template, ul.meta_options_list li.meta-optio
 {
 	display:none;
 }
-
+.sf_tab_content_taxonomies .td_taxonomy_name
+{
+	text-align:right;
+	
+}
+.sf_tab_content_taxonomies .label_taxonomy_name
+{
+	opacity:0.6;
+	display:inline-block;
+	padding-left:5px;
+	text-align:right;
+}
 /* .widgets-search-filter-sortables */
 .widgets-search-filter-draggables 
 {
@@ -936,11 +956,13 @@ ul.sort_options_list li.sort-option-template, ul.meta_options_list li.meta-optio
 	text-decoration:none;
 	color: #666666;
 }
-.sf_field_data .child-columns
+.sf_field_data .child-columns,
+.sf_field_data .child-columns-w
 {
 	max-width:300px;
 }
 .sf_field_data .child-columns input, .sf_field_data .child-columns select
+.sf_field_data .child-columns-w input, .sf_field_data .child-columns-w select
 {
 	width:auto;
 }
@@ -988,6 +1010,10 @@ ul.sort_options_list li.sort-option-template, ul.meta_options_list li.meta-optio
 {
 	padding:5px;
 	vertical-align:top;
+}
+#search-filter-settings-box .sf_tab_content_taxonomies table td
+{
+	vertical-align:middle;
 }
 #search-filter-settings-box table tr td:first-child
 {
@@ -1148,3 +1174,108 @@ ul.sort_options_list li.sort-option-template, ul.meta_options_list li.meta-optio
 {
 	display:none;
 }
+
+
+
+
+.wrap div.sf-notice
+{
+	/*background: #fff;
+    border-left: 4px solid #fff;
+    -webkit-box-shadow: 0 1px 1px 0 rgba( 0, 0, 0, 0.1 );
+    box-shadow: 0 1px 1px 0 rgba( 0, 0, 0, 0.1 );
+    margin: 5px 15px 2px;
+    padding: 1px 12px;*/
+	
+	
+	margin: 5px 0 15px;
+	border-color: #ffba00;
+}
+
+.wrap div .sf-error-langcode
+{
+	color:#888888; 
+	font-weight:bold;
+	display:inline-block;
+	padding-left:10px;
+	text-transform:uppercase;
+}
+
+.sf_number .sf_display_values_as
+{
+	display:none;
+}
+.sf_number .sf_number_formatting
+{
+	display:block;
+}
+.sf_number .sf_all_items_label_number
+{
+	display:none;
+}
+.sf_number .sf_display_input_as
+{
+	display:block;
+}
+
+/* range slider */
+.sf_number[data-number-input-type='range-slider'] .sf_display_values_as
+{
+	display:block;
+}
+.sf_number[data-number-input-type='range-slider'] .sf_display_input_as
+{
+	display:none;
+}
+
+/* range number */
+.sf_number[data-number-input-type='range-number'] .sf_display_values_as
+{
+	display:none;
+}
+.sf_number[data-number-input-type='range-number'] .sf_display_input_as
+{
+	display:none;
+}
+.sf_number[data-number-input-type='range-number'] .sf_number_formatting
+{
+	display:none;
+}
+
+.sf_number[data-number-input-type='range-select'][data-display-input-as='singlefield'] .sf_all_items_label_number,
+.sf_number[data-number-input-type='range-radio'][data-display-input-as='singlefield'] .sf_all_items_label_number
+{
+	display:block;
+}
+
+.sf_number[data-number-input-type='range-radio'] .sf_accessibility_label
+{
+	display:none;
+}
+
+/* choice */
+.choice_is_acf, .choice_order_options
+{
+	display:none;
+}
+.sf_manual_meta_options
+{
+	display:block;
+}
+
+.sf_choice[data-choice-get-options='auto'] .choice_is_acf,
+.sf_choice[data-choice-get-options='auto'] .choice_order_options
+{
+	display:block;
+}
+.sf_choice[data-choice-get-options='auto'] .sf_manual_meta_options
+{
+	display:none;
+}
+
+.sf_choice[data-choice-get-options='manual'] .sf_manual_meta_options
+{
+	display:block;
+}
+
+

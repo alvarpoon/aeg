@@ -18,7 +18,7 @@ class Search_Filter {
 	 *
 	 * @var     string
 	 */
-	const VERSION = '2.0.3';
+	const VERSION = '2.1.0';
 	
 	/**
 	 * @TODO - Rename "plugin-name" to the name your your plugin
@@ -65,7 +65,7 @@ class Search_Filter {
 
 		// Load public-facing style sheet and JavaScript.
 		add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_styles' ) );
-		add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_scripts' ) );
+		add_action( 'wp_enqueue_scripts', array( $this, 'register_scripts' ) );
 		
 		// Ajax
 		
@@ -77,6 +77,7 @@ class Search_Filter {
 		{
 			//add_action( 'pre_get_posts', array( $this, 'wp_init' ) );
 			add_action( 'parse_request', array( $this, 'archive_query_init' ), 10 );
+			add_action( 'pre_get_posts', array($this, 'custom_query_init'), 100 );
 			add_action( 'pre_get_posts', array($this, 'archive_query_init_later') );
 			//add_action( 'pre_get_posts', array($this, 'archive_query_init_later'), -100 );
 			
@@ -93,6 +94,23 @@ class Search_Filter {
 		
 		
 		
+	}
+	
+	function custom_query_init($query)
+	{	
+		if((!isset($query->query['search_filter_id']))||(!isset($query->query['search_filter_query'])))
+		{
+			return;
+		}
+		
+		if((isset($query->query['search_filter_id']))&&(isset($query->query['search_filter_query'])))
+		{
+			if(($query->query['search_filter_id']!=0)&&($query->query['search_filter_query']==true))
+			{
+				global $searchandfilter;
+				$searchandfilter->get($query->query['search_filter_id'])->query->setup_custom_query($query);
+			}
+		}
 	}
 	
 	function archive_query_init_later($query)
@@ -133,7 +151,9 @@ class Search_Filter {
 			}
 		}
 		
-		if(is_post_type_archive())
+		
+		
+		if(is_post_type_archive()||is_home())
 		{//then we know its a post type archive, see if any of our search forms
 			
 			foreach($this->all_search_form_ids as $search_form_id)
@@ -156,9 +176,16 @@ class Search_Filter {
 								$post_type = $post_types[0];
 								
 								if(is_post_type_archive($post_type))
-								{
+								{	
 									$searchandfilter->set_active_sfid($search_form_id);
 									$searchandfilter->get($search_form_id)->query->setup_archive_query($query);
+									return;
+								}
+								else if(($post_type=="post")&&(is_home()))
+								{//this then works on the blog page (is_home) set in `settings -> reading -> "a static page" -> posts page
+									$searchandfilter->set_active_sfid($search_form_id);
+									
+									$searchandfilter->get($search_form_id)->query->hook_setup_archive_query();
 									return;
 								}
 							}
@@ -227,7 +254,7 @@ class Search_Filter {
 						$results['form'] = $this->display_shortcode->display_shortcode(array("id" => $sfid));
 						$results['results'] = $sf_inst->query()->the_results();
 						
-						echo json_encode($results);
+						echo wp_json_encode($results);
 						exit;
 					}
 				}
@@ -236,7 +263,7 @@ class Search_Filter {
 					$results = array();					
 					$results['form'] = $this->display_shortcode->display_shortcode(array("id" => $sfid));
 					
-					echo json_encode($results);
+					echo wp_json_encode($results);
 					exit;
 				}
 				
@@ -545,21 +572,36 @@ class Search_Filter {
 	 *
 	 * @since    1.0.0
 	 */
-	public function enqueue_scripts() {
+	public function register_scripts() {
 		
 		global $searchandfilter;
 		
-		//if($searchandfilter->is_valid_form())
-		//{
-			wp_register_script( $this->plugin_slug . '-plugin-build', plugins_url( 'assets/js/search-filter-build.js', __FILE__ ), array('jquery'), self::VERSION );
-			wp_register_script( $this->plugin_slug . '-plugin-jquery-i18n', '//ajax.googleapis.com/ajax/libs/jqueryui/1.11.1/i18n/jquery-ui-i18n.min.js', array('jquery'), self::VERSION );
-			//wp_register_script( $this->plugin_slug . '-plugin-jquery-i18n', '//ajax.googleapis.com/ajax/libs/jqueryui/1.11.1/i18n/datepicker-nl.js', array('jquery'), self::VERSION );
-			wp_localize_script($this->plugin_slug . '-plugin-build', 'SF_LDATA', array( 'ajax_url' => admin_url( 'admin-ajax.php' ), 'home_url' => (home_url('/')) ));
-			
-			//wp_register_script( $this->plugin_slug . '-chosen-script', plugins_url( 'assets/js/chosen.jquery.min.js', __FILE__ ), array( 'jquery' ), self::VERSION );
-		//}
+		wp_register_script( $this->plugin_slug . '-plugin-build', plugins_url( 'assets/js/search-filter-build.js', __FILE__ ), array('jquery'), self::VERSION );
+		wp_register_script( $this->plugin_slug . '-plugin-jquery-i18n', '//ajax.googleapis.com/ajax/libs/jqueryui/1.11.1/i18n/jquery-ui-i18n.min.js', array('jquery'), self::VERSION );
+		//wp_register_script( $this->plugin_slug . '-plugin-jquery-i18n', '//ajax.googleapis.com/ajax/libs/jqueryui/1.11.1/i18n/datepicker-nl.js', array('jquery'), self::VERSION );
+		wp_localize_script($this->plugin_slug . '-plugin-build', 'SF_LDATA', array( 'ajax_url' => admin_url( 'admin-ajax.php' ), 'home_url' => (home_url('/')) ));
+		
+		$lazy_load_js = get_option( 'search_filter_lazy_load_js' );
+		
+		if($lazy_load_js!=1)
+		{
+			$this->enqueue_scripts();
+		}
+		
+		
 	}
-	
+	public function enqueue_scripts()
+	{
+		$load_jquery_i18n = get_option( 'search_filter_load_jquery_i18n' );
+		
+		wp_enqueue_script( $this->plugin_slug . '-plugin-build' );
+		wp_enqueue_script( 'jquery-ui-datepicker' ); 
+		
+		if($load_jquery_i18n==1)
+		{
+			wp_enqueue_script( $this->plugin_slug . '-plugin-jquery-i18n' );
+		}
+	}
 
 	/**
 	 * NOTE:  Actions are points in the execution of a page or process
@@ -636,13 +678,6 @@ if ( ! class_exists( 'Search_Filter_Global' ) )
 {
 	require_once( plugin_dir_path( __FILE__ ) . 'includes/class-search-filter-global.php' );
 }
-
-/*if ( ! class_exists( 'Search_Filter_Relationships' ) )
-{
-	require_once( plugin_dir_path( __FILE__ ) . 'includes/class-search-filter-relationships.php' );
-}*/
-
-
 
 if ( ! class_exists( 'Search_Filter_Cache' ) )
 {

@@ -17,9 +17,11 @@ class Search_Filter_Active_Query {
 	private $query_array 			= array();
 	private $form_fields 			= array();
 	
-	public function __construct($sfid, $settings, $fields)
+	public function __construct($plugin_slug, $sfid, $settings, $fields)
 	{
 		global $wpdb;
+		
+		$this->plugin_slug = $plugin_slug;
 		
 		if($this->sfid == 0)
 		{
@@ -27,9 +29,124 @@ class Search_Filter_Active_Query {
 			$this->form_fields = $fields;
 			$this->form_settings = $settings;
 		}
+		
+		$this->cache_table_name = $wpdb->prefix . 'search_filter_cache';
+		$this->term_results_table_name = $wpdb->prefix . 'search_filter_term_results';
 	}
 
-	private function set_array()
+	public function get_field_values($field_name)
+	{
+		$this->set_fields_array();
+		
+		if(isset($this->field_values[$field_name]))
+		{
+			return $this->field_values[$field_name];
+		}
+		
+		return array();
+	}
+	
+	private function set_field_values_array()
+	{
+		$field_values = array();
+		
+		$current_query_arr = $this->get_array();
+		
+		foreach($current_query_arr as $field_name => $field)
+		{
+			if(isset($field['active_terms']))
+			{
+				$field_values[$field_name] = array();
+				
+				foreach($field['active_terms'] as $active_term)
+				{
+					array_push($field_values[$field_name], $active_term['value']);
+				}
+			}
+		}
+		
+		$this->field_values = $field_values;
+		
+		//perhaps we should keep the inherited stuff sepearte? And add an option to the functions to merge with regular defaults
+		$this->set_inherited_defaults();
+		
+	}
+	
+	private function set_inherited_defaults()
+	{
+		$inherit_current_post_type_archive = "";
+		if(isset($this->form_settings['inherit_current_post_type_archive']))
+		{
+			$inherit_current_post_type_archive = $this->form_settings['inherit_current_post_type_archive'];
+		}
+		
+		$inherit_current_taxonomy_archive = "";
+		if(isset($this->form_settings['inherit_current_taxonomy_archive']))
+		{
+			$inherit_current_taxonomy_archive = $this->form_settings['inherit_current_taxonomy_archive'];
+		}
+		
+		$inherit_current_author_archive = "";
+		if(isset($this->form_settings['inherit_current_author_archive']))
+		{
+			$inherit_current_author_archive = $this->form_settings['inherit_current_author_archive'];
+		}
+		
+		if($inherit_current_post_type_archive=="1")
+		{
+			if(is_post_type_archive())
+			{
+				$post_type_slug = get_post_type();
+
+				if ( $post_type_slug )
+				{
+					$this->field_values['post_types'] = array($post_type_slug);
+				}
+
+			}
+			else if(is_home())
+			{//this is the same as the "posts" archive
+				
+			}
+		}
+		
+		if($inherit_current_taxonomy_archive=="1")
+		{
+			global $wp_query;
+			$term =	$wp_query->queried_object;
+			
+			if(is_tax())
+			{
+				$this->field_values[SF_TAX_PRE.$term->taxonomy] = array($term->slug);
+
+			}
+			else if(is_category())
+			{
+				$this->field_values[SF_TAX_PRE.'category'] = array($term->slug);
+
+			}
+			else if(is_tag())
+			{
+				$this->field_values[SF_TAX_PRE.'post_tag'] = array($term->slug);
+			}
+		}
+
+		if($inherit_current_author_archive=="1")
+		{
+			global $wp_query;
+			
+			if(is_author())
+			{
+				$author = $wp_query->queried_object;
+				
+				$this->field_values['authors'] = array($term->ID);
+			}
+
+		}
+		
+	}
+	
+	private function set_fields_array()
 	{
 		//the the object has already been set up don't bother setting up again
 		if($this->is_set)
@@ -76,37 +193,49 @@ class Search_Filter_Active_Query {
 				}
 				else if ($key=="authors")
 				{
-					$post_type = $this->get_author($key);
-					$this->query_array[$key] = $post_type;					
-					
+					$author = $this->get_author($key);
+					$this->query_array[$key] = $author;
 				}
+				/*else if ($key=="sort_order")
+				{
+					$sort_order = $this->get_sort_order($key);
+					$this->query_array[$key] = $sort_order;
+				}*/
+				
 			}
 		}
-		
-		$post_date = array("","");
+				
 		if(isset($_GET['post_date']))
 		{
+			$post_date = array("","");
+			
 			$post_date = array_map('urldecode', explode("+", esc_attr(urlencode($_GET['post_date']))));
 			if(count($post_date)==1)
 			{
 				$post_date[1] = "";
 			}
+			
+			$this->query_array[SF_FPRE.'post_date'] = $post_date;
 		}
-		$this->query_array[SF_FPRE.'post_date'] = $post_date;
 		
-		
-		
-		
-		$sort_order = array();
 		if(isset($_GET['sort_order']))
 		{
-			$sort_order = explode(",",esc_attr(urlencode($_GET['sort_order'])));
+			$sort_orders = array();
+			$sort_orders = explode(",",esc_attr(($_GET['sort_order'])));
+			
+			$this->query_array[SF_FPRE.'sort_order']['active_terms'] = array();
+			
+			foreach($sort_orders as $sort_order)
+			{
+				$active_terms = (array("value"=>urlencode($sort_order)));
+				array_push($this->query_array[SF_FPRE.'sort_order']['active_terms'], $active_terms);
+			}			
 		}
-		$this->query_array[SF_FPRE.'sort_order'] = $sort_order;
 		
-		
-
+		$this->set_field_values_array(); //this is an array with only the values from the URL, used mostly for setting defaults in the search form
 	}
+	
+	
 
 
 	public function get_taxonomy_terms_string($sf_taxonomy_key, $term_delim_arr = array(", "), $show_if_not_selected = true, $use_smart_labels = true)
@@ -344,9 +473,91 @@ class Search_Filter_Active_Query {
 		
 		return $field_as_string;
 	}
+		
+	public function get_search_term_field()
+	{
+		
+		if(isset($_GET['_sf_s']))
+		{
+			$search_term = esc_attr(trim(stripslashes($_GET['_sf_s'])));
+		}
+		
+		return array("value", $search_term);
+	}
+	
+	public function get_sort_order_value()
+	{
+		$active_values = array();
+		
+		$sf_get_key = "sort_order";
+		if(isset($_GET[$sf_get_key]))
+		{
+			$sort_order_str = esc_attr(trim(urlencode($_GET[$sf_get_key])));
+
+			//$sort_order = (preg_split("/[,\+ ]/", $sort_order_str)); //explode with 2 delims
+			$sort_orders = explode( ',', $sort_order_str );
+			
+			foreach ($sort_orders as $sort_order)
+			{
+				array_push($active_values, $sort_order);
+			}
+		}
+	}
+	public function get_sort_order($labels = array())
+	{
+		global $wp_query;
+		global $wpdb;
+
+		$field_obj = array();
+		
+		$sf_get_key = "sort_order";
+		 
+		$label_defaults = array(
+
+			"name" 					=> __('Sort Order', $this->plugin_slug),
+			"singular_name"			=> __('Sort Order', $this->plugin_slug),
+			"all_items_label"		=> __('Sort Order', $this->plugin_slug)
+
+		);
 
 
+		if((is_array($labels))&&(!empty($labels)))
+		{
+			$labels = array_replace($label_defaults, $labels);
+		}
+		else
+		{
+			$labels = $label_defaults;
+		}
 
+		$field_obj['name'] = $labels['name'];
+		$field_obj['singular_name'] = $labels['singular_name'];
+		$field_obj['all_items_label'] = $labels['all_items_label'];
+		$field_obj['type'] = "post_type";
+		
+		$field_obj['active_terms'] = array();
+		
+
+		if(isset($_GET[$sf_get_key]))
+		{
+			$sort_order_str = esc_attr(trim(urlencode($_GET[$sf_get_key])));
+
+			//$sort_order = (preg_split("/[,\+ ]/", $sort_order_str)); //explode with 2 delims
+			$sort_orders = explode( ',', $sort_order_str );
+			
+			foreach ($sort_orders as $sort_order)
+			{
+				$sort_order_option = array();
+				$sort_order_option["name"] = $sort_order;
+				$sort_order_option["value"] = $sort_order;
+
+				array_push($field_obj['active_terms'], $sort_order_option);
+			}
+		}
+
+		return $field_obj;
+	}
+	
 	
 	public function get_post_meta($sf_post_meta_key, $labels = array())
 	{
@@ -355,16 +566,9 @@ class Search_Filter_Active_Query {
 
 		$post_meta_obj = array();
 
-		//remove sf prefix fom taxonomy
+		//remove sf prefix fom meta
 		$post_meta_key = substr($sf_post_meta_key, strlen(SF_META_PRE));
 		
-		//first get the taxonomy singular and plural label
-		//$post_meta = $this->get_post_meta_field($sf_post_meta_key);
-
-		/*if(!$taxonomy)
-		{
-			return false;
-		}*/
 
 		$post_meta_obj['name'] = isset($labels['name']) ? $labels['name'] : "";
 		$post_meta_obj['singular_name'] = isset($labels['singular_name']) ? $labels['singular_name'] : "";
@@ -384,30 +588,76 @@ class Search_Filter_Active_Query {
 				{
 					$post_meta_options_list = $post_meta_field['meta_options'];
 
+					$getval = $_GET[$sf_post_meta_key];
+					
 					if($post_meta_field["operator"]=="or")
 					{
 						$ochar = "-,-";
-						$post_meta_values = explode($ochar, esc_attr($_GET[$sf_post_meta_key]));
 					}
 					else
 					{
 						$ochar = "-+-";
-						$post_meta_values = explode($ochar, esc_attr(urlencode($_GET[$sf_post_meta_key])));
-						$post_meta_values = array_map( 'urldecode', ($meta_data) );
+						$replacechar = "- -";
+						
+						$getval = str_replace($replacechar, $ochar, $getval);
 					}
-
+					
+					$post_meta_values = explode($ochar, esc_attr($getval));	
+					
+					//var_dump($post_meta_values);
+					
 					foreach ($post_meta_values as $post_meta_value)
 					{
 						$tax_term = array();
+						
+						$choice_get_option_mode = 'manual';
+						$choice_is_acf = 0;
+						if(isset($post_meta_field['choice_get_option_mode']))
+						{
+							$choice_get_option_mode = $post_meta_field['choice_get_option_mode'];
+							$choice_is_acf = $post_meta_field['choice_is_acf'];
+						}
+												
+						if($choice_get_option_mode=="manual")
+						{
+							$post_meta_option_index = $this->search_meta_option_by_value($post_meta_value, $post_meta_options_list);
+							$post_meta_option_full = $post_meta_options_list[$post_meta_option_index];
 
-						$post_meta_option_index = $this->search_meta_option_by_value($post_meta_value, $post_meta_options_list);
-
-						$post_meta_option_full = $post_meta_options_list[$post_meta_option_index];
-
-						$post_meta_option = array();
-						$post_meta_option["name"] = $post_meta_option_full['option_label'];
-						$post_meta_option["value"] = $post_meta_option_full['option_value'];
-
+							$post_meta_option = array();
+							$post_meta_option["name"] = $post_meta_option_full['option_label'];
+							$post_meta_option["value"] = $post_meta_option_full['option_value'];
+						}
+						else if($choice_get_option_mode=="auto")
+						{
+							if($choice_is_acf==0)
+							{
+								$post_meta_option = array();
+								$post_meta_option["name"] = $post_meta_value;
+								$post_meta_option["value"] = $post_meta_value;
+							}
+							else if($choice_is_acf==1)
+							{
+								$post_meta_option = array();
+								$post_meta_option["name"] = $this->get_acf_option_label($sf_post_meta_key, $post_meta_key, $post_meta_value);
+								$post_meta_option["value"] = $post_meta_value;
+								
+							}
+						}
+						
+						$use_auto_count = 0;
+						if(isset($this->form_settings['enable_auto_count']))
+						{
+							$use_auto_count = $this->form_settings['enable_auto_count'];
+						}
+						
+						if($use_auto_count==1)
+						{
+							global $searchandfilter;
+							$searchform = $searchandfilter->get($this->sfid);
+							
+							$post_meta_option["count"] = $searchform->get_count_var($sf_post_meta_key, $post_meta_option["value"]);
+						}
+						
 						array_push($post_meta_obj['active_terms'], $post_meta_option);
 
 					}
@@ -415,9 +665,7 @@ class Search_Filter_Active_Query {
 				else if($post_meta_field['meta_type']=="number")
 				{
 					$post_meta_values = array();
-
-					//var_dump($post_meta_field);
-
+					
 					$post_meta_values = (preg_split("/[,\+ ]/", esc_attr(($_GET[$sf_post_meta_key])))); //explode with 2 delims
 					
 					foreach($post_meta_values as $post_meta_value)
@@ -452,6 +700,59 @@ class Search_Filter_Active_Query {
 		return $post_meta_obj;
 		
 
+	}
+	private function get_acf_option_label($sf_post_meta_key, $post_meta_key, $post_meta_value)
+	{
+		$option_label = $post_meta_value;
+		
+		if(!function_exists('get_field_object'))
+		{
+			return $option_label;
+		}
+		
+		$post_id = $this->find_post_id_with_field($sf_post_meta_key); //acf needs to have at least 1 post id with the post meta attached in order to lookup the rest of the field
+		$field = get_field_object($post_meta_key, $post_id);
+		
+		
+		
+		if(isset($field['choices']))
+		{
+			$choices = $field['choices'];
+			
+			if(isset($choices[$post_meta_value]))
+			{
+				$option_label = $choices[$post_meta_value];
+			}
+		}
+		
+		return $option_label;
+		
+	}
+	
+	private function find_post_id_with_field($field_name)
+	{
+		global $wpdb;
+		
+		$field_options = $wpdb->get_results( 
+			"
+			SELECT field_value, result_ids
+			FROM $this->term_results_table_name
+			WHERE field_name = '$field_name' LIMIT 0,1
+			"
+		);
+		
+		foreach($field_options as $field_option)
+		{
+			
+			$post_ids = explode(",", $field_option->result_ids);
+			
+			if(isset($post_ids[0]))
+			{
+				return $post_ids[0];
+			}
+		}
+		
+		return 0;
 	}
 	public function search_meta_option_by_value($value, $array) {
 	   foreach ($array as $key => $val) {
@@ -499,7 +800,30 @@ class Search_Filter_Active_Query {
 				$tax_term["id"] = $tax_term_full->term_id;
 				$tax_term["name"] = $tax_term_full->name;
 				$tax_term["value"] = $tax_term_full->slug;
-
+								
+				$inherit_current_post_type_archive = "";
+				if(isset($this->form_settings['inherit_current_post_type_archive']))
+				{
+					$inherit_current_post_type_archive = $this->form_settings['inherit_current_post_type_archive'];
+				}
+				
+				$use_auto_count = 0;
+				if(isset($this->form_settings['enable_auto_count']))
+				{
+					$use_auto_count = $this->form_settings['enable_auto_count'];
+				}
+				
+				if($use_auto_count==1)
+				{
+					global $searchandfilter;
+					$searchform = $searchandfilter->get($this->sfid);
+					$tax_term["count"] = $searchform->get_count_var($sf_taxonomy_key, $tax_term_slug);
+				}
+				else
+				{
+					$tax_term["count"] = intval($tax_term_full->count);
+				}
+				
 				array_push($taxonomy_obj['active_terms'], $tax_term);
 
 			}
@@ -520,9 +844,9 @@ class Search_Filter_Active_Query {
 
 		$label_defaults = array(
 
-			"name" 					=> "Post Types",
-			"singular_name"			=> 'Post Type',
-			"all_items_label"		=> "All Post Types"
+			"name" 					=> __('Post Types', $this->plugin_slug),
+			"singular_name"			=> __('Post Type', $this->plugin_slug),
+			"all_items_label"		=> __('All Post Types', $this->plugin_slug)
 
 		);
 
@@ -583,12 +907,13 @@ class Search_Filter_Active_Query {
 		global $wpdb;
 
 		$field_obj = array();
-
+		
+		
 		$label_defaults = array(
 
-			"name" 					=> "Authors",
-			"singular_name"			=> 'Author',
-			"all_items_label"		=> "All Authors"
+			"name" 					=> __('Authors', $this->plugin_slug),
+			"singular_name"			=> __('Author', $this->plugin_slug),
+			"all_items_label"		=> __('All Authors', $this->plugin_slug)
 
 		);
 		
@@ -619,17 +944,19 @@ class Search_Filter_Active_Query {
 
 		if(isset($_GET[$sf_get_key]))
 		{
+			
 			$field_values_str = esc_attr(trim($_GET[$sf_get_key]));
 
 			$field_vals = (preg_split("/[,\+ ]/", $field_values_str)); //explode with 2 delims
 
 			foreach ($field_vals as $field_val)
 			{
-				$field_object = get_userdata($field_val);
-
+				$field_object = get_user_by('slug', esc_attr($field_val));
+				
 				$field_term = array();
 				$field_term["id"] = $field_object->ID;
-				$field_term["name"] = $field_object->user_nicename;
+				//$field_term["name"] = $field_object->user_nicename;
+				$field_term["name"] = $field_object->display_name;
 				$field_term["value"] = $field_object->user_nicename;
 
 				array_push($field_obj['active_terms'], $field_term);
@@ -645,7 +972,7 @@ class Search_Filter_Active_Query {
 	public function get_array()
 	{
 		
-		$this->set_array();
+		$this->set_fields_array();
 
 		return $this->query_array;
 	}
@@ -662,6 +989,20 @@ class Search_Filter_Active_Query {
 		return $search_term;
 		
 	}
-
+	
+	public function is_filtered()
+	{
+		$filtered_array = $this->get_array();
+		
+		if(empty($filtered_array))
+		{
+			return false;
+		}
+		else
+		{
+			return true;
+		}
+		
+	}
 	
 }

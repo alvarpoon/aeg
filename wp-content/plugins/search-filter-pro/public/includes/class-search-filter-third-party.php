@@ -14,6 +14,7 @@ class Search_Filter_Third_Party
 	private $form_data = '';
 	private $count_table;
 	private $cache;
+	private $relevanssi_result_ids = array();
 	private $query;
 	private $sfid = 0;
 	
@@ -24,6 +25,7 @@ class Search_Filter_Third_Party
 		// -- woocommerce
 		
 		add_filter('sf_edit_query_args', array($this, 'sf_woocommerce_query_args'), 11, 2); //modify S&F results URL
+		
 		add_filter('sf_admin_filter_settings_save', array($this, 'sf_woocommerce_filter_settings_save'), 11, 2); //modify S&F results URL
 		
 		// -- EDD
@@ -45,6 +47,8 @@ class Search_Filter_Third_Party
 		add_filter( 'sf_edit_query_args_after_custom_filter', array( $this, 'relevanssi_filter_query_args' ), 12, 2);
 		add_filter( 'sf_apply_custom_filter', array( $this, 'relevanssi_add_custom_filter' ), 10, 3);
 		
+		
+		
 		$this->init();
 	}
 	
@@ -56,6 +60,10 @@ class Search_Filter_Third_Party
 	/* WooCommerce integration */
 	
 	
+	public function sf_woocommerce_is_filtered()
+	{
+		return true;
+	}
 	public function sf_woocommerce_query_args($query_args,  $sfid)
 	{
 		global $searchandfilter;
@@ -64,6 +72,12 @@ class Search_Filter_Third_Party
 		//make sure this search form is tyring to use woocommerce
 		if($sf_inst->settings("display_results_as")=="custom_woocommerce_store")
 		{
+			$sf_current_query  = $sf_inst->current_query();
+			if($sf_current_query->is_filtered())
+			{
+				add_filter('woocommerce_is_filtered', array($this, 'sf_woocommerce_is_filtered'));
+			}
+			
 			$del_val = "product_variation"; //always remove product variations from main query
 			
 			if(isset($query_args['post_type']))
@@ -219,6 +233,46 @@ class Search_Filter_Third_Party
 		return $query_args;
 	}
 	
+	public function relevanssi_sort_result_ids($result_ids, $query_args, $sfid) {
+		
+		global $searchandfilter;
+		$sf_inst = $searchandfilter->get($sfid);
+		
+		if(count($result_ids)==1)
+		{
+			if(isset($result_ids[0]))
+			{
+				if($result_ids[0]==0) //it means there were no search results so don't even bother trying to change the sorting
+				{
+					return $result_ids; 
+				}
+			}
+		}
+		
+		if(($sf_inst->settings("use_relevanssi")==1)&&($sf_inst->settings("use_relevanssi_sort")==1))
+		{//ensure it is enabled in the admin
+			
+			if(isset($this->relevanssi_result_ids['sf-'.$sfid]))
+			{
+				$return_ids_ordered = array();
+				
+				$ordering_array = $this->relevanssi_result_ids['sf-'.$sfid];
+				
+				$ordering_array = array_flip($ordering_array);
+				
+				foreach ($result_ids as $result_id) {
+					$return_ids_ordered[$ordering_array[$result_id]] = $result_id;
+				}
+				
+				ksort($return_ids_ordered);
+				
+				return $return_ids_ordered;
+			}
+		}
+		
+		return $result_ids;
+	}
+	
 	public function relevanssi_add_custom_filter($ids_array, $query_args, $sfid) {
 		
 		global $searchandfilter;
@@ -243,9 +297,9 @@ class Search_Filter_Third_Party
 						   'paged' 						=> 1,
 						   'fields' 					=> "ids", //relevanssi only implemented support for this in 3.5 - before this, it would return the whole post object
 						   
-						   'orderby' 					=> "", //remove sorting
+						   //'orderby' 					=> "", //remove sorting
 						   'meta_key' 					=> "",
-						   'order' 						=> "",
+						   //'order' 						=> "asc",
 						   
 						   /* speed improvements */
 						   'no_found_rows' 				=> true,
@@ -255,7 +309,12 @@ class Search_Filter_Third_Party
 						);
 						
 						$query_args = array_merge($query_args, $expand_args);
-											
+						
+						//$query_args['orderby'] = "relevance";
+						//$query_args['order'] = "asc";
+						unset($query_args['order']);
+						unset($query_args['orderby']);
+						
 						// The Query
 						$query_arr = new WP_Query( $query_args );
 						relevanssi_do_query($query_arr);
@@ -283,7 +342,18 @@ class Search_Filter_Third_Party
 								{
 									array_push($ids_array, $postID);
 								}
+								
+								
 							}
+						}
+						
+						if($sf_inst->settings("use_relevanssi_sort")==1)
+						{
+							//keep a copy for ordering the results later
+							$this->relevanssi_result_ids['sf-'.$sfid] = $ids_array;
+							
+							//now add the filter 
+							add_filter( 'sf_apply_filter_sort_post__in', array( $this, 'relevanssi_sort_result_ids' ), 10, 3);
 						}
 						
 						return $ids_array;
@@ -294,6 +364,8 @@ class Search_Filter_Third_Party
 		
 		return array(false); //this tells S&F to ignore this custom filter
 	}
+	
+	
 	
 	
 }

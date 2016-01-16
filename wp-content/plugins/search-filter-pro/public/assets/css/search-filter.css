@@ -205,7 +205,34 @@
 	display:inline-block;
 	margin:0;
 	padding:0;
-    padding-left:10px;
+}
+.searchandfilter li[data-sf-field-input-type="checkbox"] label, .searchandfilter li[data-sf-field-input-type="radio"] label,
+.searchandfilter li[data-sf-field-input-type="range-radio"] label, .searchandfilter li[data-sf-field-input-type="range-checkbox"] label
+{
+	padding-left:10px;
+}
+.searchandfilter .sf-date-prefix
+{
+	padding-right:5px;
+	display:inline-block;
+}
+.searchandfilter .sf-date-postfix
+{
+	padding-left:5px;
+	display:inline-block;
+}
+.searchandfilter .sf-count
+{
+	padding-left:5px;
+	display:inline-block;
+}
+
+.searchandfilter .screen-reader-text {
+	clip: rect(1px, 1px, 1px, 1px);
+	height: 1px;
+	overflow: hidden;
+	position: absolute !important;
+	width: 1px;
 }
 .searchandfilter h4
 {
@@ -213,19 +240,40 @@
 	padding:5px 0 10px 0;
 	font-size:16px;
 }
-.searchandfilter .range-max, .searchandfilter .range-min
+.searchandfilter .sf-range-max, .searchandfilter .sf-range-min
 {
 	max-width:80px;
 }
+
+.searchandfilter .sf-meta-range-radio-fromto .sf-range-max,
+.searchandfilter .sf-meta-range-radio-fromto .sf-range-min
+{
+	display:inline-block;
+	vertical-align: middle;
+}
+.searchandfilter .sf-meta-range-radio-fromto span.sf-range-values-seperator
+{
+	vertical-align:middle;
+	display:inline-block;
+	margin:0 15px;
+}
+
 .searchandfilter .datepicker
 {
 	max-width:170px;
 }
 
-.searchandfilter select
+.searchandfilter select.sf-input-select
 {
     min-width:170px;
 }
+
+.searchandfilter  select.sf-range-min.sf-input-select,
+.searchandfilter  select.sf-range-max.sf-input-select
+{
+	min-width:auto;
+}
+
 .searchandfilter ul > li > ul:not(.children)
 {
 	margin-left:0;
