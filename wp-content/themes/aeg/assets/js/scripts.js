@@ -7002,8 +7002,8 @@ var Roots = {
 			maxHeight	: 700,
 			padding		: 30,
 			fitToView	: false,
-			width		: '70%',
-			height		: '70%',
+			width		: '95%',
+			height		: '95%',
 			autoSize	: false,
 			closeClick	: false,
 			openEffect	: 'none',
@@ -7029,7 +7029,8 @@ var Roots = {
 			slidesToScroll:1,
 			autoplay: true,
 			autoplaySpeed: 4000,
-			dots: true
+			dots: true,
+			arrows: false
 		});
 		  
       	$('.committees-home').slick({
