@@ -8,7 +8,7 @@
 			'order' 			=> 'DESC',
 			'numberposts' 		=> -1,
 			'posts_per_page' 	=> 10,
-			'category__in'		=> 11,
+			'category__in'		=> 12,
 /*			'meta_key' 			=> 'date_to',
 			'meta_compare'		=> '>',
 			'meta_value' 		=> $today,*/
@@ -35,7 +35,7 @@
 			'order' 			=> 'DESC',
 			'numberposts' 		=> -1,
 			'posts_per_page' 	=> 10,
-			'category__not_in'  => 11,
+			'category__not_in'  => 12,
 			'meta_key' 			=> 'date_to',
 			'meta_compare'		=> '>',
 			'meta_value' 		=> $today,
@@ -49,7 +49,7 @@
 			'order' 			=> 'DESC',
 			'numberposts' 		=> -1,
 			'posts_per_page' 	=> 10,
-			'category__not_in'  => 11,
+			'category__not_in'  => 12,
 			'meta_key' 			=> 'date_to',
 			'meta_compare'		=> '<',
 			'meta_value' 		=> $today,
@@ -63,7 +63,7 @@
 			'order' 			=> 'DESC',
 			'numberposts' 		=> -1,
 			'posts_per_page' 	=> 10,
-			'category__not_in'  => 11,
+			'category__not_in'  => 12,
 			'meta_key' 			=> 'date_to',
 			'meta_compare'		=> '<',
 			'meta_value' 		=> $today,
@@ -77,7 +77,7 @@
 			'order' 			=> 'DESC',
 			'numberposts' 		=> -1,
 			'posts_per_page' 	=> 10,
-			'category__not_in'  => 11,
+			'category__not_in'  => 12,
 			'meta_key' 			=> 'date_to',
 			'meta_compare'		=> '>',
 			'meta_value' 		=> $today,
@@ -137,7 +137,7 @@
                 <? while ( $results->have_posts() ) : $results->the_post(); 
 					//$pdf = get_field("pdf", $post->ID);
 					
-					$event_image = get_field("mainpage_banner",$results->ID);
+					$event_image = wp_get_attachment_image_src( get_post_thumbnail_id( $post->ID ), 'full' );
 				?>
                 <tr>
                 	<td>
@@ -150,7 +150,7 @@
 	                    <?=get_field('country', $post->ID);?>
                     </td>
                     <td class="eus-image">
-                    	<img src="<?=$event_image['url'];?>" class="img-respsonive" />
+                    	<img src="<?=$event_image[0];?>" class="img-responive" />
                     </td>
                 </tr>
                 <? endwhile; ?>				
