@@ -50,7 +50,7 @@
                                 $member_image = wp_get_attachment_image_src( get_post_thumbnail_id( $result->ID ), 'full' );
                             ?>
                                 <div class="<? if($type->cat_ID == 3) { echo "col-sm-6"; }else{ echo "col-sm-4"; } ?>  committee-item">
-                                    <img src="<?=$member_image[0]?>" alt="" class="img-responsive" />
+                                    <img src="<?=($member_image?$member_image[0]:get_template_directory().'/assets/img/profile-dummy.jpg')?>" alt="" class="img-responsive" />
                                     <div class="committee-content">
                                         <p class="title"><?=$result->post_title; ?></p>
                                         <p class="position"><?=get_field("position",$result->ID)?></p>

@@ -166,7 +166,7 @@
                 </tr>
                 <? while ( $results->have_posts() ) : $results->the_post(); ?>
                 <tr>
-                	<td><a href="<?=home_url()?>/case-record-form/?researcher_code=<?=$researcher_code?>&centre_code=<?=$centre_code?>"><? the_title(); ?></a></td>
+                	<td><a href="<?=get_field('research_page')?>?researcher_code=<?=$researcher_code?>&centre_code=<?=$centre_code?>"><? the_title(); ?></a></td>
                 </tr>
                 <? endwhile; ?>				
             </table>

@@ -6878,6 +6878,10 @@ select {
   color: #00325f;
   font-size: 32px;
 }
+body.our-committees .page-banner-container h1,
+body.our-members .page-banner-container h1 {
+  color: #fff;
+}
 @media (min-width: 992px) {
   .page-banner-container h1 {
     font-size: 45px;
@@ -7660,6 +7664,14 @@ td.eus-image img {
 #bbpress-forums #bbp-search-form {
   text-align: right;
   margin-bottom: 10px;
+}
+#bbpress-forums .bbp-submit-wrapper .button.submit {
+  padding: 10px 25px;
+  font-size: 18px;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  background: #00325c;
 }
 .lecture-upload .page-banner-container,
 .lecture-upload-bak .page-banner-container,

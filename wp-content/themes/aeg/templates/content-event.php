@@ -8,7 +8,7 @@
 			'order' 			=> 'DESC',
 			'numberposts' 		=> -1,
 			'posts_per_page' 	=> 10,
-			'category__in'		=> 12,
+			'category_name'		=> 'asian-eus-congress',
 /*			'meta_key' 			=> 'date_to',
 			'meta_compare'		=> '>',
 			'meta_value' 		=> $today,*/
