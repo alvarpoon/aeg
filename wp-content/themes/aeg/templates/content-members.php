@@ -91,6 +91,7 @@
 	}
 	/*$results = new WP_Query( $args );*/
 	$results = new WP_User_Query( $args );
+	$members = $results->get_results();
 ?>
 <div class="container">
 	<div class="row">
@@ -116,7 +117,7 @@
         <?php 
 			$i = 0;
 			$separater = 3;
-			foreach ( $results as $member ) {
+			foreach ( $members as $member ) {
 		?>
 				<div class="col-sm-4 committee-item">
 					<p class="title"><?=$member->display_name; ?></p>
