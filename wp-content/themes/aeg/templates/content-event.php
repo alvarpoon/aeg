@@ -197,7 +197,7 @@
                 <col width="25%">
                 <col width="20%">
             	<tr class="header">
-                	<td>EVENT TITLE</td>
+                	<td>EVENT</td>
                     <td>VENUE</td>
                     <td>DATE</td>
                 </tr>

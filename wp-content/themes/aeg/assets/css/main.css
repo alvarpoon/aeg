@@ -7478,6 +7478,10 @@ figure.alignnone {
 .lecture-table a {
   color: #444;
 }
+.popup_content p,
+.popup_content h2 {
+  color: #fff;
+}
 @media (min-width: 992px) {
   .lecture_nav_container {
     margin: 25px 0;
@@ -7679,9 +7683,9 @@ td.eus-image img {
 .video-upload-bak .page-banner-container,
 .image-upload .page-banner-container,
 .image-upload-bak .page-banner-container {
-  background: #003062;
-  padding: 10px 20px;
-  margin-top: 40px;
+  /*background:#003062;
+		padding:10px 20px;
+		margin-top:40px;*/
 }
 .lecture-upload .page-banner-container h1,
 .lecture-upload-bak .page-banner-container h1,
@@ -7689,10 +7693,10 @@ td.eus-image img {
 .video-upload-bak .page-banner-container h1,
 .image-upload .page-banner-container h1,
 .image-upload-bak .page-banner-container h1 {
-  color: #fff;
-  font-size: 30px;
-  text-transform: uppercase;
-  margin: 0;
+  /*color:#fff;
+			font-size:30px;
+			text-transform:uppercase;
+			margin:0;*/
 }
 .lecture-upload .gfield_label,
 .lecture-upload-bak .gfield_label,

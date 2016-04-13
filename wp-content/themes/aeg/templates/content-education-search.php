@@ -38,7 +38,7 @@
                 <col width="20%">
             	<tr class="header">
                 	<td><a href="" class="title_sort">LECTURE TITLE<i class="fa fa-caret-down"></i></a></td>
-                    <td><a href="" class="speaker_sort">SPEAKER<i class="fa fa-caret-down"></i></a></td>
+                    <td><a href="" class="speaker_sort">CONTRIBUTOR<i class="fa fa-caret-down"></i></a></td>
                     <td><a href="" class="date_sort">DATE<i class="fa fa-caret-down"></i></a></td>
                     <td>
                     	<span class="logo_pdf"></span>
