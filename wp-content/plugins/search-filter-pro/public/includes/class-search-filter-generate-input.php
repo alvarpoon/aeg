@@ -229,8 +229,22 @@ class Search_Filter_Generate_Input {
 				if($this->is_option_selected($option, $input_args['defaults']))
 				{
 					$option->attributes['selected'] = 'selected';
+					$option->attributes['class'] = trim($option->attributes['class']).' sf-option-active';
+				}
+				else
+				{
+					if(isset($option->attributes['selected']))
+					{
+						unset($option->attributes['selected']);
+					}
 				}
 				
+				$container_attibutes_html = "";
+				if(isset($option->count))
+				{
+					$option->attributes['data-sf-count'] = $option->count;
+				}
+								
 				//create the attributes
 				$option_attibutes_html = $this->convert_attributes_to_html($option->attributes);
 				
@@ -273,6 +287,8 @@ class Search_Filter_Generate_Input {
 		//prepare html
 		$attibutes_html = $this->convert_attributes_to_html($input_args['attributes']);
 		
+		$open_child_count = 0;
+		
 		ob_start();
 		
 		?>
@@ -303,9 +319,19 @@ class Search_Filter_Generate_Input {
 				$option->attributes['value'] = $option->value;
 				$option->attributes['name'] = $input_name;
 				
+				$container_attributes = array();
+				
 				if($this->is_option_selected($option, $input_args['defaults']))
 				{
 					$option->attributes['checked'] = 'checked';
+					$option->attributes['class'] = trim($option->attributes['class']).' sf-option-active';
+				}
+				else
+				{
+					if(isset($option->attributes['checked']))
+					{
+						unset($option->attributes['checked']);
+					}
 				}
 				
 				//now we want to put the class attribute on the LI, and remove from input
@@ -315,11 +341,20 @@ class Search_Filter_Generate_Input {
 				$input_id = $this->generate_input_id($input_name."_".$option->value);
 				$option->attributes['id'] = $input_id;
 				
+				$container_attibutes_html = "";
+				if(isset($option->count))
+				{
+					$container_attributes['data-sf-count'] = $option->count;
+					
+					$container_attibutes_html = $this->convert_attributes_to_html($container_attributes);
+					
+				}
+				
 				//create the attributes
 				$input_attibutes_html = $this->convert_attributes_to_html($option->attributes);
 				$option_label = $option->label;
 				
-				echo '<li class="'.$option_class.'"><input '.$input_attibutes_html.'><label class="sf-label-checkbox" for="'.$input_id.'">'.$option_label.'</label>';
+				echo '<li class="'.$option_class.'"'.$container_attibutes_html.'><input '.$input_attibutes_html.'><label class="sf-label-checkbox" for="'.$input_id.'">'.$option_label.'</label>';
 				
 				if(isset($option->depth))
 				{//then we do depth calculations
@@ -358,6 +393,7 @@ class Search_Filter_Generate_Input {
 					
 					if($open_child_list)
 					{
+						$open_child_count++;
 						echo '<ul class="children">';
 					}
 					if($close_li)
@@ -367,10 +403,15 @@ class Search_Filter_Generate_Input {
 					if($close_ul)
 					{
 						$diff = $current_depth - $next_depth;
-						echo str_repeat("</ul></li>", $diff);
+						$open_child_count = $open_child_count - $diff;
+						$str_repeat = str_repeat("</ul></li>", $diff);
+						echo $str_repeat;
 					}
 				}				
 			}
+			
+			$str_repeat = str_repeat("</ul></li>", (int)$open_child_count);
+			echo $str_repeat;
 			
 			?>
 		</ul>
@@ -396,6 +437,8 @@ class Search_Filter_Generate_Input {
 		
 		//prepare html
 		$attibutes_html = $this->convert_attributes_to_html($input_args['attributes']);
+		
+		$open_child_count = 0;
 		
 		ob_start();
 		
@@ -438,6 +481,7 @@ class Search_Filter_Generate_Input {
 				if($this->is_option_selected($option, $input_args['defaults']))
 				{
 					$option->attributes['checked'] = 'checked';
+					$option->attributes['class'] = trim($option->attributes['class']).' sf-option-active';
 				}
 				else
 				{
@@ -454,11 +498,21 @@ class Search_Filter_Generate_Input {
 				$input_id = $this->generate_input_id($input_name."_".$option->value);
 				$option->attributes['id'] = $input_id;
 				
+				$container_attibutes_html = "";
+				if(isset($option->count))
+				{
+					$container_attributes = array(
+						'data-sf-count' 	=> $option->count
+					);
+					$container_attibutes_html = $this->convert_attributes_to_html($container_attributes);
+					
+				}
+				
 				//create the attributes
 				$input_attibutes_html = $this->convert_attributes_to_html($option->attributes);
 				$option_label = $option->label;
 				
-				echo '<li class="'.$option_class.'"><input '.$input_attibutes_html.'><label class="sf-label-radio" for="'.$input_id.'">'.$option_label.'</label>';
+				echo '<li class="'.$option_class.'"'.$container_attibutes_html.'><input '.$input_attibutes_html.'><label class="sf-label-radio" for="'.$input_id.'">'.$option_label.'</label>';
 				
 				if(isset($option->depth))
 				{//then we do depth calculations
@@ -497,6 +551,7 @@ class Search_Filter_Generate_Input {
 					
 					if($open_child_list)
 					{
+						$open_child_count++;
 						echo '<ul class="children">';
 					}
 					if($close_li)
@@ -506,10 +561,17 @@ class Search_Filter_Generate_Input {
 					if($close_ul)
 					{
 						$diff = $current_depth - $next_depth;
-						echo str_repeat("</ul></li>", $diff);
+						$open_child_count = $open_child_count - $diff;
+						$str_repeat = str_repeat("</ul></li>", $diff);
+						echo $str_repeat;
+						
 					}
 				}				
 			}
+			
+			//close any child lists we may not have accounted for
+			$str_repeat = str_repeat("</ul></li>", (int)$open_child_count);
+			echo $str_repeat;
 			
 			?>
 		</ul>

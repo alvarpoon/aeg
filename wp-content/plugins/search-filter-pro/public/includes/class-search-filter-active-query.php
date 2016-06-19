@@ -215,7 +215,15 @@ class Search_Filter_Active_Query {
 				$post_date[1] = "";
 			}
 			
-			$this->query_array[SF_FPRE.'post_date'] = $post_date;
+			$this->query_array[SF_FPRE.'post_date']['active_terms'] = array();
+			
+			foreach($post_date as $a_post_date)
+			{
+				$active_terms = array("value"=>urlencode($a_post_date));
+				array_push($this->query_array[SF_FPRE.'post_date']['active_terms'], $active_terms);
+			}
+			
+			
 		}
 		
 		if(isset($_GET['sort_order']))
@@ -603,8 +611,6 @@ class Search_Filter_Active_Query {
 					}
 					
 					$post_meta_values = explode($ochar, esc_attr($getval));	
-					
-					//var_dump($post_meta_values);
 					
 					foreach ($post_meta_values as $post_meta_value)
 					{

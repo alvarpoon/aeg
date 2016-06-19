@@ -18,6 +18,8 @@ jQuery(document).ready(function($) {
     }
 
 	function init() {
+		var notification = $('#notification').val();
+
 		$(".select2").select2();
 		$(".user-select2").select2( {
 			ajax: {
@@ -44,14 +46,13 @@ jQuery(document).ready(function($) {
 		if ( 'new-user' === $('#notification').val() || 'welcome-email' === $('#notification').val() || 'reply-comment' === $('#notification').val() ) {
 			$('#toggle-fields, #email, #cc, #bcc, #users, #email-formatting, #disable-autop, #current-user, #post-author').hide();
 			$('#user-password-msg').show();
-		} else if ( 'user-password' === $('#notification').val() ) {
+		} else if ( 'user-password' === $('#notification').val() || 'user-role' === notification ) {
 			$('#toggle-fields, #email, #cc, #bcc, #users, #disable-autop, #current-user, #post-author').hide();
 			$('#user-password-msg, #email-formatting').show();
 		} else if ( 'new-comment' === $('#notification').val() || 'new-trackback' === $('#notification').val() || 'new-pingback' === $('#notification').val() || 'admin-password' === $('#notification').val() || 'admin-user' === $('#notification').val() ) {
-			$('#toggle-fields, #users, #email-formatting, #disable-autop, #current-user').show();
-			$('#only-post-author').prop( 'checked', false );
-			$('#post-author').hide();
+			$('#toggle-fields, #users, #email-formatting, #disable-autop, #current-user, #post-author').show();
 			toggle_fields();
+			toggle_users();
 			$('#user-password-msg').hide();
 		} else {
 			$('#toggle-fields, #users, #email-formatting, #disable-autop, #current-user, #post-author').show();
@@ -63,22 +64,26 @@ jQuery(document).ready(function($) {
 
 	init();
     $('#notification').on('change', function() {
-		var $this = $(this);
+		var $this = $(this),
+			notification = $this.val();
+
 		if ( 'new-user' === $this.val() || 'welcome-email' === $this.val() || 'reply-comment' === $this.val() ) {
 			$('#toggle-fields, #email, #cc, #bcc, #users, #email-formatting, #disable-autop, #current-user, #post-author').hide();
 			$('#user-password-msg').show();
-		} else if ( 'user-password' === $this.val() ) {
+		} else if ( 'user-password' === $this.val() || 'user-role' === notification ) {
 			$('#toggle-fields, #email, #cc, #bcc, #users, #disable-autop, #current-user, #post-author').hide();
 			$('#user-password-msg, #email-formatting').show();
-		} else if ( 'new-comment' === $('#notification').val() || 'new-trackback' === $('#notification').val() || 'new-pingback' === $('#notification').val() || 'admin-password' === $('#notification').val() || 'admin-user' === $('#notification').val() ) {
+		} else if ( 'admin-password' === $('#notification').val() || 'admin-user' === $('#notification').val() ) {
 			$('#post-author').hide();
 			$('#toggle-fields, #users, #email-formatting, #disable-autop, #current-user').show();
 			$('#user-password-msg').hide();
 			toggle_fields();
+			toggle_users();
 		} else {
 			$('#toggle-fields, #users, #email-formatting, #disable-autop, #current-user, #post-author').show();
 			$('#user-password-msg').hide();
 			toggle_fields();
+			toggle_users();
 		}
     });
 
@@ -95,6 +100,19 @@ jQuery(document).ready(function($) {
 		$( '#send-test-email' ).val( 'true' );
 	});
 
+	// Validate before saving notification
+	$( '#publish' ).click(function() {
+		if ( $('#users').is(':visible') ) {
+			if ( null === $('#users-select').val() ) {
+				$('#bnfw_error').remove();
+				$('.wrap h1').after('<div class="error" id="bnfw_error"><p>' + BNFW.empty_user + '</p></div>');
+				return false;
+			}
+		}
+
+		return true;
+	});
+
 	$( '#shortcode-help' ).on( 'click', function() {
 		var notification = $( '#notification' ).val(),
 			notification_slug = '',
@@ -109,6 +127,7 @@ jQuery(document).ready(function($) {
 			case 'admin-password':
 			case 'new-user':
 			case 'welcome-email':
+			case 'user-role':
 			case 'admin-user':
 			case 'new-post':
 			case 'update-post':

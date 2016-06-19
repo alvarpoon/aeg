@@ -167,7 +167,8 @@ class BNFW_Notification {
                     <optgroup label="Transactional">
                     <option value="user-password" <?php selected( 'user-password', $setting['notification'] );?>><?php _e( 'Lost Password - For User', 'bnfw' );?></option>
                     <option value="new-user" <?php selected( 'new-user', $setting['notification'] );?>><?php _e( 'New User Registration - For User', 'bnfw' );?></option>
-                    <option value="welcome-email" <?php selected( 'welcome-email', $setting['notification'] );?>><?php _e( 'New User - Welcome Email', 'bnfw' );?></option>
+                    <option value="welcome-email" <?php selected( 'welcome-email', $setting['notification'] );?>><?php _e( 'New User - Post-registration Email', 'bnfw' );?></option>
+                    <option value="user-role" <?php selected( 'user-role', $setting['notification'] );?>><?php _e( 'User Role Changed', 'bnfw' );?></option>
                     <option value="reply-comment" <?php selected( 'reply-comment', $setting['notification'] );?>><?php _e( 'Comment Reply', 'bnfw' );?></option>
                     </optgroup>
                     <optgroup label="Posts">
@@ -217,7 +218,7 @@ class BNFW_Notification {
 			), 'objects'
 		);
 
-		if ( count( $taxs > 0 ) ) {
+		if ( count( $taxs ) > 0 ) {
 ?>
                     <optgroup label="<?php _e( 'Custom Taxonomy', 'bnfw' );?>">
 <?php
@@ -323,7 +324,7 @@ class BNFW_Notification {
                 <?php _e( 'Send To', 'bnfw' ); ?>
             </th>
             <td>
-                <select multiple name="users[]" class="<?php echo bnfw_get_user_select_class(); ?>" data-placeholder="Select User Roles / Users" style="width:75%">
+                <select multiple id="users-select" name="users[]" class="<?php echo bnfw_get_user_select_class(); ?>" data-placeholder="Select User Roles / Users" style="width:75%">
 					<?php bnfw_render_users_dropdown( $setting['users'] ); ?>
                 </select>
             </td>
@@ -388,6 +389,9 @@ class BNFW_Notification {
 	 */
 	public function is_assets_needed() {
 		if ( self::POST_TYPE === get_post_type() ) {
+			// The enqueue assets function may be included from addons.
+			// We want to disable autosave only for notifications
+			wp_dequeue_script( 'autosave' );
 			$this->enqueue_assets();
 			do_action( 'bnfw_after_enqueue_scripts' );
 		}
@@ -399,18 +403,28 @@ class BNFW_Notification {
 	 * @since 1.4
 	 */
 	public function enqueue_assets() {
-		wp_dequeue_script( 'autosave' );
-
 		wp_deregister_script( 'select2' );
 		wp_dequeue_script( 'select2' );
 		wp_deregister_style( 'select2' );
 		wp_dequeue_style( 'select2' );
 
-		wp_enqueue_style( 'select2', '//cdnjs.cloudflare.com/ajax/libs/select2/4.0.1-rc.1/css/select2.min.css', array(), '4.0.1' );
-		wp_enqueue_script( 'select2', '//cdnjs.cloudflare.com/ajax/libs/select2/4.0.1-rc.1/js/select2.min.js', array( 'jquery' ), '4.0.1', true );
+		// Ultimate Member plugin is giving us problems. They should upgrade
+		wp_deregister_script( 'um_minified' );
+		wp_dequeue_script( 'um_minified' );
+		wp_deregister_script( 'um_admin_scripts' );
+		wp_dequeue_script( 'um_admin_scripts' );
+
+		wp_enqueue_style( 'select2', '//cdnjs.cloudflare.com/ajax/libs/select2/4.0.1/css/select2.min.css', array(), '4.0.1' );
+		wp_enqueue_script( 'select2', '//cdnjs.cloudflare.com/ajax/libs/select2/4.0.1/js/select2.full.min.js', array( 'jquery' ), '4.0.1', true );
 
 		wp_enqueue_script( 'bnfw', plugins_url( '../assets/js/bnfw.js', dirname( __FILE__ ) ), array( 'select2' ), '0.1', true );
 		wp_enqueue_style( 'bnfw', plugins_url( '../assets/css/bnfw.css', dirname( __FILE__ ) ), array( 'dashicons', 'select2' ), '0.1' );
+
+		$strings = array(
+			'empty_user' => __( 'You must choose at least one User or User Role to send the notification to before you can save', 'bnfw' ),
+		);
+
+		wp_localize_script( 'bnfw', 'BNFW', $strings );
 	}
 
 	/**
@@ -462,8 +476,8 @@ class BNFW_Notification {
 			$setting['show-fields'] = 'true';
 			$setting['from-name']   = sanitize_text_field( $_POST['from-name'] );
 			$setting['from-email']  = sanitize_email( $_POST['from-email'] );
-			$setting['cc']          = $_POST['cc'];
-			$setting['bcc']         = $_POST['bcc'];
+			$setting['cc']          = isset( $_POST['cc'] ) ? $_POST['cc'] : '';
+			$setting['bcc']         = isset( $_POST['bcc'] ) ? $_POST['bcc'] : '';
 		} else {
 			$setting['show-fields'] = 'false';
 		}
@@ -525,8 +539,8 @@ class BNFW_Notification {
 	 * Read settings from post meta.
 	 *
 	 * @since 1.0
-	 * @param unknown $post_id
-	 * @return unknown
+	 * @param int $post_id
+	 * @return array
 	 */
 	public function read_settings( $post_id ) {
 		$setting = array();
@@ -569,6 +583,7 @@ class BNFW_Notification {
 			delete_post_meta( $post_id, self::META_KEY_PREFIX . 'user-roles' );
 		}
 
+		$setting['id'] = $post_id;
 		return $setting;
 	}
 
@@ -655,24 +670,33 @@ class BNFW_Notification {
 	 * Get notifications based on type.
 	 *
 	 * @since 1.0
-	 * @param unknown $type
-	 * @return unknown
+	 * @param array|string $types
+	 * @param bool $exclude_disabled (optional) Whether to exclude disabled notifications or not. True by default.
+	 * @return array WP_Post objects
 	 */
-	public function get_notifications( $type ) {
+	public function get_notifications( $types, $exclude_disabled = true ) {
+		if ( ! is_array( $types ) ) {
+			$types = array( $types );
+		}
+
 		$args = array(
 			'post_type' => self::POST_TYPE,
 			'meta_query' => array(
 				array(
 					'key'     => self::META_KEY_PREFIX . 'notification',
-					'value'   => $type,
-				),
-				array(
-					'key'     => self::META_KEY_PREFIX . 'disabled',
-					'value'   => 'true',
-					'compare' => '!=',
+					'value'   => $types,
+					'compare' => 'IN',
 				),
 			),
 		);
+
+		if ( $exclude_disabled ) {
+			$args['meta_query'][] = array(
+				'key'     => self::META_KEY_PREFIX . 'disabled',
+				'value'   => 'true',
+				'compare' => '!=',
+			);
+		}
 
 		$wp_query = new WP_Query();
 		$posts = $wp_query->query( $args );
@@ -685,10 +709,11 @@ class BNFW_Notification {
 	 * @since 1.1
 	 *
 	 * @param string $type Notification Type.
+	 * @param bool $exclude_disabled (optional) Whether to exclude disabled notifications or not. True by default.
 	 * @return bool True if present, False otherwise
 	 */
-	public function notification_exists( $type ) {
-		$notifications = $this->get_notifications( $type );
+	public function notification_exists( $type, $exclude_disabled = true ) {
+		$notifications = $this->get_notifications( $type, $exclude_disabled );
 
 		if ( count( $notifications ) > 0 ) {
 			return true;
@@ -717,7 +742,6 @@ class BNFW_Notification {
 	/**
 	 * Custom column appears in each row.
 	 *
-	 *
 	 * @since 1.0
 	 * @action manage_{post_type}_posts_custom_column
 	 * @param string  $column  Column name
@@ -738,10 +762,24 @@ class BNFW_Notification {
 				echo ! empty( $setting['subject'] ) ? $setting['subject'] : '';
 				break;
 			case 'users':
-				$users = $this->get_names_from_users( $setting['users'] );
-				echo implode( ', ', $users );
+				if ( 'true' === $setting['only-post-author'] ) {
+					echo __( 'Author only', 'bnfw' );
+				} else {
+					$users = $this->get_names_from_users( $setting['users'] );
+					echo implode( ', ', $users );
+				}
 				break;
 		}
+
+		/**
+		 * Invoked while displaying a custom column in notification table.
+		 *
+		 * @since 1.3.9
+		 *
+		 * @param string  $column  Column name
+		 * @param int     $post_id Post ID
+		 */
+		do_action( 'bnfw_notification_table_column', $column, $post_id );
 	}
 
 	/**
@@ -801,13 +839,16 @@ class BNFW_Notification {
 				$name = __( 'Lost Password - For Admin', 'bnfw' );
 				break;
 			case 'new-user':
-				$name = __( 'User Registration - For User', 'bnfw' );
+				$name = __( 'New User Registration - For User', 'bnfw' );
 				break;
 			case 'welcome-email':
-				$name = __( 'New User - Welcome Email', 'bnfw' );
+				$name = __( 'New User - Post-registration Email', 'bnfw' );
 				break;
 			case 'admin-user':
-				$name = __( 'User Registration - For Admin', 'bnfw' );
+				$name = __( 'New User Registration - For Admin', 'bnfw' );
+				break;
+			case 'user-role':
+				$name = __( 'User Role Changed', 'bnfw' );
 				break;
 			case 'new-post':
 				$name = __( 'New Post Published', 'bnfw' );
@@ -854,7 +895,11 @@ class BNFW_Notification {
 						break;
 					case 'newterm':
 						$tax = get_taxonomy( $splited[1] );
-						$name = __( 'New Term in ', 'bnfw' ) . $tax->labels->name;
+						if ( ! $tax ) {
+							$name = __( 'New Term', 'bnfw' );
+						} else {
+							$name = __( 'New Term in ', 'bnfw' ) . $tax->labels->name;
+						}
 						break;
 				}
 				break;

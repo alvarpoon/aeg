@@ -4,7 +4,7 @@ Donate link:
 Tags: posts, custom posts, products, category, filter, taxonomy, post meta, custom fields, search, wordpress, post type, post date, author
 Requires at least: 3.5
 Tested up to: 4.4
-Stable tag: 2.1.0
+Stable tag: 2.1.2
 
 Search and Filtering for posts, products and custom posts. Allow your users to Search & Filter by taxonomies, custom fields and more.
 
@@ -57,8 +57,29 @@ Great for searching in your online shop, tested with: WooCommerce and WP eCommer
 
 == Changelog ==
 
-= 2.1.0 =
+= 2.1.2 =
+* New - Sort order can be displayed as radio buttons
+* New - filters for all URLs used in S&F - this allows for dynamically changing the various URLs for example to force https or similar - http://www.designsandcode.com/documentation/search-filter-pro/action-filter-reference/
+* Fix - an issue with `include_children` and allowin the AND operator to be used
+* Fix - an issue with hierarchical lists not being display correctly
 
+= 2.1.1 =
+* New - added `data-sf-count` attributes to inputs which have count variables
+* Improvement - default cache speed is set to slow
+* Fix - an issue with pagination filters
+* Fix - issues with PolyLang - should now be working again with PolyLang v1.7.12
+* Fix - minify issues with CSS & JS files
+* Fix - issues with depth in hierarchical fields
+* Fix - an issue where S&F was hijacking pagination when it wasn't supposed to
+* Fix - a couple of minor issues with the author field
+* Fix - S&F `sf:init` was incorrectly firing after each ajax request, it is now fired only on page load & once initialised
+* Fix - An issue where post date fields were not being set correctly in the front end
+* Fix - a PHP/pass by reference overload issue
+* Fix - an issue with `number_format` & PHP warnings in admin
+* Fix - an issue with undefined taxonomy slugs in the S&F cache
+* Fix - an issue with `wp_json_encode`
+
+= 2.1.0 =
 * Notice - depth classes for hierarchical fields fields have renamed to avoid conflicts - from `.level-0` to `.sf-level-0`
 * Notice - properly prefix range & min / max classes = from `.range-min`, `.range-max` and `.meta-range`  to `.sf-range-min`, `.sf-range-max` and `.sf-meta-range`
 * New - sync meta fields - when using "number" or "choice" type meta fields, the values can now be auto detected - values can also be sorted
@@ -99,7 +120,6 @@ Great for searching in your online shop, tested with: WooCommerce and WP eCommer
 * WP 4.4 compat - tested with 2016 theme
 
 = 2.0.3 =
-
 * New - update search form (auto count) without submitting the form
 * New - added variable `search_filter_id` to all queries to easily identify which S&F form your queries are being modified by - use `$query['search_filter_id'];`
 * New - added RTL support for all JS plugins - chosen comboxbox, jQuery datepicker and noUiSlider

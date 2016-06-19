@@ -18,7 +18,7 @@ class Search_Filter {
 	 *
 	 * @var     string
 	 */
-	const VERSION = '2.1.0';
+	const VERSION = '2.1.2';
 	
 	/**
 	 * @TODO - Rename "plugin-name" to the name your your plugin
@@ -97,20 +97,30 @@ class Search_Filter {
 	}
 	
 	function custom_query_init($query)
-	{	
-		if((!isset($query->query['search_filter_id']))||(!isset($query->query['search_filter_query'])))
+	{
+		if(!isset($query->query_vars['search_filter_id']))
+			
+		//||(!isset($query->query_vars['search_filter_query'])))
 		{
 			return;
 		}
 		
-		if((isset($query->query['search_filter_id']))&&(isset($query->query['search_filter_query'])))
+		
+		if(isset($query->query_vars['search_filter_override']))
 		{
-			if(($query->query['search_filter_id']!=0)&&($query->query['search_filter_query']==true))
+			if($query->query_vars['search_filter_override']==false)
 			{
-				global $searchandfilter;
-				$searchandfilter->get($query->query['search_filter_id'])->query->setup_custom_query($query);
+				return;
 			}
 		}
+		
+		if($query->query_vars['search_filter_id']!=0)
+		{
+			global $searchandfilter;
+			$searchandfilter->get($query->query_vars['search_filter_id'])->query->setup_custom_query($query);
+		}
+		
+		return;
 	}
 	
 	function archive_query_init_later($query)
@@ -254,7 +264,7 @@ class Search_Filter {
 						$results['form'] = $this->display_shortcode->display_shortcode(array("id" => $sfid));
 						$results['results'] = $sf_inst->query()->the_results();
 						
-						echo wp_json_encode($results);
+						echo Search_Filter_Helper::json_encode($results);
 						exit;
 					}
 				}
@@ -263,7 +273,7 @@ class Search_Filter {
 					$results = array();					
 					$results['form'] = $this->display_shortcode->display_shortcode(array("id" => $sfid));
 					
-					echo wp_json_encode($results);
+					echo Search_Filter_Helper::json_encode($results);
 					exit;
 				}
 				
@@ -311,6 +321,11 @@ class Search_Filter {
 					if($use_rewrite==true)
 					{
 						$newrules[$settings['page_slug'].'$'] = 'index.php?&sfid='.$base_id; //regular plain slug
+						
+						if(has_filter('sf_archive_slug_rewrite')) {
+							
+							$newrules = apply_filters('sf_archive_slug_rewrite', $newrules, $base_id, $settings['page_slug']);
+						}
 					}
 					
 				}
@@ -563,8 +578,13 @@ class Search_Filter {
 	 */
 	public function enqueue_styles()
 	{
-		wp_enqueue_style( $this->plugin_slug . '-chosen-styles', plugins_url( 'assets/css/chosen.min.css', __FILE__ ), array(), self::VERSION );
-		wp_enqueue_style( $this->plugin_slug . '-plugin-styles', plugins_url( 'assets/css/search-filter.min.css', __FILE__ ), array(), self::VERSION );
+		$file_ext = '.min.css';
+		if(SEARCH_FILTER_DEBUG==true)
+		{
+			$file_ext = '.css';
+		}
+		
+		wp_enqueue_style( $this->plugin_slug . '-plugin-styles', plugins_url( 'assets/css/search-filter'.$file_ext, __FILE__ ), array(), self::VERSION );
 	}
 	
 	/**
@@ -576,8 +596,14 @@ class Search_Filter {
 		
 		global $searchandfilter;
 		
-		wp_register_script( $this->plugin_slug . '-plugin-build', plugins_url( 'assets/js/search-filter-build.js', __FILE__ ), array('jquery'), self::VERSION );
-		wp_register_script( $this->plugin_slug . '-plugin-jquery-i18n', '//ajax.googleapis.com/ajax/libs/jqueryui/1.11.1/i18n/jquery-ui-i18n.min.js', array('jquery'), self::VERSION );
+		$file_ext = '.min.js';
+		if(SEARCH_FILTER_DEBUG==true)
+		{
+			$file_ext = '.js';
+		}
+		
+		wp_register_script( $this->plugin_slug . '-plugin-build', plugins_url( 'assets/js/search-filter-build'.$file_ext, __FILE__ ), array('jquery'), self::VERSION );
+		wp_register_script( $this->plugin_slug . '-plugin-jquery-i18n', '//ajax.googleapis.com/ajax/libs/jqueryui/1.11.1/i18n/jquery-ui-i18n'.$file_ext, array('jquery'), self::VERSION );
 		//wp_register_script( $this->plugin_slug . '-plugin-jquery-i18n', '//ajax.googleapis.com/ajax/libs/jqueryui/1.11.1/i18n/datepicker-nl.js', array('jquery'), self::VERSION );
 		wp_localize_script($this->plugin_slug . '-plugin-build', 'SF_LDATA', array( 'ajax_url' => admin_url( 'admin-ajax.php' ), 'home_url' => (home_url('/')) ));
 		

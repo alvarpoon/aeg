@@ -311,15 +311,31 @@ class Search_Filter_Field_Taxonomy extends Search_Filter_Field_Base {
 		//options is passed by ref, so when `wp_list_categories` is finished running, it will contain an object of all options for this field.
 		$options = array();
 		
+		$options_obj = new Taxonomy_Options();
+		
 		//use a walker to silence output, and create a custom object which is stored in `$options`
-		$args['walker'] = new Search_Filter_Taxonomy_Object_Walker($args['sf_name'], $options);
+		$args['walker'] = new Search_Filter_Taxonomy_Object_Walker($args['sf_name'], $options_obj);
 		
 		$output = wp_list_categories($args); //nothing is returned here but `$options` is updated
 		
-		return $options;
+		return $options_obj->get();
 		
 	}
 }
 
+
+class Taxonomy_Options {
+	
+	private $options = array();
+	
+	public function set($options)
+	{
+		$this->options = $options;
+	}
+	public function get()
+	{
+		return $this->options;
+	}
+}
 
 

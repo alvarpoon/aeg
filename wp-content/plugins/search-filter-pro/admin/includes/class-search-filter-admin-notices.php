@@ -47,7 +47,7 @@ class Search_Filter_Admin_Notices {
 	{
 		//$this->get_all_search_forms_wlang();
 		
-		if(Search_Filter_Helper::has_wpml())
+		if((Search_Filter_Helper::has_wpml())&&(defined('ICL_LANGUAGE_CODE')))
 		{
 			if(ICL_LANGUAGE_CODE=="all")
 			{//this means a user has selected "all languages" - so loop loop through each language and check for errors - appending lang code
@@ -65,7 +65,11 @@ class Search_Filter_Admin_Notices {
 
 				//reset current language - should be "all"
 				global $sitepress;
-				$sitepress->switch_lang(ICL_LANGUAGE_CODE);
+				if( !empty($sitepress) )
+				{
+					$sitepress->switch_lang(ICL_LANGUAGE_CODE);
+				}
+				
 				
 			}
 			else
@@ -90,7 +94,11 @@ class Search_Filter_Admin_Notices {
 			if(Search_Filter_Helper::has_wpml())
 			{
 				global $sitepress;
-				$sitepress->switch_lang($lang);
+				if( !empty($sitepress) )
+				{
+					$sitepress->switch_lang($lang);
+				}
+				
 			}
 		}
 		

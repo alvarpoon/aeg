@@ -46,7 +46,9 @@ class Search_Filter_Field_Author extends Search_Filter_Field_Base {
 		//set defaults so no chance of any php errors when accessing un init vars
 		$args = array_replace($defaults, $field_data);
 		
-		/*if(is_array($post_types))
+		$post_types = $this->searchform->settings("post_types");
+		
+		if(is_array($post_types))
 		{//get the post types in to the proper format
 			$post_types_array = array();
 			
@@ -56,7 +58,7 @@ class Search_Filter_Field_Author extends Search_Filter_Field_Base {
 			}
 			
 			$args['post_types'] = $post_types_array;
-		}*/
+		}
 		
 		
 		if($field_data['all_items_label']=="")
@@ -156,10 +158,28 @@ class Search_Filter_Field_Author extends Search_Filter_Field_Base {
 		//options is passed by ref, so when `wp_list_categories` is finished running, it will contain an object of all options for this field.
 		$options = array();
 		
+		$options_obj = new Author_Options();
+		
 		//use a walker to silence output, and create a custom object which is stored in `$options`
-		$walker = new Search_Filter_Author_Object_Walker($options);
+		$walker = new Search_Filter_Author_Object_Walker($options_obj);
 		$output = $walker->wp_authors($args);		
 		
-		return $options;
+		return $options_obj->get();
 	}
 }
+
+
+class Author_Options {
+	
+	private $options = array();
+	
+	public function set($options)
+	{
+		$this->options = $options;
+	}
+	public function get()
+	{
+		return $this->options;
+	}
+}
+

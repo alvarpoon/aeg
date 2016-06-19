@@ -4,7 +4,7 @@
 ?>
 
 <div class="container">
-	<div class="row">
+	<div class="row">n
     	<div class="home-logo-container">
         	<a href="<?php echo home_url(); ?>" class="logo_aeg"><img src="<?=get_stylesheet_directory_uri()?>/assets/img/logo_aeg.png" alt="" /></a>
         </div>
@@ -121,7 +121,7 @@
                         
                         while (have_posts()) : the_post(); ?>
                         <div class="lastest-news-item">
-                            <a href="<?php the_permalink(); ?>"><h3><?php the_title(); ?></h3></a>
+                            <h3><?php the_title(); ?></h3>
                             <?=apply_filters('the_content',get_field("mainpage_excerpt",get_the_ID()));?>
                         </div>
                     <?php endwhile; ?>

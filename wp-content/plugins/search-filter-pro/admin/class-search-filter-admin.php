@@ -26,7 +26,7 @@ function search_filter_plugin_updater() {
 	
 	// setup the updater
 	$edd_updater = new EDD_SL_Plugin_Updater( SEARCH_FILTER_STORE_URL, SEARCH_FILTER_PRO_BASE_PATH, array( 
-			'version' 	=> '2.1.0',				// current version number
+			'version' 	=> '2.1.2',				// current version number
 			'license' 	=> $license_key, 		// license key (used get_option above to retrieve from DB)
 			'item_name' => SEARCH_FILTER_ITEM_NAME, 	// name of this plugin
 			'author' 	=> 'Ross Morsali',  // author of this plugin
@@ -274,6 +274,10 @@ class Search_Filter_Admin {
 					{
 						$results_label = __("Using a Shortcode", $this->plugin_slug);
 					}
+					else if($display_results_as=="custom")
+					{
+						$results_label = __("Custom", $this->plugin_slug);
+					}
 					else if($display_results_as=="custom_woocommerce_store")
 					{
 						$results_label = __("WooCommerce Shop", $this->plugin_slug);
@@ -469,7 +473,7 @@ class Search_Filter_Admin {
 		
 		if(empty($cache_speed))
 		{
-			$cache_speed = "medium";
+			$cache_speed = "slow";
 		}
 		
 		if($cache_use_background_processes===false)

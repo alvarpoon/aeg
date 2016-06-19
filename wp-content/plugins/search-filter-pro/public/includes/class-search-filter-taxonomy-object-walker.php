@@ -19,12 +19,13 @@ class Search_Filter_Taxonomy_Object_Walker extends Walker_Category {
 	private $multilastdepthchange = 0; //manually calculate depth on multiselects
 	private $elementno = 0; //internal counter of which element we are on
 
-	function __construct($defaults = array(), &$options)  {
+	function __construct($defaults = array(), &$options_obj)  {
 
 		$type = 'checkbox';
 		$this->type = $type;
 		
-		$this->options = &$options;
+		$this->options = array();
+		$this->options_obj = $options_obj;
 	}
 	
 	function display_element( $element, &$children_elements, $max_depth, $depth=0, $args, &$output ) {
@@ -135,6 +136,8 @@ class Search_Filter_Taxonomy_Object_Walker extends Walker_Category {
 				if($this->multidepth>0)
 				{
 					$this->multidepth--;
+					
+					$this->multilastdepthchange = $taxonomy_term->parent;
 				}
 			}
 		}
@@ -167,6 +170,8 @@ class Search_Filter_Taxonomy_Object_Walker extends Walker_Category {
 			array_push($this->options, $option);
 			
 		}
+		
+		$this->options_obj->set($this->options);
 		
 		$this->multilastid = $taxonomy_term_id;
 				

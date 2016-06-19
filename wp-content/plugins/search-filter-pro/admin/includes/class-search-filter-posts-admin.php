@@ -227,9 +227,9 @@ class Search_Filter_Posts_Admin {
 		
 		if(isset($_POST['template_name_manual']))
 		{
-			//$settings['template_name_manual'] = $this->sanitize_template_path($_POST['template_name_manual']);
+			//$settings['template_name_manual'] = $this->sanitize_template_path($_POST['template_name_manual']); //this leaves the field blank
 			//$settings['template_name_manual'] = sanitize_file_name($_POST['template_name_manual']); //this removes slashes
-			$settings['template_name_manual'] = esc_attr($_POST['template_name_manual']); //this removes slashes
+			$settings['template_name_manual'] = esc_attr($_POST['template_name_manual']); //this works but might not be as safe
 		}
 		
 		if(isset($_POST['page_slug']))
@@ -1267,7 +1267,7 @@ class Search_Filter_Posts_Admin {
 				/*'meta_key'					=> '',
 				'meta_key_manual'			=> '',
 				'meta_key_manual_toggle'	=> '',*/
-				'input_type'				=> '',
+				'input_type'				=> 'select',
 				'heading'					=> '',
 				'all_items_label'			=> '',
 				'accessibility_label'		=> '',

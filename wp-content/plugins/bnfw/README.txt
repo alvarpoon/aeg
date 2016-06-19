@@ -3,8 +3,8 @@ Contributors: voltronik
 Donate link: https://betternotificationsforwp.com/donate/
 Tags: notifications, email, mail, alerts, roles, user, users, admin, HTML, plain, wp_mail, shortcode, customize, post, page, updated, pending review, scheduled, category, tag, term, custom post type, comment, akismet, trackback, pingback, lost password, welcome, new user, bulk, notice, trigger, CC, BCC, from, author
 Requires at least: 3.5
-Tested up to: 4.4
-Stable tag: 1.3.8
+Tested up to: 4.5.2
+Stable tag: 1.4.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -12,16 +12,18 @@ Send customisable emails to your users for different WordPress notifications.
 
 == Description ==
 
-> Recently updated to be even easier to use!
+> New add-ons are now available! [View Add-ons](https://betternotificationsforwp.com/store/)
 
-Better Notifications for WordPress allows you to generate custom email notifications and send them to user roles (including custom roles) or individual users for all kinds of things happening on your WordPress website. Emails are sent out via your WordPress website (using `wp_mail`) but can be sent via SMTP using an appropriate 3rd party plugin should you wish.
+Better Notifications for WordPress allows you to create custom email notifications and send them to user roles (including custom roles) or individual users for all kinds of things happening on your WordPress website. Emails are sent out via your WordPress website (using `wp_mail`) but can be sent via SMTP using an appropriate 3rd party plugin should you wish.
 
 https://www.youtube.com/watch?v=MxPUyRZPJ1Q
 
 = For example: =
 You want a user with the editor role (or all users using the Editor role) to be alerted via email when a new post is published and you'd like to customise it to include your branding along with the author's display name and post time - with this plugin, that's easy. 
 
-> A long and handy list of shortcodes you can use is available [here](https://betternotificationsforwp.com/shortcodes/ "Shortcodes for use in Better Notifications for WordPress").
+If you want to override the notifications that you've set-up on an individual post / page / custom post basis, you may be interested in the [Per-post Override add-on](https://betternotificationsforwp.com/downloads/per-post-override/).
+
+> A handy list of shortcodes you can use is available [here](https://betternotificationsforwp.com/shortcodes/ "Shortcodes for use in Better Notifications for WordPress").
 
 Notifications that are currently available to use are: 
 
@@ -30,14 +32,15 @@ Notifications that are currently available to use are:
 * New Comment / Comment Awaiting Moderation
 * New Trackback
 * New Pingback
-* Lost Password (For Admin)
-* New User Registration (For Admin)
+* Lost Password - For Admin
+* New User Registration - For Admin
 
 **Transactional**
 
-* Lost Password (For User)
-* New User Registration (For User)
-* New User - Welcome Email
+* Lost Password - For User
+* New User Registration - For User
+* New User - Post-registration Email
+* User Role Changed
 * Comment Reply
 
 **Posts / Custom Post Types**
@@ -46,6 +49,7 @@ Notifications that are currently available to use are:
 * Post Updated
 * Post Pending Review
 * Post Scheduled
+* Post - Custom Field Updated ([Custom Fields Add-on](https://betternotificationsforwp.com/downloads/custom-fields/))
 
 **Pages**
 
@@ -54,6 +58,7 @@ Notifications that are currently available to use are:
 * Page Pending Review
 * Page Scheduled
 * Page - New Comment
+* Page - Custom Field Updated ([Custom Fields Add-on](https://betternotificationsforwp.com/downloads/custom-fields/))
 
 **Posts**
 
@@ -64,15 +69,13 @@ Notifications that are currently available to use are:
 
 * New Term
 
-If you'd like to see a notification in the list above, please drop me a line in the forums and I'll see what I can do to add it.
-
-Having problems? Please let me know via this plugin's forum so I can address them and let it act as a source of information for future reference and other users.
+If you'd like to see a notification in the list above, please drop me a line in the forum and I'll see what I can do to add it.
 
 Like this plugin? Please leave it [a great review](https://wordpress.org/support/view/plugin-reviews/bnfw?rate=5#postform)! 
-Don't think the plugin is worthy of 5 stars? Let me know on the forum and I'll do my best to help.
+Don't think the plugin is worthy of 5 stars? Having problems? Let me know in the [forum](https://wordpress.org/support/plugin/bnfw) and I'll do my best to help.
 
 > DISCLAIMER
-> This is an incredibly useful and highly rated plugin however, it's possible that overuse or abuse of this plugin could upset your users by sending them too many notifications. By downloading / installing / using this plugin, you take full responsibility of the management / quantity / types of notifications that are sent out from it including abiding by any SPAM laws in your country / operating areas, dealing with / responding to subscription / unsubscription requests, complaints, and so on. I accept no liability or responsibility for spam or abuse of this plugin from the user(s) of or anyone that may receive notifications as a result of the use of this plugin. I'm trusting you, please don't abuse your users.
+> This is an incredibly useful and highly rated plugin however, it's possible that overuse or abuse of this plugin could upset your users by sending them too many notifications. By downloading / installing / using this plugin, you take full responsibility of the management / quantity / types of notifications that are sent out from it including abiding by any SPAM laws in your country / operating areas, dealing with / responding to subscription / unsubscription requests, complaints, and so on. I accept no liability or responsibility for SPAM or abuse of this plugin from the user(s) of or anyone that may receive notifications as a result of the use of this plugin. I'm trusting you, please don't abuse your users.
 
 
 
@@ -90,11 +93,11 @@ Don't think the plugin is worthy of 5 stars? Let me know on the forum and I'll d
 
 = What are shortcodes? Where can I use them in this plugin? = 
 
-Shortcodes are little blocks of content inserted by WordPress, contained in square brackets. For example, if you want to add the content of a post to a notification for 'New Post Published', you can use the `[post_content]` shortcode to display this in the email that is sent out. 
+Shortcodes are little blocks of content contained in square brackets. For example, if you want to add the content of a post to a notification for 'New Post Published', you can use the `[post_content]` shortcode to display this in the email that is sent out. 
 
 Shortcodes can be used in the 'Subject' and 'Message Body' of your notifications, except for a select few (due to a restriction in WordPress).
 
-> A long and handy list of shortcodes you can use is available [here](https://betternotificationsforwp.com/shortcodes/ "Shortcodes for use in Better Notifications for WordPress").
+> A handy list of shortcodes you can use is available [here](https://betternotificationsforwp.com/shortcodes/ "Shortcodes for use in Better Notifications for WordPress").
 
 = What are some scenarios this plugin could be used for? =
 
@@ -111,7 +114,7 @@ Yes! There is an option for suppressing comments marked as SPAM by Akismet in th
 
 = Does this plugin work with Multisite? =
 
-Yes and no - some notifications work, others don't, and some are missing entirely. I do plan on adding full Multisite support at a later date however, this will most likely be in the form of an add-on. 
+Yes and no - some notifications work, others don't, and some are missing entirely. I do plan on adding full Multisite support at a later date however, this will be in the form of an add-on. 
 
 = What isn't this plugin? =
 
@@ -121,21 +124,21 @@ It's not designed to send out newsletters. There is no send-this-out-on-this-dat
 
 This will very much depend on what notifications you're using the plugin for. Out-of-the-box, this plugin works very well but there are a few tweaks that you will need to ensure 100% compatibility. All the below points refer to this plugin: 
 
-* If you want to use the new comment notifications in BNFW, you need to un-tick 'Email me whenever anyone posts a comment' and 'A comment is held for moderation' under Settings > Discussion. It's ok if you don't do this but you might receive WordPress's own email notifications along with the ones you've configure using BNFW. It also goes without saying that you need to enable comments for your posts if you want the email notifications to come through. 
+* If you want to use the new comment notifications in BNFW, you need to un-tick 'Email me whenever anyone posts a comment' and 'A comment is held for moderation' under Settings > Discussion. It's OK if you don't do this but you might receive WordPress's own email notifications along with the ones you've configure using BNFW. It also goes without saying that you need to enable comments for your posts if you want the email notifications to come through. 
 
 * If you want to use the 'Comment Reply' transactional email, you need to ensure that comments are only set-up to be 2-levels deep. You can do this by going to Settings > Discussion and changing the option 'Enable threaded (nested) comments 'X' levels deep' to '2'. Please also ensure this option is ticked. 
 
 = Notifications aren't coming through! =
 
-A [very handy answer](http://stackoverflow.com/questions/371/how-do-you-make-sure-email-you-send-programmatically-is-not-automatically-marked) on StackExchange explains what you might need to do to make sure that emails don't make it through to your users SPAM / Junk folders. It's worth going through this and completing as much as you can.
+First of all, follow [this article](https://betternotificationsforwp.com/how-can-i-receive-the-best-support/) about how to find out what might be causing the problem. Additionally, this [very handy answer](http://stackoverflow.com/questions/371/how-do-you-make-sure-email-you-send-programmatically-is-not-automatically-marked) on Stack Overflow explains what you might need to do to make sure that emails don't make it through to your users SPAM / Junk folders. It's worth going through this and completing as much as you can.
 
-After this, check your Notification settings to make sure all is as it should be, then check your SPAM folder and/or filter at your host. Gmail and certain hosts can mark messages from new websites (or IP addresses) as SPAM so it's worth checking and possibly creating a filter to ensure this doesn't happen in the future.
+Many hosts place a limit on the number of emails that can be sent out within an hour so this may also cause some delay in emails arriving. MailPoet has a fairly extensive list of hosts and their corresponding email rate limits that's worth checkout [here](https://support.mailpoet.com/knowledgebase/lists-of-hosts-and-their-sending-limits/). Alternatively, please check with your host directly to find out what your limit is. 
 
-Many hosts place a limit on the number of emails that can be sent out within an hour so this may also cause some delay in emails arriving. Please check with your host to find out what this limit is. 
+If you're still having problems, please drop me a line in the [Free Support Forums](https://wordpress.org/support/plugin/bnfw) and I'll do my best to help. 
 
 = Some of my shortcodes aren't working! =
 
-It's possible you're inserting a shortcode into a notification that cannot use it. For example: the 'New Category' email notification cannot use any of the author or time shortcodes as WordPress only stores the category name, category slug and category description in the database. It's also worth checking the spelling and underscores in any shortcodes as well as if they are wrapped in square brackets `[]`.
+It's possible you're inserting a shortcode into a notification that cannot use it. For example: the 'New Category' email notification cannot use any of the author or time shortcodes as WordPress only stores the category name, category slug and category description in the database by default. It's also worth checking the spelling and underscores in any shortcodes as well as if they are wrapped in square brackets `[]`.
 
 = I press the 'Send Me a Test Email' button but nothing happens! =
 
@@ -149,17 +152,13 @@ WordPress, by default, sends all emails in Plain Text. If you'd like to include 
 
 This is most likely because it's `public` setting is set to `false`. Try changing this and see if it shows up in the list. If the custom post type has been created by a plugin and is set to private (such as [TablePress](https://wordpress.org/plugins/tablepress/ "TablePress")), you'll need to get in touch with the plugin author to see if they'll consider changing it to public instead so that BNFW can send out notifications for it. 
 
-= I'm using the P2 theme and my notifications are coming through twice =
-
-In order to fix a problem with P2 not triggering notifications at all, if you post from the WordPress Admin, it will trigger two notifications: one for the standard settings and one for the additional P2 settings. I recommend posting from the front-end only if you're using P2 in order to trigger just a single notification. 
-
 = Can I translate this plugin? =
 
-Yes, of course! The plugin is completely translation-friendly and if you send me your .po file, i'll make sure to include it in the plugin and credit you on this page.
+Yes, of course! The plugin is completely translation-friendly and if you send me your .po file, I'll make sure to include it in the plugin and credit you on this page.
 
 = Will this plugin work with versions of WordPress less than 3.5? = 
 
-It might do but this is untested. 
+An older version might work but this is untested. A lot of the newer features require WordPress 4.0 and above.
 
 
 
@@ -174,6 +173,59 @@ It might do but this is untested.
 
 
 == Changelog ==
+
+= 1.4.1 - 3rd June 2016 =
+* Fixed: Multiple emails were being sent for a single notification for a small number of users. After lots of hunting and lots of testing, I'm hoping this should now be fixed.
+* Fixed: The 'User Role Changed' notification was broken after the update to WordPress 4.5.
+* Fixed: The 'Password Reset - For User' and 'New User - Post-registration Email' notifications were being sent in HTML but with all carriage returns / line breaks stripped out.
+* Fixed: User shortcodes for new comments on custom post types weren't being outputted properly.
+* Fixed: The 'Notifications' BNFW menu item in the Sidebar in the WordPress Admin was showing for non-admins.
+* Added: German Translation (props Michael Schröttle).
+
+= 1.4 - 8th April 2016 =
+* New: Shortcode `[post_slug]`. Output the post slug.
+* New: Shortcode `[edit_post]`. Outputs the link to edit the post / page / custom post.
+* New: Shortcode `[post_parent_permalink]`. Outputs a permalink to the post / page / custom post's parent item.
+* New: Shortcode `[author_link]`. Outputs a link to the post / page / custom post's author archive.
+* New: You can now add the collection of User Shortcodes to the 'Lost Password - For User' email. 
+* New: Support for the 'O2' plugin, when used in conjunction with the 'P2' Theme via a filter. Please see the [documentation](https://betternotificationsforwp.com/documentation/) for details.
+* Improved: Users were getting confused with the 'Welcome Email', thinking it operated like that in the 'SB Welcome Email Editor' plugin. The name of this notification has been changed from 'New User - Welcome Email' to 'New User - Post-registration Email' to help differentiate its functionality in BNFW.
+* Improved: The screen where you add your license(s) after purchasing any BNFW add-on(s) is now called 'Add-on Licenses', instead of going to 'Settings' and adding them there. 
+* Improved: Setting a notification to send to 'the author only' now shows a label in the 'User Roles / Users' column in the 'All Notifications' screen.
+* Improved: 'New Comment / Awaiting Moderation', 'New Trackback', and 'New Pingback' notifications now show the 'Send this notification to the Author only' checkbox.
+* Improved: If a notification is present but disabled, the default WordPress notification (if there is one), will not be sent. 
+* Fixed: New Post Published notifications weren't being sent if you had the Per-post Override add-on installed. 
+
+= 1.3.9.5 - 26th February 2016 =
+* Fixed: New Post Published notifications were triggering multiple times due to `auto_draft_to_publish`.
+
+= 1.3.9.4 - 15th February 2016 =
+* Filter improvements for the new [Per-post Override add-on](https://betternotificationsforwp.com/downloads/per-post-override/).
+
+= 1.3.9.3 - 12th February 2016 =
+* General bug fixes and updates relating to future add-ons and the new [Per-post Override add-on](https://betternotificationsforwp.com/downloads/per-post-override/) which allows you to override your notifications for each post / page / custom post.
+* Added: New Post Published notifications now trigger on `auto_draft_to_publish`. This may or may not effect you if you publish through a front-end form or from an app.
+
+= 1.3.9.2 - 29th January 2016 =
+* The [Add-on Store](https://betternotificationsforwp.com/store/) is now live! Looking for some extra, premium functionality in your notifications? You might find an add-on for it!
+* New: A filter is now available for adding compatibility to themes for creating posts using `wp_insert_post`. Please see the bottom of the [FAQ](https://wordpress.org/plugins/bnfw/faq/) for details.
+* Fixed: 'User Role Changed' notifications were being triggered for new users. 
+* Fixed: The label for custom taxonomies was showing in the Notification select box even if you didn't have any.
+* Fixed: A warning was showing when no 'CC' or 'BCC' details were added but the 'Name' and 'From' details were specified.
+* Fixed: A warning was showing after a taxonomy was deleted but a notification existed for it.
+* Fixed: Replaced select2 v4 script for full version for better compatibility with other plugins.
+* Fixed: The javascript in the plugin is now translatable.
+* Added: French translation - props Mygale06.
+
+= 1.3.9.1 - 9th January 2016 =
+* Fixed: Missing shortcode link for new 'User Role Changed' notification.
+* Fixed: Duplicate 'User Role Changed' listing in the Notification select box.
+
+= 1.3.9 - 9th January 2016 =
+* Happy New Year!
+* New: Transactional notification for when a User Role Changed. This is sent to the user when their User Role is changed.
+* Fixed: Ensure that at least one User or User Role is selected before saving a notification.
+* Fixed: select2 v4 update and compatibility with Ultimate Member and ACF Pro.
 
 = 1.3.8 - 16th December 2015 =
 * Fixed: Notifications weren't being sent out at all. After lots of testing, I think this should now be resolved.
@@ -190,7 +242,7 @@ It might do but this is untested.
 * Updated: select2.js library updated to v4.
 * Fixed: Compatibility with password reset notifications in WordPress 4.1.0 and below.
 * Fixed: An issue where the 'Tag' label was showing incorrectly in the 'All Notifications' screen.
-* I've added a short disclaimer to the [Description Tab](https://wordpress.org/plugins/bnfw/) regarding spam and overuse/abuse of this plugin which I recommend a quick read through.
+* I've added a short disclaimer to the [Description Tab](https://wordpress.org/plugins/bnfw/) regarding SPAM and overuse/abuse of this plugin which I recommend a quick read through.
 
 = 1.3.5 - 9th October 2015 =
 * Fixed: A large bug that was causing issues with Password URL shortcodes in the 'New User Registration - For User' and 'Password Reset - For User' notifications.

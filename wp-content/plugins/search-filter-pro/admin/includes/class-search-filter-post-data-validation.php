@@ -461,21 +461,21 @@ class Search_Filter_Post_Data_Validation {
 		
 		if($clean_widget['number_is_decimal']==0)
 		{//if data is not actually decimal, its really only cosmetic to display the the decimal places - so remove all decimals to reset them to 0 on the next `number_format` call
-			$range_min = number_format( $range_min, 0, $decimal_point, '' );
-			$range_max = number_format( $range_max, 0, $decimal_point, '' );
-			$range_step = number_format( $range_step, 0, $decimal_point, '' );
+			$range_min = number_format( (float)$range_min, 0, $decimal_point, '' );
+			$range_max = number_format( (float)$range_max, 0, $decimal_point, '' );
+			$range_step = number_format( (float)$range_step, 0, $decimal_point, '' );
 			
 		}
 		else
 		{//also remove any data in extra decimal places
-			$range_min = number_format( $range_min, $clean_widget['number_decimal_places'], $decimal_point, '' );
-			$range_max = number_format( $range_max, $clean_widget['number_decimal_places'], $decimal_point, '' );
-			$range_step = number_format( $range_step, $clean_widget['number_decimal_places'], $decimal_point, '' );
+			$range_min = number_format( (float)$range_min, $clean_widget['number_decimal_places'], $decimal_point, '' );
+			$range_max = number_format( (float)$range_max, $clean_widget['number_decimal_places'], $decimal_point, '' );
+			$range_step = number_format( (float) $range_step, $clean_widget['number_decimal_places'], $decimal_point, '' );
 		}
 		
-		$clean_widget['range_min'] = number_format( $range_min, $clean_widget['decimal_places'], $decimal_point, '' );
-		$clean_widget['range_max'] = number_format( $range_max, $clean_widget['decimal_places'], $decimal_point, '' );
-		$clean_widget['range_step'] = number_format( $range_step, $clean_widget['decimal_places'], $decimal_point, '' );
+		$clean_widget['range_min'] = number_format( (float)$range_min, $clean_widget['decimal_places'], $decimal_point, '' );
+		$clean_widget['range_max'] = number_format( (float)$range_max, $clean_widget['decimal_places'], $decimal_point, '' );
+		$clean_widget['range_step'] = number_format( (float)$range_step, $clean_widget['decimal_places'], $decimal_point, '' );
 		
 		
 		$clean_widget['range_value_prefix'] = $this->sanitize_text_field_kws($widget_data['range_value_prefix']);

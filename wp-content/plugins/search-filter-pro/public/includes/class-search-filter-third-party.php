@@ -23,10 +23,8 @@ class Search_Filter_Third_Party
 		$this->plugin_slug = $plugin_slug;
 		
 		// -- woocommerce
-		
-		add_filter('sf_edit_query_args', array($this, 'sf_woocommerce_query_args'), 11, 2); //modify S&F results URL
-		
-		add_filter('sf_admin_filter_settings_save', array($this, 'sf_woocommerce_filter_settings_save'), 11, 2); //modify S&F results URL
+		add_filter('sf_edit_query_args', array($this, 'sf_woocommerce_query_args'), 11, 2); //
+		add_filter('sf_admin_filter_settings_save', array($this, 'sf_woocommerce_filter_settings_save'), 11, 2); //
 		
 		// -- EDD
 		//add_action( 'marketify_entry_before', array($this, 'marketify_entry_before_hook') );
@@ -34,21 +32,19 @@ class Search_Filter_Third_Party
 		//$searchform->query()->prep_query();
 		
 		// -- polylang
-		
 		//add_action('init', array($this, 'dump_stuff'));
-		
-		add_filter('pll_get_post_types', array($this, 'my_pll_get_post_types'));
-		add_filter('sf_archive_results_url', array($this, 'sf_archive_results_url'), 10, 3); //modify S&F results URL
-		//add_filter('sf_pre_get_posts_admin_cache', array($this, 'sf_pre_get_posts_admin_cache'), 10, 3); //modify S&F results URL
-		add_filter('sf_edit_cache_query_args', array($this, 'sf_edit_cache_query_args'), 10, 3); //modify S&F results URL
-		
+		//add_filter('pll_the_language_link', array($this, 'my_link'), 10, 2);
+		add_filter('pll_get_post_types', array($this, 'pll_sf_add_translations'));
+		add_filter('sf_archive_results_url', array($this, 'pll_sf_archive_results_url'), 10, 3); //
+		add_filter('sf_archive_slug_rewrite', array($this, 'pll_sf_archive_slug_rewrite'), 10, 3); //
+		add_filter('sf_ajax_results_url', array($this, 'pll_sf_ajax_results_url'), 10, 2); //
+		//add_filter('sf_pre_get_posts_admin_cache', array($this, 'sf_pre_get_posts_admin_cache'), 10, 3); //
+		add_filter('sf_edit_cache_query_args', array($this, 'poly_lang_sf_edit_cache_query_args'), 10, 3); //
 		
 		// -- relevanssi
 		add_filter( 'sf_edit_query_args_after_custom_filter', array( $this, 'relevanssi_filter_query_args' ), 12, 2);
 		add_filter( 'sf_apply_custom_filter', array( $this, 'relevanssi_add_custom_filter' ), 10, 3);
-		
-		
-		
+				
 		$this->init();
 	}
 	
@@ -124,35 +120,16 @@ class Search_Filter_Third_Party
 	
 	/* pollylang integration */
 	
-	public function dump_stuff($stuff) {
-		global $polylang;
-		
-		/*if(empty($polylang))
-		{
-			return;
-		}
-		else
-		{
-			
-		}
-		echo $polylang;
-		exit;*/
-
-		/*$langs = array();
-		
-		foreach ($polylang->model->get_languages_list() as $term)
-		{
-			array_push($langs, $term->slug);
-		}
-		
-		var_dump($langs);exit;*/
+	function my_link($url, $slug) {
+		echo "THE LINK: ".$url." | ".$slug."<br />";
+		return $url === null ? home_url('?lang='.$slug) : $url;
 	}
-	
-	public function my_pll_get_post_types($types) {
+
+	public function pll_sf_add_translations($types) {
 		return array_merge($types, array('search-filter-widget' => 'search-filter-widget'));
 	}
 	
-	public function sf_edit_cache_query_args($query_args,  $sfid) {
+	public function poly_lang_sf_edit_cache_query_args($query_args,  $sfid) {
 		
 		global $polylang;
 		
@@ -161,14 +138,14 @@ class Search_Filter_Third_Party
 			return $query_args;
 		}
 		
-		$langs = array();
+		/*$langs = array();
 		
 		foreach ($polylang->model->get_languages_list() as $term)
 		{
 			array_push($langs, $term->slug);
 		}
 		
-		$query_args["lang"] = implode(",",$langs);
+		$query_args["lang"] = implode(",",$langs);*/
 		
 		return $query_args;
 	}
@@ -180,17 +157,73 @@ class Search_Filter_Third_Party
 		return $query;
 	}
 	*/
-	public function sf_archive_results_url($results_url,  $sfid, $page_slug) {
+	
+	function add_url_args($url, $str)
+	{
+		$query_arg = '?';
+		if (strpos($url,'?') !== false) {
+			
+			//url has a question mark
+			$query_arg = '&';
+		}
 		
-		/*$results_url = add_query_arg(array('sfid' => $sfid), pll_home_url());
+		return $url.$query_arg.$str;
 		
-		if(get_option('permalink_structure'))
+	}
+	public function pll_sf_archive_slug_rewrite($newrules,  $sfid, $page_slug) {
+		
+		if((function_exists('pll_home_url'))&&(function_exists('pll_current_language')))
 		{
-			if($page_slug!="")
+			//takes into account language prefix
+			//$newrules = array();
+			$newrules["([a-zA-Z0-9_-]+)/".$page_slug.'$'] = 'index.php?&sfid='.$sfid; //regular plain slug
+		}
+		
+		return $newrules;
+	}
+	public function pll_sf_ajax_results_url($ajax_url,  $sfid) {
+		
+		if((function_exists('pll_home_url'))&&(function_exists('pll_current_language')))
+		{			
+			if(get_option('permalink_structure'))
 			{
-				$results_url = trailingslashit(pll_home_url()).$page_slug."/";
+				$home_url = trailingslashit(pll_home_url());
+				
+				$ajax_url = $this->add_url_args($home_url, "sfid=$sfid&sf_action=get_results");
+				
 			}
-		}*/
+			else
+			{
+				$ajax_url = $this->add_url_args( pll_home_url(), "sfid=$sfid&sf_action=get_results");				
+			}
+		}
+		
+		return $ajax_url;
+	}
+	public function pll_sf_archive_results_url($results_url,  $sfid, $page_slug) {
+		
+		
+		if((function_exists('pll_home_url'))&&(function_exists('pll_current_language')))
+		{
+			$results_url = pll_home_url(pll_current_language());
+			
+			if(get_option('permalink_structure'))
+			{	
+				if($page_slug!="")
+				{
+					$results_url = trailingslashit(trailingslashit($results_url).$page_slug);
+				}
+				else
+				{
+					$results_url = trailingslashit($results_url);
+					$results_url = $this->add_url_args( $results_url, "sfid=$sfid");
+				}
+			}
+			else
+			{
+				$results_url .= "&sfid=".$sfid;
+			}
+		}
 		
 		return $results_url;
 	}

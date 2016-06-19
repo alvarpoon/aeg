@@ -40,13 +40,13 @@ class BNFW_Engine {
 	 */
 	public function send_notification( $setting, $id ) {
 		/**
-		 * BNFW - Whether notification is enabled?
+		 * BNFW - Whether notification is disabled?
 		 *
 		 * @since 1.3.6
 		 */
-		$notification_enabled = apply_filters( 'bnfw_notification_enabled', true, $id, $setting );
+		$notification_disabled = apply_filters( 'bnfw_notification_disabled', false, $id, $setting );
 
-		if ( $notification_enabled ) {
+		if ( ! $notification_disabled ) {
 			$subject = $this->handle_shortcodes( $setting['subject'], $setting['notification'], $id );
 			$message = $this->handle_shortcodes( $setting['message'], $setting['notification'], $id );
 			$emails  = $this->get_emails( $setting, $id );
@@ -62,7 +62,7 @@ class BNFW_Engine {
 				$headers[] = 'Content-type: text/plain';
 			}
 
-			if ( is_array( $emails['to'] ) ) {
+			if ( isset( $emails['to'] ) && is_array( $emails['to'] ) ) {
 				foreach ( $emails['to'] as $email ) {
 					wp_mail( $email, stripslashes( $subject ), $message, $headers );
 				}
@@ -132,6 +132,31 @@ class BNFW_Engine {
 	}
 
 	/**
+	 * Send user role changed email.
+	 *
+	 * @since 1.3.9
+	 *
+	 * @param array $setting Notification setting
+	 * @param int   $user_id User ID
+	 */
+	public function send_user_role_changed_email( $setting, $user_id ) {
+		$subject = $this->handle_shortcodes( $setting['subject'], $setting['notification'], $user_id );
+		$message = $this->handle_shortcodes( $setting['message'], $setting['notification'], $user_id );
+
+		$headers = array();
+		if ( 'html' == $setting['email-formatting'] ) {
+			$headers[] = 'Content-type: text/html';
+		}
+
+		if ( 'true' != $setting['disable-autop'] && 'html' == $setting['email-formatting'] ) {
+			$message = wpautop( $message );
+		}
+
+		$user = get_user_by( 'id', $user_id );
+		wp_mail( $user->user_email, stripslashes( $subject ), $message, $headers );
+	}
+
+	/**
 	 * Handle shortcode for password reset email message.
 	 *
 	 * @since 1.1
@@ -151,10 +176,10 @@ class BNFW_Engine {
 	 * Generate message for notification.
 	 *
 	 * @since 1.0
-	 * @param unknown $message
-	 * @param unknown $notification
-	 * @param unknown $id
-	 * @return unknown
+	 * @param string $message
+	 * @param string $notification
+	 * @param int $id
+	 * @return string
 	 */
 	private function handle_shortcodes( $message, $notification, $id ) {
 		switch ( $notification ) {
@@ -166,6 +191,9 @@ class BNFW_Engine {
 				$message = $this->comment_shortcodes( $message, $id );
 				$comment = get_comment( $id );
 				$message = $this->post_shortcodes( $message, $comment->comment_post_ID );
+				if ( 0 != $comment->user_id ) {
+					$message = $this->user_shortcodes( $message, $comment->user_id );
+				}
 				break;
 
 			case 'admin-password':
@@ -173,6 +201,7 @@ class BNFW_Engine {
 			case 'admin-user':
 			case 'welcome-email':
 			case 'new-user':
+			case 'user-role':
 				// handle users (lost password and new user registration)
 				$message = $this->user_shortcodes( $message, $id );
 				break;
@@ -207,6 +236,9 @@ class BNFW_Engine {
 					$message = $this->comment_shortcodes( $message, $id );
 					$comment = get_comment( $id );
 					$message = $this->post_shortcodes( $message, $comment->comment_post_ID );
+					if ( 0 != $comment->user_id ) {
+						$message = $this->user_shortcodes( $message, $comment->user_id );
+					}
 				}
 				break;
 		}
@@ -240,18 +272,21 @@ class BNFW_Engine {
 		$message = str_replace( '[ping_status]', $post->ping_status, $message );
 		$message = str_replace( '[post_password]', $post->post_password, $message );
 		$message = str_replace( '[post_name]', $post->post_name, $message );
+		$message = str_replace( '[post_slug]', $post->post_name, $message );
 		$message = str_replace( '[to_ping]', $post->to_ping, $message );
 		$message = str_replace( '[pinged]', $post->pinged, $message );
 		$message = str_replace( '[post_modified]', $post->post_modified, $message );
 		$message = str_replace( '[post_modified_gmt]', $post->post_modified_gmt, $message );
 		$message = str_replace( '[post_content_filtered]', $post->post_content_filtered, $message );
 		$message = str_replace( '[post_parent]', $post->post_parent, $message );
+		$message = str_replace( '[post_parent_permalink]', get_permalink( $post->post_parent ), $message );
 		$message = str_replace( '[guid]', $post->guid, $message );
 		$message = str_replace( '[menu_order]', $post->menu_order, $message );
 		$message = str_replace( '[post_type]', $post->post_type, $message );
 		$message = str_replace( '[post_mime_type]', $post->post_mime_type, $message );
 		$message = str_replace( '[comment_count]', $post->comment_count, $message );
 		$message = str_replace( '[permalink]', get_permalink( $post->ID ), $message );
+		$message = str_replace( '[edit_post]', get_edit_post_link( $post->ID ), $message );
 
 		if ( 'future' == $post->post_status ) {
 			$message = str_replace( '[post_scheduled_date]', $post->post_date, $message );
@@ -269,6 +304,8 @@ class BNFW_Engine {
 
 		$user_info = get_userdata( $post->post_author );
 		$message = str_replace( '[post_author]', $user_info->display_name, $message );
+
+		$message = str_replace( '[author_link]', get_author_posts_url( $post->post_author ), $message );
 
 		if ( $last_id = get_post_meta( $post->ID, '_edit_last', true ) ) {
 			if ( $post->post_author != $last_id ) {
@@ -345,6 +382,7 @@ class BNFW_Engine {
 			$message = str_replace( '[wp_capabilities]', implode( ',', $user_info->wp_capabilities ), $message );
 		}
 
+		$message = apply_filters( 'bnfw_shortcodes_user', $message, $user_id );
 		return $message;
 	}
 
@@ -389,7 +427,14 @@ class BNFW_Engine {
 		}
 
 		if ( 'true' === $setting['only-post-author'] ) {
-			$author = get_user_by( 'id', get_post_field( 'post_author', $id ) );
+
+			$post_id = $id;
+			if ( bnfw_is_comment_notification( $setting['notification'] ) ) {
+				$comment = get_comment( $id );
+				$post_id = $comment->comment_post_ID;
+			}
+
+			$author = get_user_by( 'id', get_post_field( 'post_author', $post_id ) );
 			if ( false !== $author ) {
 				$emails['to'] = array( $author->user_email );
 			}
@@ -436,6 +481,10 @@ class BNFW_Engine {
 		$email_list = array();
 		$user_ids = array();
 		$user_roles = array();
+
+		if ( empty( $users ) ) {
+			return array();
+		}
 
 		foreach ( $users as $user ) {
 			if ( $this->starts_with( $user, 'role-' ) ) {

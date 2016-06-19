@@ -24,12 +24,29 @@ class Search_Filter_Helper {
 		
 		
 	}	
+	//Search_Filter_Helper::json_encode()
+	public static function json_encode($obj)
+	{
+		if(function_exists('wp_json_encode'))
+		{//introduced WP 4.1
+			return wp_json_encode($obj);
+		}
+		else 
+		{
+			return json_encode($obj);
+		}
+		/*else
+		{
+			return false;
+		}*/
+		
+	}
 	
 	public static function has_wpml()
 	{
 		//filter is for WPML v 3.5 and over
 		//keep icl_object as a check for older WPML and also other plugins which declare the same functions for compatibility
-		if(has_filter('wpml_object_id')||(function_exists('icl_object_id')))
+		if((has_filter('wpml_object_id')||(function_exists('icl_object_id'))))
 		{
 			return true;			
 		}

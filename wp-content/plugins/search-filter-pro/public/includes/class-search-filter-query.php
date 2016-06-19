@@ -248,6 +248,7 @@ class Search_Filter_Query {
 	
 	public function setup_pagination()
 	{
+		global $searchandfilter;
 		if(!$searchandfilter->has_pagination_init())
 		{
 			add_filter('get_pagenum_link', array($this, 'pagination_fix_pagenum'), 100);
@@ -383,6 +384,7 @@ class Search_Filter_Query {
 		//regular paged value - normally found when loading the page (non ajax)
 		$args['paged'] = $sfpaged;
 		$args['search_filter_id'] = $this->sfid;
+		$args['search_filter_override'] = false;
 		
 		/* to do - make sure its ajax/shortcode request */
 		//if(is_admin()) //is_admin is a great way to test if this is in an ajax call
@@ -800,6 +802,12 @@ class Search_Filter_Query {
 			{
 				global $searchandfilter;
 				$post_date_field = $searchandfilter->get($this->sfid)->get_field_by_key('post_date');
+				
+				if(!$post_date_field)
+				{
+					return $args;
+				}
+				
 				$date_format="m/d/Y";
 				
 				if(isset($post_date_field['date_format']))

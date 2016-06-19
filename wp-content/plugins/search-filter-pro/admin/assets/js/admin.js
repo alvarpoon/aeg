@@ -111,7 +111,7 @@
 			
 			get_cache_progress();
 			
-		}, 5000);
+		}, 15000);
 		
 		function get_cache_progress()
 		{

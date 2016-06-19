@@ -18,6 +18,7 @@ class Search_Filter_Field_Base {
 		
 		global $searchandfilter;
 		$searchform = $searchandfilter->get($this->sfid);
+		$this->searchform = $searchform;
 		$this->current_query = $searchform->current_query();
 	}
 	

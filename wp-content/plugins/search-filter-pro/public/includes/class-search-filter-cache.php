@@ -372,14 +372,25 @@ class Search_Filter_Cache {
 			{
 				foreach($filter_terms as $filter_term)
 				{
+					$add_term = true;
+					
 					if($this->filters[$filter_name]['source']=="taxonomy")
 					{//then we will have IDs - so we need to convert back to slug
 						
 						$term = get_term( $filter_term->field_value, $this->filters[$filter_name]['taxonomy_name'] );
-						$term_name = $term->slug;
 						
-						$this->filters[$filter_name]['terms'][$term_name] = array();
-						$this->filters[$filter_name]['terms'][$term_name]['term_id'] = $term->term_id;
+						if(!empty($term))
+						{//make sure term exists
+							
+							$term_name = $term->slug;
+							
+							$this->filters[$filter_name]['terms'][$term_name] = array();
+							$this->filters[$filter_name]['terms'][$term_name]['term_id'] = $term->term_id;
+						}
+						else
+						{
+							$add_term = false; //couldn't fine the term, so don't try to add it
+						}
 					}
 					else
 					{
@@ -387,10 +398,13 @@ class Search_Filter_Cache {
 						$this->filters[$filter_name]['terms'][$term_name] = array();
 					}
 					
-					//all the IDs used for setting up queries & counts
-					$this->filters[$filter_name]['terms'][$term_name]['cache_result_ids'] = array();
-					$this->filters[$filter_name]['terms'][$term_name]['wp_query_results_ids'] = array();
-					$this->filters[$filter_name]['terms'][$term_name]['count'] = 0;
+					if($add_term)
+					{
+						//all the IDs used for setting up queries & counts
+						$this->filters[$filter_name]['terms'][$term_name]['cache_result_ids'] = array();
+						$this->filters[$filter_name]['terms'][$term_name]['wp_query_results_ids'] = array();
+						$this->filters[$filter_name]['terms'][$term_name]['count'] = 0;
+					}
 					
 					
 				}
@@ -680,11 +694,19 @@ class Search_Filter_Cache {
 				//$term_id_postfix = $field_value;
 				$taxonomy_name = substr($term_result->field_name, strlen(SF_TAX_PRE));
 				$term = get_term( $term_result->field_value, $taxonomy_name, 'OBJECT', false);
-				$field_value = $term->slug;//.$term_id_postfix;
 				
+				if(!empty($term))
+				{//make sure term exists
+					
+					$field_value = $term->slug;
+					
+				}
+				else
+				{
+					$setup_term = false; //couldn't fine the term, so don't try to add it
+				}
 				
-				
-				if(Search_Filter_Helper::has_wpml())
+				if((Search_Filter_Helper::has_wpml())&&(!empty($term)))
 				{
 					//do not even add the term to the list if its in the wrong language
 					if($term_result->field_value!=$term->term_id)
