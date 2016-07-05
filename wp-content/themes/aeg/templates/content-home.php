@@ -4,7 +4,7 @@
 ?>
 
 <div class="container">
-	<div class="row">n
+	<div class="row">
     	<div class="home-logo-container">
         	<a href="<?php echo home_url(); ?>" class="logo_aeg"><img src="<?=get_stylesheet_directory_uri()?>/assets/img/logo_aeg.png" alt="" /></a>
         </div>

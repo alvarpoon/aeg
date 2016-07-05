@@ -8,9 +8,9 @@ jQuery( document ).ready(function(){
 });
 
 /*
-* Set the width of the shortcode input based on an element that
-* has the width of its contents
-*/
+ * Set the width of the shortcode input based on an element that
+ * has the width of its contents
+ */
 function setShortcodeInputWidth( $inputField ) {
     var tempSpan = document.createElement('span');
     tempSpan.className = "wppb-shortcode-temp";
@@ -86,13 +86,24 @@ jQuery( function(){
     jQuery( '#wppb-ul-settings-args').on('click', '#visible-only-to-logged-in-users_yes', function(){
         jQuery( '.row-visible-to-following-roles', jQuery(this).parent().parent().parent().parent().parent().parent()).toggle();
     });
+
+    jQuery( '#wppb-ul-faceted-args').on('change', '#facet-type', function(){
+        if( jQuery(this).val() == 'checkboxes' ){
+            jQuery( '.row-facet-behaviour, .row-facet-limit', jQuery(this).parent().parent().parent()).show();
+        }
+        else{
+            jQuery( '.row-facet-behaviour, .row-facet-limit', jQuery(this).parent().parent().parent()).hide();
+            jQuery( '.row-facet-behaviour #facet-behaviour', jQuery(this).parent().parent().parent()).val('narrow');
+        }
+    });
+
 });
 
 /*
-* Dialog boxes throughout Profile Builder
-*/
+ * Dialog boxes throughout Profile Builder
+ */
 jQuery( function() {
-    jQuery(document).ready( function() {
+    if ( jQuery.fn.dialog ) {
         jQuery('.wppb-modal-box').dialog({
             autoOpen: false,
             modal: true,
@@ -101,9 +112,9 @@ jQuery( function() {
             minHeight: 450
         });
 
-        jQuery('.wppb-open-modal-box').click( function(e) {
+        jQuery('.wppb-open-modal-box').click(function (e) {
             e.preventDefault();
             jQuery('#' + jQuery(this).attr('href')).dialog('open');
         });
-    });
+    }
 });

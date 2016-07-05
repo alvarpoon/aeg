@@ -680,7 +680,7 @@ class Wordpress_Creation_Kit_PB{
 
 	/* Helper function for required fields */
 	function wck_test_required( $meta_array, $meta, $values, $id ){
-		$fields = $meta_array;
+        $fields = apply_filters( 'wck_before_test_required', $meta_array, $meta, $values, $id );
 		$required_fields = array();
 		$required_fields_with_errors = array();
 		$required_message = '';
@@ -1036,9 +1036,18 @@ class Wordpress_Creation_Kit_PB{
     function wck_save_single_metabox( $post_id, $post ){
         if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE )
             return $post_id;
-        // check permissions
-        if ( !current_user_can( 'edit_page', $post_id ) )
-            return $post_id;
+
+        // Check the user's permissions.
+        if ( isset( $_POST['post_type'] ) && 'page' == $_POST['post_type'] ) {
+            if ( ! current_user_can( 'edit_page', $post_id ) ) {
+                return $post_id;
+            }
+        } else {
+            if ( ! current_user_can( 'edit_post', $post_id ) ) {
+                return $post_id;
+            }
+        }
+
         /* only go through for metaboxes defined for this post type */
         if( get_post_type( $post_id ) != $this->args['post_type'] )
             return $post_id;
@@ -1159,9 +1168,9 @@ class Wordpress_Creation_Kit_PB{
 	 * if any of the custom fields has the 'wckwpml' prefix.
 	 */
 	function wck_add_sync_translation_metabox(){
-		global $post;	
-			
-		if( isset( $_GET['lang'] ) ){
+		global $post;
+
+		if( isset( $_GET['lang'] ) && !empty( $post ) ){
 			
 			$has_wck_with_unserialize_fields = false;
 			$custom_field_keys = get_post_custom_keys( $post->ID );
@@ -1453,8 +1462,9 @@ class WCK_Page_Creator_PB{
 	/**
 	 * Do action 'add_meta_boxes'. This hook isn't executed by default on a admin page so we have to add it.
 	 */
-	function wck_settings_page_add_meta_boxes() {					
-		do_action( 'add_meta_boxes', $this->hookname );		
+	function wck_settings_page_add_meta_boxes() {
+        global $post;
+		do_action( 'add_meta_boxes', $this->hookname, $post );
 	}
 	
 	/**

@@ -51,6 +51,11 @@ function wppb_user_role_handler( $output, $form_location, $field, $user_id, $fie
 				<label for="custom_field_user_role">'.$item_title.$error_mark.'</label>
 				<select name="custom_field_user_role" id="'.$field['meta-name'].'" class="custom_field_user_role '. apply_filters( 'wppb_fields_extra_css_class', '', $field ) .'" '. $extra_attr .'>';
 
+				$extra_select_option = apply_filters( 'wppb_extra_select_option', '', $field, $item_title );
+				if( ! empty( $extra_select_option ) ) {
+					$output .= $extra_select_option;
+				}
+
                 if( !empty( $available_user_roles ) ) {
                     foreach( $available_user_roles as $user_role ){
                         $output .= '<option value="'. $user_role['slug'] .'"';

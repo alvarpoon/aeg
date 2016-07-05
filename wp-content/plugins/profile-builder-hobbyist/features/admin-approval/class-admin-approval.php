@@ -71,22 +71,11 @@ class wpp_list_approved_unapproved_users extends PB_WP_List_Table {
      * @return string Text or HTML to be placed inside the column <td>
      **************************************************************************/
     function column_default($item, $column_name){
-        switch($column_name){
-            case 'first_name':
-				return $item[$column_name];
-			case 'last_name':
-				return $item[$column_name];
-			case 'email':
-				return $item[$column_name];
-			case 'role':
-				return $item[$column_name];
-            case 'registered':
-                return $item[$column_name];
-			case 'user_status':
-				return $item[$column_name];
-            default:
-                return print_r($item,true); //Show the whole array for troubleshooting purposes
-        }
+        $default = '';
+        if( !empty( $item[$column_name] ) )
+            $default = $item[$column_name];
+
+        return $default;
     }
     
         
@@ -110,7 +99,7 @@ class wpp_list_approved_unapproved_users extends PB_WP_List_Table {
 		global $current_user;
 
 		$GRavatar = get_avatar( $item['email'], 32, '' );
-		$user = get_user_by( 'ID', $item['ID'] );
+		$user = apply_filters( 'wppb_admin_approval_user_listing_user_object', get_user_by( 'ID', $item['ID'] ), $item );
 		$currentUser =  wp_get_current_user();
 		$wppb_nonce = wp_create_nonce( '_nonce_'.$current_user->ID.$user->ID);
 		
@@ -182,7 +171,7 @@ class wpp_list_approved_unapproved_users extends PB_WP_List_Table {
             'registered'  	=> __('Registered', 'profile-builder'),
 			'user_status'	=> __('User-status', 'profile-builder')
         );
-        return $columns;
+        return apply_filters( 'wppb_admin_approval_page_columns', $columns );
     }
     
     /** ************************************************************************
@@ -210,7 +199,7 @@ class wpp_list_approved_unapproved_users extends PB_WP_List_Table {
             'user_status'  	=> array('user_status',false)
         );
 		
-        return $sortable_columns;
+        return apply_filters( 'wppb_admin_approval_page_sortable_columns', $sortable_columns );
     }
     
     
@@ -315,9 +304,13 @@ class wpp_list_approved_unapproved_users extends PB_WP_List_Table {
         $args = array(
             'number' => $per_page,
             'offset' => ( $current_page-1 ) * $per_page,
-            'fields' => 'all_with_meta',
-            'blog_id' => get_current_blog_id()
+            'fields' => 'all_with_meta'
         );
+
+        if( is_network_admin() )
+            $args['blog_id'] = 0;
+        else
+            $args['blog_id'] = get_current_blog_id();
 
         if ( isset( $_REQUEST['orderby'] ) )
             $args['orderby'] = $_REQUEST['orderby'];
@@ -346,6 +339,8 @@ class wpp_list_approved_unapproved_users extends PB_WP_List_Table {
             $last_name = get_user_meta ( $user->ID, 'last_name', true );
 
             $tempArray = array('ID' => $user->ID, 'username' => $user->data->user_login, 'first_name' => trim( $first_name ), 'last_name' => trim( $last_name ), 'email' => $user->data->user_email, 'role'	=> $user->roles[0], 'registered'  => $user->data->user_registered, 'user_status' => $status);
+            $tempArray = apply_filters( 'wppb_admin_approval_page_manage_column_data', $tempArray, $user );
+
             array_push( $this->dataArray, $tempArray );
         }
         
@@ -424,16 +419,11 @@ class wpp_list_approved_unapproved_users extends PB_WP_List_Table {
  * Now we just need to define an admin page.
  */
 function wppb_add_au_submenu_page() {
-	if (is_multisite()){
-		add_submenu_page( 'users.php', 'Admin Approval', 'Admin Approval', 'manage_options', 'admin_approval', 'wppb_approved_unapproved_users_custom_menu_page' );
-		remove_submenu_page( 'users.php', 'admin_approval' ); //hide the page in the admin menu
-	
-	}else{
-		add_submenu_page( 'users.php', 'Admin Approval', 'Admin Approval', 'manage_options', 'admin_approval', 'wppb_approved_unapproved_users_custom_menu_page' );
-		remove_submenu_page( 'users.php', 'admin_approval' ); //hide the page in the admin menu
-	}
+    add_submenu_page( 'users.php', 'Admin Approval', 'Admin Approval', 'manage_options', 'admin_approval', 'wppb_approved_unapproved_users_custom_menu_page' );
+    remove_submenu_page( 'users.php', 'admin_approval' ); //hide the page in the admin menu
 }
 add_action('admin_menu', 'wppb_add_au_submenu_page');
+add_action('network_admin_menu', 'wppb_add_au_submenu_page');
 
 
 

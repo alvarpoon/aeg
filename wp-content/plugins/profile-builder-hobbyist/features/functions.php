@@ -36,12 +36,12 @@ function wppb_add_plugin_stylesheet() {
 	$wppb_generalSettings = get_option( 'wppb_general_settings' );
 
 	if ( ( file_exists( WPPB_PLUGIN_DIR . '/assets/css/style-front-end.css' ) ) && ( isset( $wppb_generalSettings['extraFieldsLayout'] ) && ( $wppb_generalSettings['extraFieldsLayout'] == 'default' ) ) ){
-		wp_register_style( 'wppb_stylesheet', WPPB_PLUGIN_URL . 'assets/css/style-front-end.css' );
+		wp_register_style( 'wppb_stylesheet', WPPB_PLUGIN_URL . 'assets/css/style-front-end.css', array(), PROFILE_BUILDER_VERSION );
 		wp_enqueue_style( 'wppb_stylesheet' );
 	}
 	if( is_rtl() ) {
 		if ( ( file_exists( WPPB_PLUGIN_DIR . '/assets/css/rtl.css' ) ) && ( isset( $wppb_generalSettings['extraFieldsLayout'] ) && ( $wppb_generalSettings['extraFieldsLayout'] == 'default' ) ) ){
-			wp_register_style( 'wppb_stylesheet_rtl', WPPB_PLUGIN_URL . 'assets/css/rtl.css' );
+			wp_register_style( 'wppb_stylesheet_rtl', WPPB_PLUGIN_URL . 'assets/css/rtl.css', array(), PROFILE_BUILDER_VERSION );
 			wp_enqueue_style( 'wppb_stylesheet_rtl' );
 		}
 	}
@@ -79,13 +79,17 @@ if(!function_exists('wppb_curpageurl')){
 			
 		$pageURL .= "://";
 
-		if ($_SERVER["SERVER_PORT"] != "80")
-			$pageURL .= $_SERVER["SERVER_NAME"].":".$_SERVER["SERVER_PORT"].$_SERVER["REQUEST_URI"];
-			
-		else
-			$pageURL .= $_SERVER["SERVER_NAME"].$_SERVER["REQUEST_URI"];
+        if( strpos( $_SERVER["HTTP_HOST"], $_SERVER["SERVER_NAME"] ) !== false ){
+            $pageURL .=$_SERVER["HTTP_HOST"].$_SERVER["REQUEST_URI"];
+        }
+        else {
+            if ($_SERVER["SERVER_PORT"] != "80")
+                $pageURL .= $_SERVER["SERVER_NAME"] . ":" . $_SERVER["SERVER_PORT"] . $_SERVER["REQUEST_URI"];
+            else
+                $pageURL .= $_SERVER["SERVER_NAME"] . $_SERVER["REQUEST_URI"];
+        }
 		
-		if ( function_exists('apply_filters') ) apply_filters('wppb_curpageurl', $pageURL);
+		if ( function_exists('apply_filters') ) $pageURL = apply_filters('wppb_curpageurl', $pageURL);
 
         return $pageURL;
 	}
@@ -167,11 +171,13 @@ function wppb_mail( $to, $subject, $message, $message_from, $context = null ) {
 		add_filter( 'wp_mail_content_type', create_function( '', 'return "text/html"; ' ) );
 
 		$sent = wp_mail( $to , $subject, $message );
+
+		do_action( 'wppb_after_sending_email', $sent, $to, $subject, $message, $send_email );
+
+		return $sent;
 	}
-	
-	do_action( 'wppb_after_sending_email', $sent, $to, $subject, $message, $send_email );
-	
-	return $sent;
+
+	return '';
 }
 
 function wppb_activate_account_check(){
@@ -461,7 +467,7 @@ if ( is_admin() ){
 	}
 
     $wppb_generalSettings = get_option( 'wppb_general_settings' );
-    if ( $wppb_generalSettings['emailConfirmation'] == 'yes' ) {
+    if ( !empty( $wppb_generalSettings['emailConfirmation'] ) && ( $wppb_generalSettings['emailConfirmation'] == 'yes' ) ) {
         if( is_multisite() )
             add_action( 'wpmu_delete_user', 'wppb_delete_user_from_signups_table' );
         else
@@ -621,6 +627,12 @@ function wppb_recaptcha_field_error($field_title='') {
 
     return $recaptcha_error;
 
+}
+/* Function for displaying phone field error */
+function wppb_phone_field_error( $field_title = '' ) {
+	$phone_error = apply_filters( 'wppb_phone_error' , __( 'Incorrect phone number', 'profile-builder' ) , $field_title );
+
+	return $phone_error;
 }
 
 /* Create a wrapper function for get_query_var */
