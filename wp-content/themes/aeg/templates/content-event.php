@@ -8,26 +8,11 @@
 			'order' 			=> 'DESC',
 			'numberposts' 		=> -1,
 			'posts_per_page' 	=> 10,
-			'category_name'		=> 'asian-eus-congress',
-/*			'meta_key' 			=> 'date_to',
-			'meta_compare'		=> '>',
-			'meta_value' 		=> $today,*/
+			'category__in'		=> 13,
 			'orderby' 			=> 'date_from',
 			'paged' 			=> $paged,
 		);
 		
-		/*$past_args= array(
-			'post_type'			=> 'event',
-			'post_status' 		=> 'publish',
-			'order' 			=> 'DESC',
-			'numberposts' 		=> -1,
-			'posts_per_page' 	=> 10,
-			'meta_key' 			=> 'date_to',
-			'meta_compare'		=> '<',
-			'meta_value' 		=> $today,
-			'orderby' 			=> 'date_from',
-			'paged' 			=> $paged,
-		);*/
 	} else if($post->ID == 39){//up-coming
 		$current_args= array(
 			'post_type'			=> 'event',
@@ -35,7 +20,7 @@
 			'order' 			=> 'DESC',
 			'numberposts' 		=> -1,
 			'posts_per_page' 	=> 10,
-			'category__not_in'  => 12,
+			'category__not_in'  => 13,
 			'meta_key' 			=> 'date_to',
 			'meta_compare'		=> '>',
 			'meta_value' 		=> $today,
@@ -49,7 +34,7 @@
 			'order' 			=> 'DESC',
 			'numberposts' 		=> -1,
 			'posts_per_page' 	=> 10,
-			'category__not_in'  => 12,
+			'category__not_in'  => 13,
 			'meta_key' 			=> 'date_to',
 			'meta_compare'		=> '<',
 			'meta_value' 		=> $today,
@@ -63,7 +48,7 @@
 			'order' 			=> 'DESC',
 			'numberposts' 		=> -1,
 			'posts_per_page' 	=> 10,
-			'category__not_in'  => 12,
+			'category__not_in'  => 13,
 			'meta_key' 			=> 'date_to',
 			'meta_compare'		=> '<',
 			'meta_value' 		=> $today,
@@ -77,7 +62,7 @@
 			'order' 			=> 'DESC',
 			'numberposts' 		=> -1,
 			'posts_per_page' 	=> 10,
-			'category__not_in'  => 12,
+			'category__not_in'  => 13,
 			'meta_key' 			=> 'date_to',
 			'meta_compare'		=> '>',
 			'meta_value' 		=> $today,
