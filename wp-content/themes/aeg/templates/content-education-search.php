@@ -1,4 +1,4 @@
-<?php the_search_query(); ?>
+<?php //the_search_query(); ?>
 
 <?
 	//$paged = (get_query_var('paged')) ? get_query_var('paged') : 1;
@@ -7,17 +7,17 @@
 	<div class="row">
         <div class="clearfix">
             <div class="lecture_nav_container clearfix">
-                <div class="lecture_nav_item active">
-                    <a href="#">LECTURE</a>
-                </div>
-                <!--<div class="lecture_nav_item">
-                    <a href="/education/videos/">VIDEO<span><?=$video_results->post_count;?></span></a>
+                <div class="lecture_nav_item">
+                    <a href="/education/lecture/">LECTURE</a>
                 </div>
                 <div class="lecture_nav_item">
-                    <a href="/education/image/">IMAGES<span><?=$image_results->post_count;?></span></a>
-                </div>-->
+                    <a href="/education/videos/">VIDEO</a>
+                </div>
+                <div class="lecture_nav_item">
+                    <a href="/education/image/">IMAGES</a>
+                </div>
             </div>
-            <!--<a href="<?=site_url().'/education/lecture-upload/';?>" class="btn_yellow">UPLOAD</a>-->
+            <a href="<?=site_url().'/education/lecture-upload/';?>" class="btn_yellow">UPLOAD</a>
         </div>
         <div class="clearfix lecture-search-container">
             <div class="col-sm-5 noPadding">
