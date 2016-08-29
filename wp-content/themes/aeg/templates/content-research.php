@@ -166,7 +166,13 @@
                 </tr>
                 <? while ( $results->have_posts() ) : $results->the_post(); ?>
                 <tr>
-                	<td><a href="<?=home_url()?>/case-record-form/?researcher_code=<?=$researcher_code?>&centre_code=<?=$centre_code?>"><? the_title(); ?></a></td>
+                	<td>
+                		<? if(get_field('external_research_page')){ ?>
+                		<a target="_blank" href="http://<?=get_field('external_research_page')?>"><? the_title(); ?></a>
+                		<? }else{ ?>
+                		<a target="_blank" href="<?=get_field('research_page')?>?researcher_code=<?=$researcher_code?>&centre_code=<?=$centre_code?>"><? the_title(); ?></a>
+                		<? } ?>
+                	</td>
                 </tr>
                 <? endwhile; ?>				
             </table>
@@ -197,7 +203,7 @@
 				?>
                 <tr>
                 	<td>
-                    <? if(count($pdf) > 0) { ?>
+                    <? if($pdf) { ?>
                         <a target="_blank" href="<?=$pdf['url']?>"><? the_title(); ?></a></td>
                     <? }else{?>
                         <? the_title(); ?></td>
@@ -211,7 +217,7 @@
                         } ?>
                     </td>
                     <td>
-                    	<? if(count($pdf) > 0) { ?>
+                    	<? if($pdf) { ?>
 	                    	<a href="<?=$pdf['url']?>" target="_blank"><span class="logo_pdf enable"></span></a>
                         <? }else{ ?>
                         	<span class="logo_pdf"></span>

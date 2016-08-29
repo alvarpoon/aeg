@@ -328,6 +328,7 @@ class Search_Filter_Display_Shortcode {
 				$base_form_id = Search_Filter_Helper::wpml_object_id($id, 'search-filter-widget', true, ICL_LANGUAGE_CODE);
 			}
 			
+			
 			if(get_post_status($base_form_id)!="publish")
 			{
 				return;				
@@ -511,11 +512,21 @@ class Search_Filter_Display_Shortcode {
 						
 						if($results_url!="")
 						{
+							if(has_filter('sf_results_url')) {
+			
+								$results_url = apply_filters('sf_results_url', $results_url, $base_form_id);
+							}
+							
 							$form_attr.=' data-results-url="'.$results_url.'"';
 						}
 						
 						if(($use_ajax)&&($ajax_url!=""))
-						{
+						{					
+							if(has_filter('sf_ajax_results_url')) {
+			
+								$ajax_url = apply_filters('sf_ajax_results_url', $ajax_url, $base_form_id);
+							}
+							
 							$form_attr.=' data-ajax-url="'.$ajax_url.'"';
 						}
 						
@@ -524,6 +535,11 @@ class Search_Filter_Display_Shortcode {
 						
 						if($ajax_form_url!="")
 						{
+							if(has_filter('sf_ajax_form_url')) {
+			
+								$ajax_form_url = apply_filters('sf_ajax_form_url', $ajax_form_url, $base_form_id);
+							}
+							
 							$form_attr.=' data-ajax-form-url="'.$ajax_form_url.'"';
 						}
 						
@@ -727,6 +743,17 @@ class Search_Filter_Display_Shortcode {
 			{
 				$input_type = $field_data['date_input_type'];
 			}
+		}
+		
+		$display_field = true;
+		
+		if(has_filter('sf_display_field')) {
+			$display_field = apply_filters('sf_display_field', $display_field, $search_form_id, $field_name);
+		}
+		
+		if($display_field==false)
+		{
+			return $returnvar;
 		}
 		
 		$returnvar .= "<li class=\"$field_class\" data-sf-field-name=\"$field_name\" data-sf-field-type=\"".$field_data['type']."\" data-sf-field-input-type=\"".$input_type."\"".$addAttributes.">";

@@ -11,7 +11,7 @@
  * Plugin Name:       Search & Filter Pro
  * Plugin URI:        http://www.designsandcode.com/wordpress-plugins/search-filter-pro/
  * Description:       Search & Filtering for posts, products and custom posts. Allow your users to Search & Filter by categories, tags, taxonomies, custom fields, post meta, post dates, post types and authors.
- * Version:           2.1.0
+ * Version:           2.1.2
  * Author:            Designs & Code
  * Author URI:        http://www.designsandcode.com/
  * Text Domain:       search-filter
@@ -23,6 +23,10 @@
 // If this file is called directly, abort.
 if ( ! defined( 'WPINC' ) ) {
 	die;
+}
+
+if ( ! defined( 'SEARCH_FILTER_DEBUG' ) ) {
+	define('SEARCH_FILTER_DEBUG', false);
 }
 
 if ( ! defined( 'SEARCH_FILTER_PRO_BASE_PATH' ) ) {

@@ -10,13 +10,20 @@ include_once( WPPB_PLUGIN_DIR.'/front-end/extra-fields/select/select.php' );
 include_once( WPPB_PLUGIN_DIR.'/front-end/extra-fields/select-multiple/select-multiple.php' );
 include_once( WPPB_PLUGIN_DIR.'/front-end/extra-fields/select-country/select-country.php' );
 include_once( WPPB_PLUGIN_DIR.'/front-end/extra-fields/select-timezone/select-timezone.php' );
+include_once( WPPB_PLUGIN_DIR.'/front-end/extra-fields/select-currency/select-currency.php' );
 include_once( WPPB_PLUGIN_DIR.'/front-end/extra-fields/datepicker/datepicker.php' );
+include_once( WPPB_PLUGIN_DIR.'/front-end/extra-fields/colorpicker/colorpicker.php' );
 include_once( WPPB_PLUGIN_DIR.'/front-end/extra-fields/textarea/textarea.php' );
+include_once( WPPB_PLUGIN_DIR.'/front-end/extra-fields/timepicker/timepicker.php' );
 include_once( WPPB_PLUGIN_DIR.'/front-end/extra-fields/upload/upload.php' );
 include_once( WPPB_PLUGIN_DIR.'/front-end/extra-fields/avatar/avatar.php' );
 include_once( WPPB_PLUGIN_DIR.'/front-end/extra-fields/recaptcha/recaptcha.php' );
 include_once( WPPB_PLUGIN_DIR.'/front-end/extra-fields/user-role/user-role.php' );
 include_once( WPPB_PLUGIN_DIR.'/front-end/extra-fields/wysiwyg/wysiwyg.php' );
+include_once( WPPB_PLUGIN_DIR.'/front-end/extra-fields/validation/validation.php' );
+include_once( WPPB_PLUGIN_DIR.'/front-end/extra-fields/map/map.php' );
+include_once( WPPB_PLUGIN_DIR.'/front-end/extra-fields/phone/phone.php' );
+include_once( WPPB_PLUGIN_DIR.'/front-end/extra-fields/html/html.php' );
 
 // the function to display the custom fields in the back-end
 function display_profile_extra_fields_in_admin( $user ){

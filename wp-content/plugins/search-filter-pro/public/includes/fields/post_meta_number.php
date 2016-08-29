@@ -265,8 +265,8 @@ class Search_Filter_Field_Post_Meta_Number {
 				$max_val = (float) $max;
 			}
 			
-			$min_label = number_format( $min_val, $decimal_places, $decimal_point, '' );
-			$max_label = number_format( $max_val, $decimal_places, $decimal_point, '' );
+			$min_label = number_format( (float)$min_val, $decimal_places, $decimal_point, '' );
+			$max_label = number_format( (float)$max_val, $decimal_places, $decimal_point, '' );
 			
 			$option = new stdClass();
 			$option->label = $value_prefix.$min_label.$value_postfix." - ".$value_prefix.$max_label.$value_postfix;
@@ -308,7 +308,7 @@ class Search_Filter_Field_Post_Meta_Number {
 		
 		for($value=$min; $value<=$max; $value+=$step)
 		{
-			$value_formatted = number_format( $value, $decimal_places, $decimal_point, '' );
+			$value_formatted = number_format( (float)$value, $decimal_places, $decimal_point, '' );
 			
 			$option = new stdClass();
 			$option->label = $value_formatted;

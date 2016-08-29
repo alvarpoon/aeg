@@ -66,11 +66,11 @@ function wppb_add_hidden_element_class ( $input_element, $field, $error_var ){
 	global $current_user;
 	
 	if ( $field['field'] == 'Input (Hidden)' ){
-		get_currentuserinfo();
 
-		if ( apply_filters ( 'wppb_display_capability_level', user_can( $current_user->ID, 'manage_options' ) ) ){
-		}else
+		if ( apply_filters ( 'wppb_display_capability_level', current_user_can( 'manage_options' ) ) ) {
+		} else {
 			$input_element = str_replace( ' input-hidden"', ' input-hidden hidden-element"', $input_element );
+		}
 	}
 	
 	return $input_element;

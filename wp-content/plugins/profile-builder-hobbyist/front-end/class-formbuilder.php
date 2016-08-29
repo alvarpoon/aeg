@@ -121,6 +121,16 @@ class Profile_Builder_Form_Creator{
             $this->args['redirect_url'] = ( isset( $page_settings[0]['url'] ) ? $page_settings[0]['url'] : $this->args['redirect_url'] );
             $this->args['redirect_delay'] = ( isset( $page_settings[0]['display-messages'] ) ? $page_settings[0]['display-messages'] : $this->args['redirect_delay'] );
 		}
+
+        if( !empty( $this->args['role'] ) ){
+            $role_in_arg = get_role( $this->args['role'] );
+            if( !empty( $role_in_arg->capabilities['manage_options'] ) || !empty( $role_in_arg->capabilities['remove_users'] ) ){
+                if( !current_user_can( 'manage_options' ) || !current_user_can( 'remove_users' ) ){
+                    $this->args['role'] = get_option('default_role');
+                    echo apply_filters( 'wppb_register_pre_form_user_role_message', '<p class="alert" id="wppb_general_top_error_message">'.__( 'The role of the created user set to the default role. Only an administrator can register a user with the role assigned to this form.', 'profile-builder').'</p>' );
+                }
+            }
+        }
 	}
 
     function wppb_form_logic() {
@@ -255,6 +265,9 @@ class Profile_Builder_Form_Creator{
 		if( isset( $_REQUEST['action'] ) ){
 			$field_check_errors = $this->wppb_test_required_form_values( $_REQUEST );			
 			if( empty( $field_check_errors ) ){
+
+                do_action('wppb_before_saving_form_values',$_REQUEST, $this->args);
+
 				// we only have a $user_id on default registration (no email confirmation, no multisite)
 				$user_id = $this->wppb_save_form_values( $_REQUEST );
 				
@@ -329,9 +342,24 @@ class Profile_Builder_Form_Creator{
 			echo $message;
 		
 		// use this action hook to add extra content before the register form
-		do_action( 'wppb_before_'.$this->args['form_type'].'_fields' );
+		do_action( 'wppb_before_'.$this->args['form_type'].'_fields', $this->args['form_name'], $this->args['ID'], $this->args['form_type'] );
+
+		$wppb_user_role_class = '';
+		if( is_user_logged_in() ) {
+			$wppb_user = wp_get_current_user();
+
+			if( $wppb_user && isset( $wppb_user->roles ) ) {
+				foreach( $wppb_user->roles as $wppb_user_role ) {
+					$wppb_user_role_class .= ' wppb-user-role-'. $wppb_user_role;
+				}
+			}
+		} else {
+			$wppb_user_role_class = ' wppb-user-logged-out';
+		}
+		$wppb_user_role_class = apply_filters( 'wppb_user_role_form_class', $wppb_user_role_class );
+
         ?>
-        <form enctype="multipart/form-data" method="post" id="<?php if( $this->args['form_type'] == 'register' ) echo 'wppb-register-user';  else if( $this->args['form_type'] == 'edit_profile' ) echo 'wppb-edit-user'; if( isset($this->args['form_name']) && $this->args['form_name'] != "unspecified" ) echo '-' . $this->args['form_name']; ?>" class="wppb-user-forms<?php if( $this->args['form_type'] == 'register' ) echo ' wppb-register-user';  else if( $this->args['form_type'] == 'edit_profile' ) echo ' wppb-edit-user';?>" action="<?php echo apply_filters( 'wppb_form_action', '' ); ?>">
+        <form enctype="multipart/form-data" method="post" id="<?php if( $this->args['form_type'] == 'register' ) echo 'wppb-register-user';  else if( $this->args['form_type'] == 'edit_profile' ) echo 'wppb-edit-user'; if( isset($this->args['form_name']) && $this->args['form_name'] != "unspecified" ) echo '-' . $this->args['form_name']; ?>" class="wppb-user-forms<?php if( $this->args['form_type'] == 'register' ) echo ' wppb-register-user';  else if( $this->args['form_type'] == 'edit_profile' ) echo ' wppb-edit-user'; echo $wppb_user_role_class; ?>" action="<?php echo apply_filters( 'wppb_form_action', '' ); ?>">
 			<?php
             do_action( 'wppb_form_args_before_output', $this->args );
 			echo apply_filters( 'wppb_before_form_fields', '<ul>', $this->args['form_type'] );
@@ -365,7 +393,7 @@ class Profile_Builder_Form_Creator{
 		</form>
 		<?php
 		// use this action hook to add extra content after the register form
-		do_action( 'wppb_after_'. $this->args['form_type'] .'_fields' );
+		do_action( 'wppb_after_'. $this->args['form_type'] .'_fields', $this->args['form_name'], $this->args['ID'], $this->args['form_type'] );
 		
 	}
 	
@@ -441,45 +469,12 @@ class Profile_Builder_Form_Creator{
         $wppb_general_settings = get_option( 'wppb_general_settings' );
  
 		if( $this->args['form_type'] == 'register' ){
-            if( isset( $wppb_general_settings['loginWith'] ) && ( $wppb_general_settings['loginWith'] == 'email' ) ){
-                $userdata['user_login'] = apply_filters( 'wppb_generated_random_username', Wordpress_Creation_Kit_PB::wck_generate_slug( trim( $userdata['user_email'] ) ), $userdata['user_email'] );
-            }
 
-            if ( isset( $wppb_general_settings['emailConfirmation'] ) && ( $wppb_general_settings['emailConfirmation'] == 'yes' ) ){
-                $new_user_signup = true;
-                $multisite_message = true;
-                $userdata = $this->wppb_add_custom_field_values( $global_request, $userdata, $this->args['form_fields'] );
+            $result = $this->wppb_register_user( $global_request, $userdata );
+            $user_id = $result['user_id'];
+            $userdata = $result['userdata'];
+            $new_user_signup = $result['new_user_signup'];
 
-                if( !isset( $userdata['role'] ) )
-                    $userdata['role'] = $this->args['role'];
-
-                $userdata['user_pass'] = wp_hash_password( $userdata['user_pass'] );
-
-                if( is_multisite() ){
-                    /* since version 2.0.7 add this meta so we know on what blog the user registered */
-                    $userdata['registered_for_blog_id'] = get_current_blog_id();
-                    $userdata = wp_unslash( $userdata );
-                }
-
-                wppb_signup_user( $userdata['user_login'], $userdata['user_email'], $userdata );
-
-            }else{
-                if( !isset( $userdata['role'] ) )
-                    $userdata['role'] = $this->args['role'];
-
-                $userdata = wp_unslash( $userdata );
-
-				// change User Registered date and time according to timezone selected in WordPress settings
-				$wppb_get_date = wppb_get_date_by_timezone();
-
-				if( isset( $wppb_get_date ) ) {
-					$userdata['user_registered'] = $wppb_get_date;
-				}
-
-				// insert user to database
-                $user_id = wp_insert_user( $userdata );
-            }
-		
 		}elseif( $this->args['form_type'] == 'edit_profile' ){
 			if( isset( $wppb_general_settings['loginWith'] ) && ( $wppb_general_settings['loginWith'] == 'email' ) ){
                 $user_info = get_userdata( $user_id );
@@ -515,6 +510,64 @@ class Profile_Builder_Form_Creator{
 		}
 		return $user_id;
 	}
+
+    function wppb_register_user( $global_request, $userdata ){
+
+        $wppb_general_settings = get_option( 'wppb_general_settings' );
+        $user_id = null;
+        $new_user_signup = false;
+
+        if( isset( $wppb_general_settings['loginWith'] ) && ( $wppb_general_settings['loginWith'] == 'email' ) ){
+            $userdata['user_login'] = apply_filters( 'wppb_generated_random_username', Wordpress_Creation_Kit_PB::wck_generate_slug( trim( $userdata['user_email'] ) ), $userdata['user_email'] );
+        }
+
+        if ( isset( $wppb_general_settings['emailConfirmation'] ) && ( $wppb_general_settings['emailConfirmation'] == 'yes' ) ){
+            $new_user_signup = true;
+
+            $userdata = $this->wppb_add_custom_field_values( $global_request, $userdata, $this->args['form_fields'] );
+
+			if( ! isset( $userdata['role'] ) ) {
+				$userdata['role'] = $this->args['role'];
+			} else {
+				if( isset( $wppb_module_settings['wppb_customRedirect'] ) && $wppb_module_settings['wppb_customRedirect'] == 'show' && function_exists( 'wppb_custom_redirect_url' ) ) {
+					$this->args['redirect_url'] = wppb_custom_redirect_url( 'after_registration', $this->args['redirect_url'], $userdata["user_login"], $userdata['role'] );
+				}
+			}
+
+            $userdata['user_pass'] = wp_hash_password( $userdata['user_pass'] );
+
+            if( is_multisite() ){
+                /* since version 2.0.7 add this meta so we know on what blog the user registered */
+                $userdata['registered_for_blog_id'] = get_current_blog_id();
+                $userdata = wp_unslash( $userdata );
+            }
+
+            wppb_signup_user( $userdata['user_login'], $userdata['user_email'], $userdata );
+
+        }else{
+			if( ! isset( $userdata['role'] ) ) {
+				$userdata['role'] = $this->args['role'];
+			} else {
+				if( isset( $wppb_module_settings['wppb_customRedirect'] ) && $wppb_module_settings['wppb_customRedirect'] == 'show' && function_exists( 'wppb_custom_redirect_url' ) ) {
+					$this->args['redirect_url'] = wppb_custom_redirect_url( 'after_registration', $this->args['redirect_url'], $userdata["user_login"], $userdata['role'] );
+				}
+			}
+
+            $userdata = wp_unslash( $userdata );
+
+            // change User Registered date and time according to timezone selected in WordPress settings
+            $wppb_get_date = wppb_get_date_by_timezone();
+
+            if( isset( $wppb_get_date ) ) {
+                $userdata['user_registered'] = $wppb_get_date;
+            }
+
+            // insert user to database
+            $user_id = wp_insert_user( $userdata );
+        }
+
+        return array( 'userdata' => $userdata, 'user_id' => $user_id, 'new_user_signup' => $new_user_signup );
+    }
 	
 	function wppb_add_custom_field_values( $global_request, $meta, $form_properties ){	
 		if( !empty( $this->args['form_fields'] ) ){

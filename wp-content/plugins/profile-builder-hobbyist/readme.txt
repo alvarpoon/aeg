@@ -1,4 +1,4 @@
-﻿=== Profile Builder Pro === 
+﻿=== Profile Builder Hobbyist === 
 
 Contributors: reflectionmedia, barinagabriel, sareiodata, cozmoslabs, madalin.ungureanu, iova.mihai
 Donate link: http://www.cozmoslabs.com/wordpress-profile-builder/
@@ -6,8 +6,8 @@ Tags: registration, profile, user registration, custom field registration, custo
 custom registration, custom registration form, custom registration page, extra user fields, registration page, user custom fields, user listing, user login, user registration form, front-end login, 
 front-end register, front-end registration, frontend edit profile, edit profileregistration, customize profile, user fields, builder, profile builder, custom fields, avatar
 Requires at least: 3.6
-Tested up to: 4.4.1
-Stable tag: 2.2.8
+Tested up to: 4.5.3
+Stable tag: 2.4.0
 
 
 Login, registration and edit profile shortcodes for the front-end. Also you can chose what fields should be displayed or add custom ones.
@@ -97,6 +97,87 @@ This plugin only adds/removes fields in the front-end. The default information-f
 
 
 == Changelog ==
+= 2.4.0 =
+Now we check checkboxes default value to not be empty
+Display name with email confirmation now is set to First name Last name or Nickname if they exist
+Fixed UI adjustment for checkbox in admin approval and email confirmation table
+Fixed hidden input padding-bottom in forms for non-admin users
+Changed CSS for HTML field on front-end
+Removed meta-name from HTML field
+Avatar and upload image are now cropped
+Added meta name in manage fields for the Map field
+
+= 2.3.9 = 
+Security Update
+
+= 2.3.8 =
+Added Map field type
+Added HTML field type
+Added Phone field type
+Fixed an issue with the currency field that saved 0  instead of empty string when no option was selected by the user
+Fixed an issue with the redirect parameter for login widget
+Added extra_attr filter for recover password forms: 'wppb_recover_password_extra_attr'
+Added filter in select fields for placeholder labels add-on support
+Fixed the cozmoslabs.com url from http to https
+Fixed a weird bug with Fire Fox and Edge that won't open the media upload window because of a css rule
+Added new filter admin approval: 'wppb_admin_approval_user_listing_user_object'
+
+= 2.3.7 =
+Added Time Picker field type
+Added Color Picker field type
+Added Validation field type
+Added Currency Select field type
+Added a new filter wppb_send_to_admin_email to Email Confirmation
+Changed the wppb_curpageurl function to hopefully fix the missing www problem
+
+= 2.3.6 =
+Fixed a deprecated function warning in the hidden input field
+Fixed a security issue regarding shortcodes
+Fixed a notice in the WCK API
+Fixed a compatibility issue with ACF Pro
+We now make sure we call jQuery dialog only if it exists
+Fixed a js error regarding the user role field and values with spaces
+
+= 2.3.5 =
+Fixed issue regarding password update not working in certain cases
+Changed label for when login with username is selected
+Fixed small css issue regarding checkboxes labels
+
+= 2.3.4 =
+We now load the plugin translation from the current theme in the folder local_pb_lang if it exists otherwise normally from the plugin dir
+Fixed notices regarding the 'add_meta_box' hook
+Added a filter in wordpress-creation-kit API before testing for required fields: 'wck_before_test_required'
+Added hook before saving fields: 'wppb_before_saving_form_values'
+
+= 2.3.3 =
+Added more fields to be available in wpml string translations: labels, default value and default content
+Made css modifications so that Checkbox, Radio and Select fields align properly in Twenty Sixteen theme
+Fixed different notices and warnings that appeared in certain cases
+
+= 2.3.2 =
+When upgrading from an older version than 2.2.6 on a Multisite install Email Confirmation is set to yes automatically now
+Fixed notice undefined variable from wppb_mail when using filter to not send email
+When updating from PB v2.1.5 to latest version Country Name is now saved correctly
+Fixed filter wppb_curpageurl not being applied
+
+= 2.3.1 =
+Fixed conflict with WPMUDEV Set Password plugin with which we had a function with the same name
+Refactored username exists check to search only in username
+Fixed issue when there was a meta in the db with no meta key and we couldn't add our fields that had no meta key because it would generate meta name already in use
+
+= 2.3.0 =
+We no longer crop the avatar images when we are resizing them.
+Added filters in admin approval page so we can add extra columns: 'wppb_admin_approval_page_columns' and 'wppb_admin_approval_page_manage_column_data'
+Changed the input type of 'Email' field to type="email"
+Added filter in login form so we can display html at the bottom
+Fixed a filter in login redirect link that was broken
+Removed 'Display name publicly as' from Registration Forms.
+We no longer create custom directories in the WordPress uploads directory.
+Removed notice from Manage Fields page when the WPML  plugin was active.
+
+= 2.2.9 =
+Fixed compatibility with Yoast and Page Builder by SiteOrigin that caused our shortcodes to be executed multiple times
+Admin approval screen now available in network admin for multisite as well
 
 = 2.2.8 =
 Translation updates
@@ -706,4 +787,3 @@ Changes to the ReadMe File
 
 = 1.0 =
 Added the posibility of displaying/hiding default WordPress information-fields, and to modify basic layout.
-

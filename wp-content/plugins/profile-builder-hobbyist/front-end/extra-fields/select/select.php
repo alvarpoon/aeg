@@ -27,7 +27,12 @@ function wppb_select_handler( $output, $form_location, $field, $user_id, $field_
 			$output = '
 				<label for="'.$field['meta-name'].'">'.$item_title.$error_mark.'</label>
 				<select name="'.$field['meta-name'].'" id="'.$field['meta-name'].'" class="custom_field_select" '. $extra_attr .'>';
-				
+
+				$extra_select_option = apply_filters( 'wppb_extra_select_option', '', $field, $item_title );
+				if( ! empty( $extra_select_option ) ) {
+					$output .= $extra_select_option;
+				}
+
 				foreach( $select_values as $key => $value){
 					$output .= '<option value="'.esc_attr( trim( $value ) ).'" class="custom_field_select_option '. apply_filters( 'wppb_fields_extra_css_class', '', $field ) .'" ';
 
@@ -50,7 +55,7 @@ function wppb_select_handler( $output, $form_location, $field, $user_id, $field_
 						<th><label for="'.$field['meta-name'].'">'.$item_title.'</label></th>
 						<td>
 							<select name="'.$field['meta-name'].'" class="custom_field_select" id="'.$field['meta-name'].'" '. $extra_attr .'>';
-							
+
 							foreach( $select_values as $key => $value){
 								$output .= '<option value="'.esc_attr( trim( $value ) ).'" class="custom_field_select_option" ';
 								

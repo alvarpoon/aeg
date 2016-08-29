@@ -15,4 +15,5 @@
   <!--[if lt IE 9]>
     <link rel="stylesheet" href="<?php bloginfo('template_url')?>/assets/css/ie8-style.css" type="text/css" />
   <![endif]-->
+  <script src='https://www.google.com/recaptcha/api.js'></script>
 </head>

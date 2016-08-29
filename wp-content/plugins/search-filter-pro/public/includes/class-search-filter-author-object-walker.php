@@ -13,9 +13,10 @@ class Search_Filter_Author_Object_Walker {
 	private $type;
 	private $options;
 	
-	function __construct(&$options){
+	function __construct(&$options_obj){
 
-		$this->options = &$options;
+		$this->options = array();
+		$this->options_obj = $options_obj;
 	}
 	
 	function wp_authors($args = '') {
@@ -125,10 +126,12 @@ class Search_Filter_Author_Object_Walker {
 			$option->value = $author->user_nicename;
 			//$option->selected_value = $author->ID; //we want to match defaults based on ID
 			$option->label = $name;
-			$option->count = $author_count[$author->ID];
+			$option->count = $option_count;
 			
 			array_push($this->options, $option);
 		}
+		
+		$this->options_obj->set($this->options);
 	}
 }
 

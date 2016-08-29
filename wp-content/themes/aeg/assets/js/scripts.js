@@ -6986,6 +6986,13 @@ var Roots = {
     init: function() {
       // JavaScript to be fired on all pages
       //var $ = jQuery.noConflict();
+
+      //prevent right click
+      $(function() {
+        $(this).bind("contextmenu", function(e) {
+            e.preventDefault();
+        });
+    });
 	  
 	  function setMobileMenu(){
         //console.log('setMobileMenu');

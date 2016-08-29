@@ -2,11 +2,11 @@
 /**
  * Function that changes the auto generated password with the one selected by the user.
  */
-function signup_password_random_password_filter( $password ) {
+function wppb_signup_password_random_password_filter( $password ) {
 	global $wpdb;
 
 	$key = ( !empty( $_GET['key'] ) ? $_GET['key'] : null );
-	$key = ( !empty( $_POST['key'] ) ? $_POST['key'] : null );
+	$key = ( !empty( $_POST['key'] ) ? $_POST['key'] : $key );
 
 	if ( !empty( $_POST['user_pass'] ) )
 		$password = $_POST['user_pass'];
@@ -20,13 +20,14 @@ function signup_password_random_password_filter( $password ) {
 			//check for password in signup meta
 			$meta = unserialize( $signup->meta );
 			
-			$password = $meta['user_pass'];
+			if ( !empty($meta['user_pass']) )
+                $password = $meta['user_pass'];
 		}
 	}
 	
 	return apply_filters( 'wppb_generated_random_password', $password, $key );
 }
-add_filter( 'random_password', 'signup_password_random_password_filter' );
+add_filter( 'random_password', 'wppb_signup_password_random_password_filter' );
 
 /**
  * Activate a signup.
@@ -184,4 +185,19 @@ function wppbc_disable_admin_approval_for_user_role( $user_id ) {
 		wp_set_object_terms( $user_id, NULL, 'user_status' );
 		clean_object_term_cache( $user_id, 'user_status' );
 	}
+}
+
+/* authors and contributors shouldn't be allowed to create pages with the register shortcode in them */
+add_filter( 'the_content', 'wppb_maybe_remove_register_shortcode' );
+function wppb_maybe_remove_register_shortcode( $content ){
+    if ( has_shortcode( $content, 'wppb-register' ) ){
+        $author_id = get_the_author_meta( 'ID' );
+        if( !empty( $author_id ) ){
+            if( !user_can( $author_id, 'edit_others_posts' ) ) {
+                remove_shortcode('wppb-register');
+            }
+        }
+    }
+
+    return $content;
 }

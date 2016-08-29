@@ -27,7 +27,7 @@ function wppb_multiple_select_handler( $output, $form_location, $field, $user_id
 			$output = '
 				<label for="'.$field['meta-name'].'">'.$item_title.$error_mark.'</label>
 				<select name="'.$field['meta-name'].'[]" id="'.$field['meta-name'].'" size="'.( count( $select_values ) > 10 ? count( $select_values ) / 2 : count( $select_values ) ).'" class="custom_field_multiple_select '. apply_filters( 'wppb_fields_extra_css_class', '', $field ) .'" multiple="multiple" '. $extra_attr .'>';
-				
+
 				foreach( $select_values as $key => $value){
 					$output .= '<option value="'.trim( $value ).'" class="custom_field_multiple_select_option" name="'.trim( $value ).'_'.$field['id'].'" id="'.trim( $value ).'_'.$field['id'].'"';
 					

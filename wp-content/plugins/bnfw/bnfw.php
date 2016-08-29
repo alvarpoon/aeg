@@ -1,12 +1,12 @@
 <?php
 /**
  * Plugin Name: Better Notifications for WordPress
- * Plugin URI: http://wordpress.org/plugins/bnfw/
+ * Plugin URI: https://wordpress.org/plugins/bnfw/
  * Description: Send customisable emails to your users for different WordPress notifications.
- * Version: 1.3.8
+ * Version: 1.4.1
  * Author: Voltronik
  * Author URI: https://betternotificationsforwp.com/
- * Author Email: plugins@voltronik.co.uk
+ * Author Email: hello@betternotificationsforwp.com
  * License: GPLv2 or later
  * License URI: http://www.gnu.org/licenses/gpl-2.0.html
  * Text Domain: bnfw
@@ -14,7 +14,7 @@
  */
 
 /**
- * Copyright © 2015 Voltronik (plugins@voltronik.co.uk)
+ * Copyright © 2016 Voltronik (hello@betternotificationsforwp.com)
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License, version 2, as
  * published by the Free Software Foundation.
@@ -74,6 +74,7 @@ class BNFW {
 	 * @since 1.0
 	 */
 	public function includes() {
+
 		// Load license related classes
 		if ( ! class_exists( 'EDD_SL_Plugin_Updater' ) ) {
 			require_once 'includes/libraries/EDD_SL_Plugin_Updater.php';
@@ -89,7 +90,7 @@ class BNFW {
 		require_once 'includes/admin/class-bnfw-notification.php';
 		require_once 'includes/notification/post-notification.php';
 
-		// helpers
+		// Helpers
 		require_once 'includes/helpers/helpers.php';
 		require_once 'includes/helpers/ajax-helpers.php';
 
@@ -105,16 +106,29 @@ class BNFW {
 	 * @since 1.0
 	 */
 	public function hooks() {
+		global $wp_version;
+
 		register_activation_hook( __FILE__      , array( $this, 'activate' ) );
 
-		// P2 theme directly inserts the post into db
-		if ( 'P2' == wp_get_theme() ) {
+		// Some themes like P2, directly insert posts into DB.
+		$insert_post_themes = apply_filters( 'bnfw_insert_post_themes', array( 'P2', 'Syncope' ) );
+		$current_theme = wp_get_theme();
+
+		/**
+		 * Whether to trigger insert post hook.
+		 *
+		 * @since 1.4
+		 */
+		$trigger_insert_post = apply_filters( 'bnfw_trigger_insert_post', false );
+
+		if ( in_array( $current_theme, $insert_post_themes ) || $trigger_insert_post ) {
 			add_action( 'wp_insert_post'        , array( $this, 'insert_post' ), 10, 3 );
 		}
 
 		add_action( 'draft_to_publish'          , array( $this, 'publish_post' ) );
 		add_action( 'future_to_publish'         , array( $this, 'publish_post' ) );
 		add_action( 'pending_to_publish'        , array( $this, 'publish_post' ) );
+		add_action( 'private_to_publish'        , array( $this, 'publish_post' ) );
 		add_action( 'publish_to_publish'        , array( $this, 'update_post' ) );
 		add_action( 'init'                      , array( $this, 'custom_post_type_hooks' ), 100 );
 		add_action( 'create_term'               , array( $this, 'create_term' ), 10, 3 );
@@ -125,12 +139,18 @@ class BNFW {
 
 		add_action( 'user_register'             , array( $this, 'user_register' ) );
 		add_action( 'user_register'             , array( $this, 'welcome_email' ) );
+		add_action( 'set_user_role'             , array( $this, 'user_role_changed' ), 10, 3 );
 
+		if ( version_compare( $wp_version, '4.4', '>=' ) ) {
+			add_filter( 'retrieve_password_title', array( $this, 'change_password_email_title' ), 10, 3 );
+		} else {
+			add_filter( 'retrieve_password_title', array( $this, 'change_password_email_title' ) );
+		}
 		add_action( 'lostpassword_post'         , array( $this, 'on_lost_password' ) );
-		add_filter( 'retrieve_password_title'   , array( $this, 'change_password_email_title' ) );
 		add_filter( 'retrieve_password_message' , array( $this, 'change_password_email_message' ), 10, 4 );
 
 		add_filter( 'plugin_action_links'       , array( $this, 'plugin_action_links' ), 10, 4 );
+		add_action( 'shutdown'                  , array( $this, 'on_shutdown' ) );
 	}
 
 	/**
@@ -209,7 +229,7 @@ class BNFW {
 		$post_type = $post->post_type;
 
 		if ( BNFW_Notification::POST_TYPE != $post_type ) {
-			$this->send_notification( 'new-' . $post_type, $post_id );
+			$this->send_notification_async( 'new-' . $post_type, $post_id );
 		}
 	}
 
@@ -224,7 +244,7 @@ class BNFW {
 		$post_type = $post->post_type;
 
 		if ( BNFW_Notification::POST_TYPE != $post_type ) {
-			$this->send_notification( 'update-' . $post_type, $post_id );
+			$this->send_notification_async( 'update-' . $post_type, $post_id );
 		}
 	}
 
@@ -239,7 +259,7 @@ class BNFW {
 		$post_type = $post->post_type;
 
 		if ( BNFW_Notification::POST_TYPE != $post_type ) {
-			$this->send_notification( 'pending-' . $post_type, $post_id );
+			$this->send_notification_async( 'pending-' . $post_type, $post_id );
 		}
 	}
 
@@ -254,7 +274,7 @@ class BNFW {
 		$post_type = $post->post_type;
 
 		if ( BNFW_Notification::POST_TYPE != $post_type ) {
-			$this->send_notification( 'future-' . $post_type, $post_id );
+			$this->send_notification_async( 'future-' . $post_type, $post_id );
 		}
 	}
 
@@ -332,13 +352,19 @@ class BNFW {
 	 *
 	 * @since 1.1
 	 */
-	public function change_password_email_title( $title ) {
+	public function change_password_email_title( $title, $user_login = '', $user_data = '' ) {
 		$notifications = $this->notifier->get_notifications( 'user-password' );
 		if ( count( $notifications ) > 0 ) {
 			// Ideally there should be only one notification for this type.
 			// If there are multiple notification then we will read data about only the last one
 			$setting = $this->notifier->read_settings( end( $notifications )->ID );
-			return $setting['subject'];
+
+			if ( '' === $user_data ) {
+				return $this->engine->user_shortcodes( $setting['subject'], $user_data->ID );
+
+			} else {
+				return $setting['subject'];
+			}
 		}
 
 		return $title;
@@ -356,13 +382,14 @@ class BNFW {
 			// If there are multiple notification then we will read data about only the last one
 			$setting = $this->notifier->read_settings( end( $notifications )->ID );
 
+			$message = $this->engine->handle_password_reset_shortcodes( $setting, $key, $user_login, $user_data );
+
 			if ( 'html' == $setting['email-formatting'] ) {
 				add_filter( 'wp_mail_content_type', array( $this, 'set_html_content_type' ) );
+				$message = wpautop( $message );
 			} else {
 				add_filter( 'wp_mail_content_type', array( $this, 'set_text_content_type' ) );
 			}
-
-			return $this->engine->handle_password_reset_shortcodes( $setting, $key, $user_login, $user_data );
 		}
 
 		return $message;
@@ -387,17 +414,17 @@ class BNFW {
 	}
 
 	/**
-	 * Send notification for new uses.
+	 * Send notification for new users.
 	 *
 	 * @since 1.0
-	 * @param unknown $user_id
+	 * @param int $user_id
 	 */
 	function user_register( $user_id ) {
 		$this->send_notification( 'admin-user', $user_id );
 	}
 
 	/**
-	 * New User - Welcome email
+	 * New User - Post-registration Email
 	 *
 	 * @since 1.1
 	 * @param int $user_id New user id
@@ -410,17 +437,55 @@ class BNFW {
 	}
 
 	/**
+	 * Send notification when a user role changes.
+	 *
+	 * @since 1.3.9
+	 *
+	 * @param int    $user_id  User ID
+	 * @param string $new_role New User role
+	 * @param array  $old_role Old User role
+	 */
+	public function user_role_changed( $user_id, $new_role, $old_role ) {
+		if ( ! empty( $old_role ) ) {
+			$notifications = $this->notifier->get_notifications( 'user-role' );
+			foreach ( $notifications as $notification ) {
+				$this->engine->send_user_role_changed_email( $this->notifier->read_settings( $notification->ID ), $user_id );
+			}
+		}
+	}
+
+	/**
 	 * Send notification based on type and ref id
 	 *
 	 * @access private
 	 * @since 1.0
-	 * @param unknown $type
-	 * @param unknown $ref_id
+	 * @param string $type Notification type.
+	 * @param int $ref_id Reference id.
 	 */
 	private function send_notification( $type, $ref_id ) {
 		$notifications = $this->notifier->get_notifications( $type );
 		foreach ( $notifications as $notification ) {
 			$this->engine->send_notification( $this->notifier->read_settings( $notification->ID ), $ref_id );
+		}
+	}
+
+	/**
+	 * Send notification async based on type and ref id.
+	 *
+	 * @access private
+	 * @param  string  $type   Notification type.
+	 * @param  int     $ref_id Reference id.
+	 */
+	private function send_notification_async( $type, $ref_id ) {
+		$notifications = $this->notifier->get_notifications( $type );
+		foreach ( $notifications as $notification ) {
+			$transient = get_transient( 'bnfw-async-notifications' );
+			if ( ! is_array( $transient ) ) {
+				$transient = array();
+			}
+
+			$transient[] = array( 'ref_id' => $ref_id, 'notification_id' => $notification->ID, 'notification_type' => $type );
+			set_transient( 'bnfw-async-notifications', $transient, 600 );
 		}
 	}
 
@@ -438,6 +503,23 @@ class BNFW {
 			return false;
 		}
 		return true;
+	}
+
+	/**
+	 * Send notification emails on shutdown.
+	 */
+	public function on_shutdown() {
+		if ( defined( 'DOING_AJAX' ) && DOING_AJAX ) {
+			return;
+		}
+
+		$transient = get_transient( 'bnfw-async-notifications' );
+		if ( is_array( $transient ) ) {
+			delete_transient( 'bnfw-async-notifications' );
+			foreach ( $transient as $id_pairs ) {
+				$this->engine->send_notification( $this->notifier->read_settings( $id_pairs['notification_id'] ), $id_pairs['ref_id'] );
+			}
+		}
 	}
 }
 

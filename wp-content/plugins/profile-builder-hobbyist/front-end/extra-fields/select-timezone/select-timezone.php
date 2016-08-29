@@ -26,6 +26,11 @@ function wppb_timezone_select_handler( $output, $form_location, $field, $user_id
 				<label for="'.$field['meta-name'].'">'.$item_title.$error_mark.'</label>
 				<select name="'.$field['meta-name'].'" id="'.$field['meta-name'].'" class="custom_field_timezone_select '. apply_filters( 'wppb_fields_extra_css_class', '', $field ) .'" '. $extra_attr .'>';
 
+			$extra_select_option = apply_filters( 'wppb_extra_select_option', '', $field, $item_title );
+			if( ! empty( $extra_select_option ) ) {
+				$output .= $extra_select_option;
+			}
+
             foreach( $timezone_array as $timezone ){
                 $output .= '<option value="'.$timezone.'"';
 

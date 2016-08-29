@@ -137,7 +137,7 @@ function wppb_login_redirect( $redirect_to, $redirect_url, $user ){
 					}
 				}
 			}
-			apply_filters( 'wppb_after_login_redirect_url', $redirect_to );
+            $redirect_to = apply_filters( 'wppb_after_login_redirect_url', $redirect_to );
 		}
 	}
 
@@ -158,8 +158,12 @@ function wppb_front_end_login( $atts ){
 		$form_args = array( 'echo' => false, 'id_submit' => 'wppb-submit' );
 
 		// maybe set up the redirect argument
+		if( ! empty( $redirect ) ) {
+			$redirect_url = $redirect;
+		}
+
         if ( ! empty( $redirect_url ) ) {
-			if( $redirect_priority == 'top' ) {
+			if( $redirect_priority == 'top' || ! empty( $redirect ) ) {
 				$form_args['redirect_priority'] = 'top';
 			} else {
 				$form_args['redirect_priority'] = 'normal';
@@ -171,6 +175,9 @@ function wppb_front_end_login( $atts ){
 		// change the label argument for username is login with email is enabled
 		if ( isset( $wppb_generalSettings['loginWith'] ) && ( $wppb_generalSettings['loginWith'] == 'email' ) )
 			$form_args['label_username'] = __( 'Email', 'profile-builder' );
+
+        if ( isset( $wppb_generalSettings['loginWith'] ) && ( $wppb_generalSettings['loginWith'] == 'username' ) )
+            $form_args['label_username'] = __( 'Username', 'profile-builder' );
 
 		// change the label argument for username on login with username or email when Username and Email is enabled
 		if ( isset( $wppb_generalSettings['loginWith'] ) && ( $wppb_generalSettings['loginWith'] == 'usernameemail' ) )
@@ -212,6 +219,8 @@ function wppb_front_end_login( $atts ){
                 }
                 $login_form .= '</p>';
         }
+
+        $login_form .= apply_filters( 'wppb_login_form_bottom', '', $form_args );
 
         $login_form .= '</div>';
 		return $login_form;

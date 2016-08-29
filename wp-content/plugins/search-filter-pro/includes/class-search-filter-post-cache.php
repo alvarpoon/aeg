@@ -29,7 +29,7 @@ class Search_Filter_Post_Cache {
 		
 		if(empty($cache_speed))
 		{
-			$cache_speed = "medium";
+			$cache_speed = "slow";
 		}
 		
 		if($cache_speed=="slow")
@@ -150,7 +150,7 @@ class Search_Filter_Post_Cache {
 		$cache_json = $this->cache_options;
 		
 		unset($cache_json['cache_list']);
-		echo wp_json_encode($cache_json);
+		echo Search_Filter_Helper::json_encode($cache_json);
 		
 		if($this->cache_options['rc_status']=="")
 		{//then we need to test for a remote connection
@@ -179,9 +179,6 @@ class Search_Filter_Post_Cache {
 	{
 		$query->set("tax_query", array());
 		
-		/*if(has_filter('sf_pre_get_posts_admin_cache')) {
-			$this->query_args = apply_filters('sf_pre_get_posts_admin_cache', $this->query_args, $this->sfid);
-		}*/
 	}
 	public function refresh_cache()
 	{//spawned from a wp_remote_get - so a background process
@@ -254,9 +251,13 @@ class Search_Filter_Post_Cache {
 			
 			$this->hard_remove_filters();
 			
-			add_action('pre_get_posts', array($this, 'clean_query'));
+			add_action('pre_get_posts', array($this, 'clean_query'), 100);
 			$query = new WP_Query($query_args);
-			remove_action('pre_get_posts', array($this, 'clean_query'));
+			
+			/*write_log('ALL QUERY ARGS');
+				write_log($query_args);
+			*/
+			remove_action('pre_get_posts', array($this, 'clean_query'), 100);
 			
 			$this->hard_restore_filters();
 			

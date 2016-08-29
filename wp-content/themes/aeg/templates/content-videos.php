@@ -146,13 +146,13 @@
         </div>
         <div class="table-responsive lecture-table">
         	<table class="table">
-            	<col width="50%">
-                <col width="15%">
+            	<col width="45%">
+                <col width="20%">
                 <col width="15%">
                 <col width="20%">
             	<tr class="header">
                     <td><a href="" class="title_sort">VIDEO TITLE<i class="fa fa-caret-down"></i></a></td>
-                    <td><a href="" class="speaker_sort">SPEAKER<i class="fa fa-caret-down"></i></a></td>
+                    <td><a href="" class="speaker_sort">CONTRIBUTOR<i class="fa fa-caret-down"></i></a></td>
                     <td><a href="" class="date_sort">DATE<i class="fa fa-caret-down"></i></a></td>
                     <td>&nbsp;</td>
                 </tr>

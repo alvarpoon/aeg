@@ -528,25 +528,7 @@
 						{
 							//include children
 							var $operator_select = item.find(".sf_operator select");
-							var $children_checkbox = item.find(".sf_include_children input");
 							
-							$operator_select.on("change", function(){
-								
-								if($(this).val()=="and")
-								{
-									$children_checkbox.prop("checked", false);
-								}
-								
-							});
-							
-							$children_checkbox.on("change", function(){
-								
-								if($(this).prop("checked")==true)
-								{
-									$operator_select.val("or");
-								}
-								
-							});
 						}
 					}
 					
@@ -1853,6 +1835,7 @@
 			var $template_sect = $('.setup .sf_tab_content_template .template_options_sect');
 			var $display_result_txt_cont = $('.setup .sf_tab_content_template .display_result_txt_cont');
 			var $tpl_archive_rows = $('.setup .sf_tab_content_template .tpl_archive_rows');
+			var $tpl_custom_rows = $('.setup .sf_tab_content_template .tpl_custom_rows');
 			
 			var $use_ajax_toggle = $('.setup .sf_tab_content_template .use_ajax_toggle');
 			var $selectors_results_div = $('#shortcode-info .results-shortcode');
@@ -1871,6 +1854,7 @@
 			{
 				$template_table.removeClass("template_archive_options");
 				$template_table.addClass("template_shortcode_options");
+				$tpl_custom_rows.hide();
 				$selectors_results_div.show();
 				$template_sect.show();
 				$tpl_archive_rows.hide();
@@ -1879,6 +1863,7 @@
 			{
 				$template_table.removeClass("template_shortcode_options");
 				$template_table.addClass("template_archive_options");
+				$tpl_custom_rows.hide();
 				$selectors_results_div.hide();
 				$template_sect.show();
 				$tpl_archive_rows.show();
@@ -1887,14 +1872,25 @@
 			{
 				$template_table.removeClass("template_shortcode_options");
 				$template_table.addClass("template_archive_options");
+				$tpl_custom_rows.hide();
 				$selectors_results_div.hide();
 				$template_sect.hide();
 				$tpl_archive_rows.show();
+			}
+			else if(val=="custom")
+			{
+				$template_table.removeClass("template_archive_options");
+				$template_table.addClass("template_shortcode_options");
+				$selectors_results_div.show();
+				$template_sect.show();
+				$tpl_archive_rows.hide();
+				$tpl_custom_rows.show();
 			}
 			else
 			{
 				$template_table.removeClass("template_shortcode_options");
 				$template_table.addClass("template_archive_options");
+				$tpl_custom_rows.hide();
 				$selectors_results_div.hide();
 				$template_sect.hide();
 				$tpl_archive_rows.show();
@@ -1929,6 +1925,7 @@
 				{
 					$template_table.removeClass("template_archive_options");
 					$template_table.addClass("template_shortcode_options");
+					$tpl_custom_rows.hide();
 					$selectors_results_div.show();
 					$template_sect.show();
 					$tpl_archive_rows.hide();
@@ -1937,6 +1934,7 @@
 				{
 					$template_table.removeClass("template_shortcode_options");
 					$template_table.addClass("template_archive_options");
+					$tpl_custom_rows.hide();
 					$selectors_results_div.hide();
 					$template_sect.show();
 					$tpl_archive_rows.show();
@@ -1945,14 +1943,25 @@
 				{
 					$template_table.removeClass("template_shortcode_options");
 					$template_table.addClass("template_archive_options");
+					$tpl_custom_rows.hide();
 					$selectors_results_div.hide();
 					$template_sect.hide();
 					$tpl_archive_rows.show();
+				}
+				else if(val=="custom")
+				{
+					$template_table.removeClass("template_archive_options");
+					$template_table.addClass("template_shortcode_options");
+					$selectors_results_div.show();
+					$template_sect.show();
+					$tpl_archive_rows.hide();
+					$tpl_custom_rows.show();
 				}
 				else
 				{
 					$template_table.removeClass("template_shortcode_options");
 					$template_table.addClass("template_archive_options");
+					$tpl_custom_rows.hide();
 					$selectors_results_div.hide();
 					$template_sect.hide();
 					$tpl_archive_rows.show();

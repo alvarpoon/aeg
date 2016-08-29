@@ -236,7 +236,15 @@ var fields 	=	{
                                                                                         '.row-overwrite-existing'
                                                                                     ]
                                                                 },
-
+                        'Phone':								{	'show_rows'	:	[
+                                                                                        '.row-field-title',
+                                                                                        '.row-meta-name',
+                                                                                        '.row-description',
+                                                                                        '.row-phone-format',
+                                                                                        '.row-required',
+                                                                                        '.row-overwrite-existing'
+                                                                                    ]
+                                                                },
 						'Select':								{	'show_rows'	:	[
 																						'.row-field-title',
 																						'.row-meta-name',
@@ -269,6 +277,17 @@ var fields 	=	{
 																						'.row-overwrite-existing'
 																					]
 																},
+
+                        'Select (Currency)':					{	'show_rows'	:	[
+                                                                                        '.row-field-title',
+                                                                                        '.row-meta-name',
+                                                                                        '.row-description',
+                                                                                        '.row-show-currency-symbol',
+                                                                                        '.row-default-option-currency',
+                                                                                        '.row-required',
+                                                                                        '.row-overwrite-existing'
+                                                                                    ]
+                                                                },
 
 						'Select (Timezone)':					{	'show_rows'	:	[
 																						'.row-field-title',
@@ -348,6 +367,40 @@ var fields 	=	{
 																					]
 																},
 
+
+                        'Timepicker':							{	'show_rows'	:	[
+                                                                                        '.row-field-title',
+                                                                                        '.row-meta-name',
+                                                                                        '.row-description',
+                                                                                        '.row-required',
+                                                                                        '.row-time-format',
+                                                                                        '.row-overwrite-existing'
+                                                                                    ]
+                                                                },
+
+                        'Colorpicker':							{	'show_rows'	:	[
+																						'.row-field-title',
+																						'.row-meta-name',
+																						'.row-description',
+																						'.row-required',
+																						'.row-overwrite-existing'
+																					]
+																},
+
+
+                        'Validation':							{	'show_rows'	:	[
+                                                                                        '.row-field-title',
+                                                                                        '.row-meta-name',
+                                                                                        '.row-description',
+                                                                                        '.row-validation-possible-values',
+                                                                                        '.row-custom-error-message',
+                                                                                        '.row-required'
+                                                                                    ],
+                                                                    'required'	:	[
+                                                                        true
+                                                                    ]
+                                                                },
+
 						'reCAPTCHA':							{	'show_rows'	:	[
 																						'.row-field-title',
 																						'.row-description',
@@ -374,8 +427,29 @@ var fields 	=	{
                                                                     'properties':	{
                                                                         'meta_name_value'	: ''
                                                                     }
-                                                                }
+                                                                },
 
+                        'Map':              					{	'show_rows'	:	[
+                                                                                        '.row-field-title',
+                                                                                        '.row-meta-name',
+                                                                                        '.row-description',
+                                                                                        '.row-map-api-key',
+                                                                                        '.row-map-default-lat',
+                                                                                        '.row-map-default-lng',
+                                                                                        '.row-map-default-zoom',
+                                                                                        '.row-map-height',
+                                                                                        '.row-required'
+                                                                                    ]
+                                                                },
+						'HTML':              					{	'show_rows'	:	[
+																						'.row-field-title',
+																						'.row-description',
+																						'.row-html-content'
+																					],
+                                                                    'properties':	{
+                                                                        'meta_name_value'	: ''
+                                                                    }
+																}
 				}
 var fields_to_show = [
 	'.row-field-title',
@@ -571,7 +645,7 @@ function wppb_handle_user_role_field( container_name ) {
                 sortOrderElements.shift();
 
                 for( var i=0; i < sortOrderElements.length; i++ ) {
-                    jQuery( container_name + ' ' + '.row-user-roles .wck-checkboxes').append( jQuery( container_name + ' ' + '.row-user-roles .wck-checkboxes input[value=' + sortOrderElements[i] + ']').parent().parent().get(0) );
+                    jQuery( container_name + ' ' + '.row-user-roles .wck-checkboxes').append( jQuery( container_name + ' ' + '.row-user-roles .wck-checkboxes input[value="' + sortOrderElements[i] + '"]').parent().parent().get(0) );
                 }
             }
         },

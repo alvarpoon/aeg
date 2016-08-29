@@ -30,7 +30,7 @@ class Search_Filter_Field_Sort_Order extends Search_Filter_Field_Base {
 		
 		//set defaults so no chance of any php errors when accessing un init vars
 		$defaults = array(
-			'input_type'				=> '',
+			'input_type'				=> 'select',
 			'all_items_label'			=> '',
 			'accessibility_label'		=> '',
 			'sort_options'				=> array()
@@ -45,7 +45,14 @@ class Search_Filter_Field_Sort_Order extends Search_Filter_Field_Base {
 		
 		if($field_data['all_items_label']=="")
 		{
-			$args['show_option_all_sf'] = __("Sort Results By", $this->plugin_slug);
+			if($values['input_type']=="select")
+			{
+				$args['show_option_all_sf'] = __("Sort Results By", $this->plugin_slug);
+			}
+			else if($values['input_type']=="radio")
+			{
+				$args['show_option_all_sf'] = __("Default Sort Order", $this->plugin_slug);
+			}
 		}
 		else
 		{
@@ -65,14 +72,35 @@ class Search_Filter_Field_Sort_Order extends Search_Filter_Field_Base {
 		$args['show_default_option_sf'] = true;
 		
 		$input_args = array(
-			'name'					=> $field_name,
-			'options'				=> $this->get_options($args),
-			'defaults'				=> $fields_defaults,
-			'accessibility_label'	=> $values['accessibility_label'],
-			'attributes'			=> $attributes
+			'name'			=> $field_name,
+			'defaults'		=> $fields_defaults,
+			'attributes'	=> $attributes,
+			'options'		=> array()
 		);
 		
-		$returnvar .= $this->create_input->select($input_args);
+		if($values['input_type']=="select")
+		{
+			$args['show_default_option_sf'] = true;
+			$input_args['options'] = $this->get_options($args);
+			$input_args['attributes'] = $attributes;
+			$input_args['accessibility_label'] = $values['accessibility_label'];
+			
+			$returnvar .= $this->create_input->select($input_args);
+		}
+		else if($values['input_type']=="radio")
+		{
+			//setup any custom attributes
+			$attributes = array();
+			
+			//finalise input args object
+			$args['show_default_option_sf'] = true;
+			$input_args['options'] = $this->get_options($args);
+			$input_args['attributes'] = $attributes;
+			
+			$returnvar .= $this->create_input->radio($input_args);
+			
+		}
+		
 		//$returnvar .= $this->create_input->generate_select($taxonomychildren, $field_name, $defaults, $values['all_items_label']);
 		
 	

@@ -1943,6 +1943,7 @@ module.exports = function(options)
 {
 	var defaults = {
 		startOpened: false,
+		isInit: true,
 		action: ""
 	};
 	
@@ -2967,7 +2968,7 @@ module.exports = function(options)
 					self.copyListItemsContents($(data['form']), $this);
 					
 					//re init S&F class on the form
-					$this.searchAndFilter();
+					$this.searchAndFilter({'isInit': false});
 				}
 				else
 				{
@@ -2996,7 +2997,7 @@ module.exports = function(options)
 					self.copyListItemsContents($new_search_form, $this);
 					
 					//re init S&F class on the form
-					$this.searchAndFilter();
+					$this.searchAndFilter({'isInit': false});
 				}
 				else
 				{
@@ -3112,8 +3113,13 @@ module.exports = function(options)
 			}
 		}
 		
-		this.canFetchAjaxResults = function()
+		this.canFetchAjaxResults = function(fetch_type)
 		{
+			if(typeof(fetch_type)=="undefined")
+			{
+				var fetch_type = "";
+			}
+			
 			var self = this;
 			var fetch_ajax_results = false;
 			
@@ -3126,14 +3132,14 @@ module.exports = function(options)
 					fetch_ajax_results = true;
 				}
 				
+				var results_url = self.results_url;
+				var current_url = window.location.href;
+				var current_url_contains_results_url = current_url.indexOf(results_url);
+				
 				if(self.only_results_ajax==1)
 				{//if a user has chosen to only allow ajax on results pages (default behaviour)
 					
-					
-					var results_url = self.results_url;
-					var current_url = window.location.href;
-					
-					if(current_url.indexOf(results_url) > -1)
+					if( current_url_contains_results_url > -1)
 					{//this means the current URL contains the results url, which means we can do ajax
 						fetch_ajax_results = true;
 					}
@@ -3141,6 +3147,24 @@ module.exports = function(options)
 					{
 						fetch_ajax_results = false;
 					}
+				}
+				else
+				{
+					if(fetch_type=="pagination")
+					{
+						if( current_url_contains_results_url > -1)
+						{//this means the current URL contains the results url, which means we can do ajax
+					
+						}
+						else
+						{
+							//don't ajax pagination when not on a S&F page
+							fetch_ajax_results = false;
+						}
+						
+						
+					}
+					
 				}
 			}
 			
@@ -3161,7 +3185,7 @@ module.exports = function(options)
 				$ajax_links_object.off('click');
 				$ajax_links_object.on('click', function(e) {
 					
-					if(self.canFetchAjaxResults())
+					if(self.canFetchAjaxResults("pagination"))
 					{
 						e.preventDefault();
 						
@@ -3372,7 +3396,10 @@ module.exports = function(options)
 		var event_data = {};
 		event_data.sfid = self.sfid;
 		event_data.targetSelector = self.ajax_target_attr;	
-		$this.trigger("sf:init", [ event_data ]);
+		if(opts.isInit)
+		{
+			$this.trigger("sf:init", [ event_data ]);
+		}
 		
 	});
 };
@@ -3501,7 +3528,8 @@ module.exports = {
 	},
 	processSortOrderField: function($container)
 	{
-		var self = this;
+		this.processAuthor($container);
+		/*var self = this;
 
 		var $field = $container.find("select");
 		
@@ -3519,7 +3547,7 @@ module.exports = {
 					self.url_params['sort_order'] = fieldVal;
 				}
 			}
-		}
+		}*/
 	},
 	getSelectVal: function($field){
 		
@@ -3702,6 +3730,7 @@ module.exports = {
 		}
 		else if(inputType=="radio")
 		{
+			
 			$field = $container.find("ul > li input:radio");
 			
 			if($field.length>0)
@@ -3721,6 +3750,10 @@ module.exports = {
 				if(fieldName=="_sf_author")
 				{
 					fieldSlug = "authors";
+				}
+				else if(fieldName=="_sf_sort_order")
+				{
+					fieldSlug = "sort_order";
 				}
 				else if(fieldName=="_sf_post_type")
 				{

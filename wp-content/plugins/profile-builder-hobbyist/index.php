@@ -1,11 +1,11 @@
 <?php
 /*
 Plugin Name: Profile Builder Hobbyist
-Plugin URI: http://www.cozmoslabs.com/wordpress-profile-builder/
+Plugin URI: https://www.cozmoslabs.com/wordpress-profile-builder/
 Description: Login, registration and edit profile shortcodes for the front-end. Also you can chose what fields should be displayed or add new (custom) ones both in the front-end and in the dashboard.
-Version: 2.2.8
+Version: 2.4.0
 Author: Cozmoslabs, Madalin Ungureanu, Antohe Cristian, Barina Gabriel, Mihai Iova
-Author URI: http://www.cozmoslabs.com/
+Author URI: https://www.cozmoslabs.com/
 License: GPL2
 
 == Copyright ==
@@ -73,7 +73,7 @@ function wppb_hobbyist_plugin_init() {
          *
          *
          */
-        define('PROFILE_BUILDER_VERSION', '2.2.8' );
+        define('PROFILE_BUILDER_VERSION', '2.4.0' );
         define('WPPB_PLUGIN_DIR', plugin_dir_path(__FILE__));
         define('WPPB_PLUGIN_URL', plugin_dir_url(__FILE__));
         define('WPPB_SERVER_MAX_UPLOAD_SIZE_BYTE', apply_filters('wppb_server_max_upload_size_byte_constant', wppb_return_bytes(ini_get('upload_max_filesize'))));
@@ -103,7 +103,11 @@ function wppb_hobbyist_plugin_init() {
          */
         function wppb_init_translation()
         {
-            load_plugin_textdomain('profile-builder', false, basename(dirname(__FILE__)) . '/translation/');
+            $current_theme = wp_get_theme();
+            if( !empty( $current_theme->stylesheet ) && file_exists( get_theme_root().'/'. $current_theme->stylesheet .'/local_pb_lang' ) )
+                load_plugin_textdomain( 'profile-builder', false, basename( dirname( __FILE__ ) ).'/../../themes/'.$current_theme->stylesheet.'/local_pb_lang' );
+            else
+                load_plugin_textdomain( 'profile-builder', false, basename(dirname(__FILE__)) . '/translation/' );
         }
 
         add_action('init', 'wppb_init_translation', 8);
@@ -141,10 +145,10 @@ function wppb_hobbyist_plugin_init() {
             include_once(WPPB_PLUGIN_DIR . '/modules/custom-redirects/custom-redirects.php');
             include_once(WPPB_PLUGIN_DIR . '/modules/email-customizer/email-customizer.php');
             include_once(WPPB_PLUGIN_DIR . '/modules/multiple-forms/multiple-forms.php');
+            include_once(WPPB_PLUGIN_DIR . '/modules/user-listing/userlisting.php');
 
             $wppb_module_settings = get_option('wppb_module_settings');
             if (isset($wppb_module_settings['wppb_userListing']) && ($wppb_module_settings['wppb_userListing'] == 'show')) {
-                include_once(WPPB_PLUGIN_DIR . '/modules/user-listing/userlisting.php');
                 add_shortcode('wppb-list-users', 'wppb_user_listing_shortcode');
             } else
                 add_shortcode('wppb-list-users', 'wppb_list_all_users_display_error');

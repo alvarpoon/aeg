@@ -217,6 +217,7 @@
 								<option value="shortcode"<?php $this->set_selected($values['display_results_as'], "shortcode"); ?>><?php _e("Using a Shortcode", $this->plugin_slug); ?></option>
 								<option value="custom_woocommerce_store"<?php $this->set_selected($values['display_results_as'], "custom_woocommerce_store"); ?>><?php _e("WooCommerce Shop", $this->plugin_slug); ?></option>
 								<option value="custom_edd_store"<?php $this->set_selected($values['display_results_as'], "custom_edd_store"); ?>><?php _e("EDD Downloads Page", $this->plugin_slug); ?></option>
+								<option value="custom"<?php $this->set_selected($values['display_results_as'], "custom"); ?>><?php _e("Custom", $this->plugin_slug); ?></option>
 							</select>
 						</p>
 						
@@ -253,6 +254,17 @@
 								<p>
 									<a href="http://www.designsandcode.com/documentation/search-filter-pro/search-results/using-a-shortcode/" target="_blank"><?php _e("View the Shortcode setup instructions", $this->plugin_slug ); ?></a>
 								</p>
+							</div>
+							<div class="display_result_txt" id="display_result_custom_txt">
+								<p>
+									<?php _e("Manually add S&F to an existing query and then simply supply the URL where this can be located.", $this->plugin_slug ); ?>
+								</p>
+								<!--<p>
+									<em><?php _e("* You can find your results shortcode in the <strong>Shortcodes</strong> box on this page", $this->plugin_slug ); ?></em>
+								</p>
+								<p>
+									<a href="http://www.designsandcode.com/documentation/search-filter-pro/search-results/using-a-shortcode/" target="_blank"><?php _e("View the Shortcode setup instructions", $this->plugin_slug ); ?></a>
+								</p>-->
 							</div>
 							<div class="display_result_txt" id="display_result_custom_woocommerce_store_txt">
 								<p>
@@ -418,7 +430,7 @@
 					</td>
 				</tr>
 				
-				<tr class="tpl_archive_rows tpl_use_ajax_rows">
+				<tr class="tpl_archive_rows tpl_use_ajax_rows tpl_custom_rows">
 					<td>
 						<label for="ajax_target">
 							<?php _e("Results Container:", $this->plugin_slug); ?><span class="hint--top hint--info" data-hint="<?php _e("The ID or class of the container which your results are loaded in to", $this->plugin_slug); ?>"><i class="dashicons dashicons-info"></i></span>
