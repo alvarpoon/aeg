@@ -119,18 +119,20 @@
         </div>
         <div class="member-search-container">
         	<div class="clearfix">
-		        <? //=do_shortcode('[acps id="156"]');?>
+		        <? //=do_shortcode('[acps id="156"]'); ?>
 				
-				<?//=do_shortcode('[searchandfilter id="349"]'); ?>
+				<? //=do_shortcode('[searchandfilter id="349"]'); ?>
+				
+				<?php echo do_shortcode('[searchandfilter id="1128"]'); ?>
             </div>
-            <select id="sorting_control">
+            <!--<select id="sorting_control">
             	<option value="title_asc">Sort by Title (Ascending)</option>
                 <option value="title_desc">Sort by Title (Descending)</option>
                 <!-- <option value="country_asc">Sort by Country (Ascending)</option>
-                <option value="country_desc">Sort by Country (Descending)</option> -->
-            </select>            
+                <option value="country_desc">Sort by Country (Descending)</option>
+            </select>  -->          
         </div>
-        <?//=do_shortcode('[ULWPQSF id=465]');?>
+        <? //=do_shortcode('[ULWPQSF id=465]');?>
         <div class="members-container clearfix">
         <?php 
 			$i = 0;
