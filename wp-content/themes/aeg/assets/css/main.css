@@ -7608,6 +7608,14 @@ td.eus-image img {
   max-width: 250px;
 }
 @media (min-width: 992px) {
+  .lecture_nav_container {
+    float: left;
+  }
+  .lecture-search-container {
+    width: 40%;
+    float: left;
+    margin: 25px 0px;
+  }
   .event-grid {
     width: 100%;
     margin: 0;
@@ -7670,6 +7678,12 @@ td.eus-image img {
   margin-bottom: 10px;
 }
 #bbpress-forums .bbp-submit-wrapper .button.submit {
+  /*border:none;
+				background:#00325c;
+				border-radius:5px;
+				color:#fff;
+				font-size:18px;
+				padding:10px 25px;*/
   padding: 10px 25px;
   font-size: 18px;
   color: #fff;

@@ -8,7 +8,11 @@
 			'order' 			=> 'DESC',
 			'numberposts' 		=> -1,
 			'posts_per_page' 	=> 10,
-			'category__in'		=> 13,
+			'category_name'		=> 'asian-eus-congress',
+/*			'meta_key' 			=> 'date_to',
+			'meta_compare'		=> '>',
+			'meta_value' 		=> $today,
+			'category__in'		=> 13,*/
 			'orderby' 			=> 'date_from',
 			'paged' 			=> $paged,
 		);
@@ -92,6 +96,12 @@
                 </div>
                 <div class="lecture_nav_item <? if($post->ID == 41){ echo "active"; } ?>">
                     <a href="/events/past-events/">Past Event<? if($post->ID != 41) {echo "<span>".$past_result->post_count."</span>";} ?></a>
+                </div>
+            </div>
+            <div class="clearfix lecture-search-container">
+                <div class="align-right">
+                    <!--Search bar-->
+                    <?=do_shortcode('[searchandfilter id="1127"]');?>
                 </div>
             </div>
         </div>

@@ -166,6 +166,7 @@
                 </tr>
                 <? while ( $results->have_posts() ) : $results->the_post(); ?>
                 <tr>
+                	<!--<td><a href="<?=get_field('research_page')?>?researcher_code=<?=$researcher_code?>&centre_code=<?=$centre_code?>"><? the_title(); ?></a></td>-->
                 	<td>
                 		<? if(get_field('external_research_page')){ ?>
                 		<a target="_blank" href="http://<?=get_field('external_research_page')?>"><? the_title(); ?></a>
