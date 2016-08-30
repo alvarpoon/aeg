@@ -1,21 +1,118 @@
 <?
 	$today = date('Ymd');
 	$paged = (get_query_var('paged')) ? get_query_var('paged') : 1;
+	
+	if( isset($_GET['sorting']) ){
+		$sort_order = $_GET['sorting'];
+	}else{
+		$sort_order = '';
+	}
+	
 	if($post->ID == 37){ //Asian EUS Congress
-		$current_args= array(
+		switch ($sort_order) {
+			case "date_asc":
+				$current_args= array(
+					'post_type'			=> 'event',
+					'post_status' 		=> 'publish',
+					'orderby' 			=> 'date_from',
+					'order' 			=> 'ASC',
+					'numberposts' 		=> -1,
+					'posts_per_page' 	=> 10,
+					'category_name'		=> 'asian-eus-congress',
+					'paged' 			=> $paged,
+				);
+				break;
+			case "date_desc":
+				$current_args= array(
+					'post_type'			=> 'event',
+					'post_status' 		=> 'publish',
+					'orderby' 			=> 'date_from',
+					'order' 			=> 'DESC',
+					'numberposts' 		=> -1,
+					'posts_per_page' 	=> 10,
+					'category_name'		=> 'asian-eus-congress',
+					'paged' 			=> $paged,
+				);
+				break;
+			case "venue_asc":
+				$current_args= array(
+					'post_type'			=> 'event',
+					'post_status' 		=> 'publish',
+					'meta_key' 			=> 'venue',
+					'orderby'    		=> 'meta_value',
+					'order' 			=> 'ASC',
+					'numberposts' 		=> -1,
+					'posts_per_page' 	=> 10,
+					'category_name'		=> 'asian-eus-congress',
+					'paged' 			=> $paged,
+				);
+				break;
+			case "venue_desc":
+				$current_args= array(
+					'post_type'			=> 'event',
+					'post_status' 		=> 'publish',
+					'meta_key' 			=> 'venue',
+					'orderby'    		=> 'meta_value',
+					'order' 			=> 'DESC',
+					'numberposts' 		=> -1,
+					'posts_per_page' 	=> 10,
+					'category_name'		=> 'asian-eus-congress',
+					'paged' 			=> $paged,
+				);
+				break;
+			case "country_asc":
+				$current_args= array(
+					'post_type'			=> 'event',
+					'post_status' 		=> 'publish',
+					'meta_key' 			=> 'country',
+					'orderby'    		=> 'meta_value',
+					'order' 			=> 'ASC',
+					'numberposts' 		=> -1,
+					'posts_per_page' 	=> 10,
+					'category_name'		=> 'asian-eus-congress',
+					'paged' 			=> $paged,
+				);
+				break;
+			case "country_desc":
+				$current_args= array(
+					'post_type'			=> 'event',
+					'post_status' 		=> 'publish',
+					'meta_key' 			=> 'country',
+					'orderby'    		=> 'meta_value',
+					'order' 			=> 'DESC',
+					'numberposts' 		=> -1,
+					'posts_per_page' 	=> 10,
+					'category_name'		=> 'asian-eus-congress',
+					'paged' 			=> $paged,
+				);
+				break;
+			default:
+				$current_args= array(
+					'post_type'			=> 'event',
+					'post_status' 		=> 'publish',
+					'order' 			=> 'DESC',
+					'numberposts' 		=> -1,
+					'posts_per_page' 	=> 10,
+					'category_name'		=> 'asian-eus-congress',
+					'orderby' 			=> 'date_from',
+					'paged' 			=> $paged,
+				);
+		}
+	
+		/*$current_args= array(
 			'post_type'			=> 'event',
 			'post_status' 		=> 'publish',
 			'order' 			=> 'DESC',
 			'numberposts' 		=> -1,
 			'posts_per_page' 	=> 10,
 			'category_name'		=> 'asian-eus-congress',
-/*			'meta_key' 			=> 'date_to',
-			'meta_compare'		=> '>',
-			'meta_value' 		=> $today,
-			'category__in'		=> 13,*/
+			//'meta_key' 			=> 'date_to',
+			//'meta_compare'		=> '>',
+			//'meta_value' 		=> $today,
+			//'category__in'		=> 13,
 			'orderby' 			=> 'date_from',
 			'paged' 			=> $paged,
-		);
+		);*/
 		
 	} else if($post->ID == 39){//up-coming
 		$current_args= array(
@@ -124,9 +221,9 @@
                 <col width="20%">
                 <col width="30%">
             	<tr class="header">
-                	<td>DATE</td>
-                    <td>VENUE</td>
-                    <td>COUNTRY</td>
+                	<td><a href="" class="date_sort">DATE<i class="fa fa-caret-down"></i></a></td>
+                    <td><a href="" class="venue_sort">VENUE<i class="fa fa-caret-down"></i></a></td>
+                    <td><a href="" class="country_sort">COUNTRY<i class="fa fa-caret-down"></i></a></td>
                     <td></td>
                 </tr>
                 <? while ( $results->have_posts() ) : $results->the_post(); 
@@ -227,3 +324,11 @@
 
 <div id="lecture_content"></div>
 <div id="author_content"></div>
+
+<?php
+	$uri_parts = explode('?', $_SERVER['REQUEST_URI'], 2);
+?>
+<script>
+	
+	var full_url = 'http://<?=$_SERVER['HTTP_HOST']; ?>'+'<?=$uri_parts[0];?>';
+</script>
