@@ -7611,7 +7611,7 @@ td.eus-image img {
   .lecture_nav_container {
     float: left;
   }
-  .page-template-template-event .lecture-search-container {
+  .lecture-search-container {
     width: 40%;
     float: left;
     margin: 25px 0px;

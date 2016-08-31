@@ -10,6 +10,19 @@
 	
 	$paged = (get_query_var('paged')) ? get_query_var('paged') : 1;
 	switch ($sort_order) {
+<<<<<<< HEAD
+		/*case "title_asc":
+			$args= array(
+				'post_type'			=> 'member',
+				'post_status' 		=> 'publish',
+				'orderby'			=> 'title',
+				'order' 			=> 'ASC',
+				'numberposts' 		=> -1,
+				'posts_per_page' 	=> 30,
+				'paged' 			=> $paged,
+				'suppress_filters' => false
+			);
+=======
 		case "title_asc":
 			$args = array(
 				'orderby' => 'display_name',
@@ -23,6 +36,7 @@
 	                )
 	            )
 	        );
+>>>>>>> 701f04be6ea7e90a9497a736c5e0cbd7c3196a40
 			break;
 		case "title_desc":
 			$args = array(
@@ -83,7 +97,11 @@
 				'orderby'      => 'title',
 				'order'        => 'ASC'
 			 ); */
+<<<<<<< HEAD
+			$args = array(						
+=======
 			/*$args = array(						
+>>>>>>> 701f04be6ea7e90a9497a736c5e0cbd7c3196a40
 				'meta_query' => array(
 				'relation' => 'OR',
 					array(
@@ -94,6 +112,13 @@
 				),
 				'orderby'      => 'title',
 				'order'        => 'ASC'
+<<<<<<< HEAD
+			);
+	}
+	/*$results = new WP_Query( $args );*/
+	$results = new WP_User_Query( $args );
+	$members = $results->get_results();
+=======
 			);*/
 			$args = array(
 				'orderby' => 'display_name',
@@ -110,6 +135,7 @@
 	}
 	$user_query = new WP_User_Query( $args );
 	$members = $user_query->results;
+>>>>>>> 701f04be6ea7e90a9497a736c5e0cbd7c3196a40
 ?>
 <div class="container">
 	<div class="row">
@@ -118,35 +144,75 @@
             <h1><?=the_title();?></h1>
         </div>
         <div class="member-search-container">
+        	<?php
+$blogusers = get_users( 'blog_id=1&orderby=nicename&role=subscriber' );
+// Array of WP_User objects.
+foreach ( $blogusers as $user ) {
+	//print_r($user);
+	//echo '<p>' . esc_html( $user->display_name ) . '</p>';
+	
+	$first_name = get_field( 'country', $user->ID );
+	
+}?>
+        
         	<div class="clearfix">
-		        <? //=do_shortcode('[acps id="156"]'); ?>
+		        <? //=do_shortcode('[acps id="156"]');?>
 				
-				<? //=do_shortcode('[searchandfilter id="349"]'); ?>
-				
-				<?php echo do_shortcode('[searchandfilter id="1128"]'); ?>
+				<?//=do_shortcode('[searchandfilter id="349"]'); ?>
             </div>
-            <!--<select id="sorting_control">
+            <!-- <select id="sorting_control">
             	<option value="title_asc">Sort by Title (Ascending)</option>
                 <option value="title_desc">Sort by Title (Descending)</option>
-                <!-- <option value="country_asc">Sort by Country (Ascending)</option>
+                <option value="country_asc">Sort by Country (Ascending)</option>
                 <option value="country_desc">Sort by Country (Descending)</option>
-            </select>  -->          
+            </select>    -->         
         </div>
-        <? //=do_shortcode('[ULWPQSF id=465]');?>
+        <?//=do_shortcode('[ULWPQSF id=465]');?>
         <div class="members-container clearfix">
         <?php 
 			$i = 0;
 			$separater = 3;
 			foreach ( $members as $member ) {
+<<<<<<< HEAD
+		?>
+				<div class="col-sm-4 committee-item">
+					<p class="title"><?=$member->display_name; ?></p>
+				</div>
+		<?
+				if( ($i+1)%$separater == 0){
+					echo '<div class="clearfix"></div>';
+				}
+				$i++;
+			}
+			/*while ( $results->have_posts() ) : $results->the_post(); 
+				$member_image = wp_get_attachment_image_src( get_post_thumbnail_id( $post->ID ), 'full' );				
+				//$member_countries = wp_get_object_terms( $post->ID, 'country');
+				//$member_countries = get_field('country', $post->ID);
+				$member_countries = get_the_terms($post->ID, 'country');*/
+		?>
+            	<!-- <div class="col-sm-4 committee-item">
+                    <img src="<?=($member_image?$member_image[0]:get_template_directory().'/assets/img/profile-dummy.jpg')?>" alt="" class="img-responsive" />
+=======
 				$member_countries = get_the_terms($post->ID, 'country');
 				$member_image = wp_get_attachment_image_src(do_shortcode('[user_meta user_id='.$member->ID.' key="user_image"]'), 'full' );
 		?>
 				<div class="col-sm-4 committee-item">
                     <img src="<?=($member_image?$member_image[0]:get_template_directory_uri().'/assets/img/profile-dummy.jpg')?>" alt="" class="img-responsive" />
+>>>>>>> 701f04be6ea7e90a9497a736c5e0cbd7c3196a40
                     <div class="committee-content">
                         <p class="title"><?=$member->display_name; ?></p>
 						<p class="position"><?=$countries[do_shortcode('[user_meta user_id='.$member->ID.' key="user_country"]')]?></p>
                     </div>
+<<<<<<< HEAD
+                </div> -->
+		<?php 
+			/*if( ($i+1)%$separater == 0){
+				echo '<div class="clearfix"></div>';
+			}
+			
+			$i++;
+			endwhile; */?>        
+=======
                 </div>
 		<?
 				if( ($i+1)%$separater == 0){
@@ -155,6 +221,7 @@
 				$i++;
 			}
 		?>      
+>>>>>>> 701f04be6ea7e90a9497a736c5e0cbd7c3196a40
         </div>
         <?php
 		  if (function_exists(custom_pagination)) {

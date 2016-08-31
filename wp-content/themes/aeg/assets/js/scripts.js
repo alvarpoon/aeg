@@ -7178,13 +7178,6 @@ var Roots = {
 		});
 	}
   },
-  asian_eus_congress:{
-	init: function(){
-		$(document).ready(function(){
-			updateAECSortValue();
-		});
-	}	  
-  },
   up_coming_events:{
 	init: function(){
 		var masonryOptions = {
@@ -7409,76 +7402,6 @@ function updateResearchSortValue(){
 		
 		$('.title_sort').attr('href', sort_str[0]);
 		$('.speaker_sort').attr('href', sort_str[1]);
-	}	
-	updateSortStr(current_sort);
-}
-
-function updateAECSortValue(){
-	var sort_str = {};
-	var current_sort = '';
-	current_sort = getUrlVars().sorting;
-	
-	if(typeof(current_sort) !== 'undefined'){
-		switch (current_sort) {
-			case 'date_asc':
-				$('.date_sort').find('i').removeClass('fa-caret-down').addClass('fa-caret-up');
-				break;
-			case 'date_desc':
-				$('.date_sort').find('i').removeClass('fa-caret-up').addClass('fa-caret-down');
-				break;
-			case 'venue_asc':
-				$('.venue_sort').find('i').removeClass('fa-caret-down').addClass('fa-caret-up');
-				break;
-			case 'venue_desc':
-				$('.venue_sort').find('i').removeClass('fa-caret-up').addClass('fa-caret-down');
-				break;
-			case 'country_asc':
-				$('.country_sort').find('i').removeClass('fa-caret-down').addClass('fa-caret-up');
-				break;
-			case 'country_desc':
-				$('.country_sort').find('i').removeClass('fa-caret-up').addClass('fa-caret-down');
-				break;
-		}	
-	}
-	
-	function updateSortStr(current_sort){
-		// 0: title
-		// 1: venue
-		// 2: country
-		sort_str = [full_url + '?sorting=date_asc', full_url + '?sorting=venue_asc', full_url + '?sorting=country_asc'];
-		
-		var temp_str = '';
-		
-		switch (current_sort) {
-			case 'date_asc':
-				temp_str = full_url + '?sorting=date_desc';
-				sort_str[0] = temp_str;
-				break;
-			case 'date_desc':
-				temp_str = full_url + '?sorting=date_asc';
-				sort_str[0] = temp_str;
-				break;
-			case 'venue_asc':
-				temp_str = full_url + '?sorting=venue_desc';
-				sort_str[1] = temp_str;
-				break;
-			case 'venue_desc':
-				temp_str = full_url + '?sorting=venue_asc';
-				sort_str[1] = temp_str;
-				break;
-			case 'country_asc':
-				temp_str = full_url + '?sorting=country_desc';
-				sort_str[2] = temp_str;
-				break;
-			case 'country_desc':
-				temp_str = full_url + '?sorting=country_asc';
-				sort_str[2] = temp_str;
-				break;
-		}	
-		
-		$('.date_sort').attr('href', sort_str[0]);
-		$('.venue_sort').attr('href', sort_str[1]);
-		$('.country_sort').attr('href', sort_str[2]);
 	}	
 	updateSortStr(current_sort);
 }
