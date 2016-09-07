@@ -319,7 +319,7 @@
 			custom_pagination($results->max_num_pages,"",$paged);
 		  }
 		?>
-	</div>
+	</div> 
 </div>
 
 <div id="lecture_content"></div>
