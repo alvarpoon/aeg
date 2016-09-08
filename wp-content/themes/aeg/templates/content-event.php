@@ -209,13 +209,6 @@
 			?>
             <a href="http://<?=$banner_event_apply_link?>" target="_blank" class="btn_event_apply_link">Apply</a>
         </div>
-        <?php
-        	//banner_event_heading
-			//banner_event_info
-			//banner_event_apply_link
-			
-			
-		?>
     </div>
 </div>
 <div class="container">
