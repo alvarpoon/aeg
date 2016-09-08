@@ -180,7 +180,42 @@
 <div class="container">
 	<div class="row">
     	<? $feature_image = wp_get_attachment_image_src( get_post_thumbnail_id( $post->ID ), 'full' ); ?>
-    	<img src="<?=$feature_image[0];?>" alt="" />
+        
+        <div class="feature_banner_wrapper">
+	    	<img src="<?=$feature_image[0];?>" alt="" />
+            <div class="banner_content_container">
+            	<div class="banner_table_div">
+                    <div class="banner_event_heading col-sm-6">
+                        <div class="banner_event_content">
+                        <?php
+                            $banner_event_heading = get_field('banner_event_heading', $post->ID);
+                            echo $banner_event_heading;
+                        ?>
+                        </div>
+                    </div>
+                    <div class="banner_event_info col-sm-6">
+                    	<div class="event_info_content">
+						<?php
+                            $banner_event_info = get_field('banner_event_info', $post->ID);
+                            echo $banner_event_info;
+                        ?>
+                        </div>
+                    </div>
+            	</div>
+            </div>
+            
+            <?php
+               	$banner_event_apply_link = get_field('banner_event_apply_link', $post->ID);
+			?>
+            <a href="<?=$banner_event_apply_link?>" target="_blank" class="btn_event_apply_link">Apply</a>
+        </div>
+        <?php
+        	//banner_event_heading
+			//banner_event_info
+			//banner_event_apply_link
+			
+			
+		?>
     </div>
 </div>
 <div class="container">

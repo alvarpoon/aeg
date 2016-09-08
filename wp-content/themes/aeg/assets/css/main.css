@@ -6647,6 +6647,9 @@ img {
   width: 100%;
   max-width: auto;
 }
+.italic {
+  font-style: italic;
+}
 p {
   line-height: 130%;
   margin-bottom: 20px;
@@ -7337,6 +7340,20 @@ figure.alignnone {
 .committee_popup_content .popup_content span {
   color: #9C9C9C;
 }
+.btn_member_search {
+  background: rgba(0, 0, 0, 0) url("../img/btn_search_submit.png") no-repeat scroll 0 0;
+  border: 0 none;
+  height: 36px;
+  text-indent: -9999px;
+  width: 37px;
+}
+.member_search_input {
+  border: 1px solid #ccccca;
+  border-radius: 5px;
+  height: 45px;
+  margin-right: 10px;
+  padding: 0 10px;
+}
 @media (min-width: 992px) {
   .expandable-container .expandable-header {
     padding: 10px 30px 10px 60px;
@@ -7607,6 +7624,45 @@ figure.alignnone {
 td.eus-image img {
   max-width: 250px;
 }
+.feature_banner_wrapper {
+  position: relative;
+}
+.feature_banner_wrapper .banner_content_container {
+  padding: 20px 0;
+}
+.feature_banner_wrapper .banner_content_container .banner_event_heading .banner_event_content {
+  margin-bottom: 20px;
+  color: #000;
+}
+.feature_banner_wrapper .banner_content_container .banner_event_heading .banner_event_content h2 {
+  font-size: 45px;
+  margin: 0;
+  padding: 0;
+}
+.feature_banner_wrapper .banner_content_container .banner_event_heading .banner_event_content p {
+  font-size: 30px;
+  margin: 15px 0 0 0!important;
+  padding: 0;
+}
+.feature_banner_wrapper .banner_content_container .banner_event_heading .banner_event_content span {
+  font-size: 30px;
+}
+.feature_banner_wrapper .banner_content_container .banner_event_info {
+  color: #000;
+}
+.feature_banner_wrapper .banner_content_container .banner_event_info p {
+  margin: 0!important;
+}
+.feature_banner_wrapper .btn_event_apply_link {
+  display: inline-block;
+  background: #FAB736;
+  color: #fff;
+  border: 1px solid #999;
+  padding: 10px 40px;
+  border-radius: 5px;
+  text-transform: uppercase;
+  margin-left: 15px;
+}
 @media (min-width: 992px) {
   .lecture_nav_container {
     float: left;
@@ -7629,6 +7685,58 @@ td.eus-image img {
   .event-grid .event-item {
     padding: 2%;
     width: 32%;
+  }
+  .feature_banner_wrapper .banner_content_container {
+    padding: 0;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+  }
+  .feature_banner_wrapper .banner_content_container .banner_table_div {
+    display: table;
+    width: 100%;
+    height: 80%;
+  }
+  .feature_banner_wrapper .banner_content_container .banner_table_div .banner_event_heading {
+    padding: 0;
+    float: none;
+    display: table-cell;
+    vertical-align: middle;
+    text-align: center;
+  }
+  .feature_banner_wrapper .banner_content_container .banner_table_div .banner_event_heading .banner_event_content {
+    border-top: 1px solid #fff;
+    border-bottom: 1px solid #fff;
+    padding: 25px 0;
+    width: 80%;
+    margin-bottom: 0;
+    color: #fff;
+    margin-left: 30px;
+  }
+  .feature_banner_wrapper .banner_content_container .banner_table_div .banner_event_info {
+    padding: 0;
+    float: none;
+    display: table-cell;
+    vertical-align: bottom;
+    text-align: right;
+  }
+  .feature_banner_wrapper .banner_content_container .banner_table_div .banner_event_info .event_info_content {
+    padding-bottom: 15%;
+    margin-right: 20%;
+    font-weight: bold;
+    color: #fff;
+  }
+  .feature_banner_wrapper .banner_content_container .banner_table_div .banner_event_info .event_info_content p {
+    margin: 0;
+    padding: 0;
+  }
+  .feature_banner_wrapper .btn_event_apply_link {
+    position: absolute;
+    bottom: 20px;
+    left: 30px;
+    margin: 0;
   }
 }
 #bbpress-forums div.odd,

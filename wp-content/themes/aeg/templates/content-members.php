@@ -198,21 +198,29 @@
 	    	<img src="<?=get_stylesheet_directory_uri()?>/assets/img/committees/img_committees_banner.png" alt="" />
             <h1><?=the_title();?></h1>
         </div>
-        <div class="member-search-container">
-            <select id="sorting_control">
-            	<option value="title_asc">Sort by Title (Ascending)</option>
-                <option value="title_desc">Sort by Title (Descending)</option>
-            </select>
-			<form action="http://<?=$_SERVER['HTTP_HOST']; ?><?=$uri_parts[0];?>" method="GET">
-			  <input type="text" name="search_word" value="" />
-			  <input type="submit" /> 
-			</form>
+        <div class="member-search-container clearfix">
+            <div class="col-sm-6 noPadding">
+                <select id="sorting_control">
+                    <option value="title_asc">Sort by Title (Ascending)</option>
+                    <option value="title_desc">Sort by Title (Descending)</option>
+                </select>
+            </div>
+            <div class="col-sm-6 noPadding" style="text-align:right;">
+                <form action="http://<?=$_SERVER['HTTP_HOST']; ?><?=$uri_parts[0];?>" method="GET">
+                  <input type="text" name="search_word" value="" class="member_search_input" placeholder="Search …" />
+                  <input type="submit" value="Submit" class="btn_member_search"/> 
+                </form>
+            </div>
         </div>
         <div class="members-container clearfix">
         <?php 
 			$i = 0;
 			$separater = 3;
 			if(!empty($members)){
+				if($search_string != ''){
+					echo '<p>Search Results for <span class="italic">'.$search_string.'</span></p>';
+				}
+				
 				foreach ( $members as $member ) {
 					$member_countries = get_the_terms($post->ID, 'country');
 					$member_image = wp_get_attachment_image_src(do_shortcode('[user_meta user_id='.$member->ID.' key="user_image"]'), 'full' );
