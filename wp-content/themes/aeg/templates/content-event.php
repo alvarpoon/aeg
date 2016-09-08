@@ -207,7 +207,7 @@
             <?php
                	$banner_event_apply_link = get_field('banner_event_apply_link', $post->ID);
 			?>
-            <a href="<?=$banner_event_apply_link?>" target="_blank" class="btn_event_apply_link">Apply</a>
+            <a href="http://<?=$banner_event_apply_link?>" target="_blank" class="btn_event_apply_link">Apply</a>
         </div>
         <?php
         	//banner_event_heading
