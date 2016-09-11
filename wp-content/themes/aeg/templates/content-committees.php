@@ -70,13 +70,8 @@
                                 //$member_image = wp_get_attachment_image_src( get_post_thumbnail_id( $result->ID ), 'full' );
                                 $member_image = wp_get_attachment_image_src(do_shortcode('[user_meta user_id='.$user->ID.' key="user_image"]'), 'full' );
                             ?>
-<<<<<<< HEAD
-                                <div class="<? if($type->cat_ID == 3) { echo "col-sm-6"; }else{ echo "col-sm-4"; } ?>  committee-item">
-                                    <img src="<?=($member_image?$member_image[0]:get_template_directory().'/assets/img/profile-dummy.jpg')?>" alt="" class="img-responsive" />
-=======
                                 <div class="<? if($type_name == "Steering Committee") { echo "col-sm-6"; }else{ echo "col-sm-4"; } ?>  committee-item">
                                     <img src="<?=($member_image?$member_image[0]:get_template_directory_uri().'/assets/img/profile-dummy.jpg')?>" alt="" class="img-responsive" />
->>>>>>> 701f04be6ea7e90a9497a736c5e0cbd7c3196a40
                                     <div class="committee-content">
                                         <p class="title"><?=$user->display_name; ?></p>
                                         <p class="position"><?=do_shortcode('[user_meta user_id='.$user->ID.' key="user_position"]')?></p>
