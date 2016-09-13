@@ -1,9 +1,3 @@
-<!--<div class="container">
-	<div class="row">
-    	<? $feature_image = wp_get_attachment_image_src( get_post_thumbnail_id( $post->ID ), 'full' ); ?>
-    	<img src="<?=$feature_image[0];?>" alt="" />
-    </div>
-</div>-->
 <div class="container">
 	<div class="row">
         <div class="clearfix">

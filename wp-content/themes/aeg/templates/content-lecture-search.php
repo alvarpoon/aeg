@@ -7,7 +7,7 @@
 	<div class="row">
         <div class="clearfix">
             <div class="lecture_nav_container clearfix">
-                <div class="lecture_nav_item">
+                <div class="lecture_nav_item active">
                     <a href="/education/lecture/">LECTURE</a>
                 </div>
                 <div class="lecture_nav_item">

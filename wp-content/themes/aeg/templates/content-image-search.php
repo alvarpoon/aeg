@@ -1,132 +1,17 @@
+<?php //the_search_query(); ?>
+
 <?
-
-	$paged = (get_query_var('paged')) ? get_query_var('paged') : 1;
-	if( isset($_GET['sorting']) ){
-		$sort_order = $_GET['sorting'];
-	}else{
-		$sort_order = '';
-	}
-	
-	switch ($sort_order) {
-		case "title_asc":
-			$image_args= array(
-				'post_type'			=> 'image',
-				'post_status' 		=> 'publish',
-				'orderby'			=> 'title',
-				'order' 			=> 'ASC',
-				'numberposts' 		=> -1,
-				'posts_per_page' 	=> 16,
-				'paged' 			=> $paged,
-				'suppress_filters' => false
-			);
-			break;
-		case "title_desc":	
-			$image_args= array(
-				'post_type'			=> 'image',
-				'post_status' 		=> 'publish',
-				'orderby'			=> 'title',
-				'order' 			=> 'DESC',
-				'numberposts' 		=> -1,
-				'posts_per_page' 	=> 16,
-				'paged' 			=> $paged,
-				'suppress_filters' => false
-			);
-			break;
-		case "speaker_asc":
-			$image_args= array(
-				'post_type'			=> 'image',
-				'post_status' 		=> 'publish',
-				'orderby'			=> 'author date',
-				'order' 			=> 'ASC',
-				'numberposts' 		=> -1,
-				'posts_per_page' 	=> 16,
-				'paged' 			=> $paged,
-				'suppress_filters' => false
-			);
-			break;
-		case "speaker_desc":
-			$image_args= array(
-				'post_type'			=> 'image',
-				'post_status' 		=> 'publish',
-				'orderby'			=> 'author date',
-				'order' 			=> 'DESC',
-				'numberposts' 		=> -1,
-				'posts_per_page' 	=> 16,
-				'paged' 			=> $paged,
-				'suppress_filters' => false
-			);
-			break;
-		case "date_asc":
-			$image_args= array(
-				'post_type'			=> 'image',
-				'post_status' 		=> 'publish',
-				'orderby'			=> 'date',
-				'order' 			=> 'ASC',
-				'numberposts' 		=> -1,
-				'posts_per_page' 	=> 16,
-				'paged' 			=> $paged,
-				'suppress_filters' => false
-			);
-			break;
-		case "date_desc":
-			$image_args= array(
-				'post_type'			=> 'image',
-				'post_status' 		=> 'publish',
-				'orderby'			=> 'date',
-				'order' 			=> 'DESC',
-				'numberposts' 		=> -1,
-				'posts_per_page' 	=> 16,
-				'paged' 			=> $paged,
-				'suppress_filters' => false
-			);
-			break;
-		default:
-			$image_args= array(
-				'post_type'			=> 'image',
-				'post_status' 		=> 'publish',
-				'orderby'			=> 'title',
-				'order' 			=> 'DESC',
-				'numberposts' 		=> -1,
-				'posts_per_page' 	=> 16,
-				'paged' 			=> $paged,
-				'suppress_filters' => false
-			);
-	}
-	
-	$results = new WP_Query( $image_args );
-	
-	$video_args= array(
-		'post_type'			=> 'video',
-		'post_status' 		=> 'publish',
-		'orderby'			=> 'date',
-		'order' 			=> 'DESC',
-		'numberposts' 		=> -1,
-		'posts_per_page' 	=> 16,
-		'paged' 			=> $paged,
-	);
-	$video_results = new WP_Query( $video_args );
-	
-	$lecture_args= array(
-		'post_type'			=> 'lecture',
-		'post_status' 		=> 'publish',
-		'orderby'			=> 'date',
-		'order' 			=> 'DESC',
-		'numberposts' 		=> -1,
-		'posts_per_page' 	=> 16,
-		'paged' 			=> $paged,
-	);
-	$lecture_results = new WP_Query( $lecture_args );
-
+	//$paged = (get_query_var('paged')) ? get_query_var('paged') : 1;
 ?>
 <div class="container">
 	<div class="row">
         <div class="clearfix">
             <div class="lecture_nav_container clearfix">
                 <div class="lecture_nav_item">
-                    <a href="/education/lecture/">LECTURE<span><?=$lecture_results->post_count;?></span></a>
+                    <a href="/education/lecture/">LECTURE</a>
                 </div>
                 <div class="lecture_nav_item">
-                    <a href="/education/videos/">VIDEO<span><?=$video_results->post_count;?></span></a>
+                    <a href="/education/videos/">VIDEO</a>
                 </div>
                 <div class="lecture_nav_item active">
                     <a href="#">IMAGES</a>
@@ -157,7 +42,7 @@
                     <td><a href="" class="date_sort">DATE<i class="fa fa-caret-down"></i></a></td>
                     <td></td>
                 </tr>
-                <? while ( $results->have_posts() ) : $results->the_post(); 
+                <? while ( have_posts() ) : the_post(); 
 					$author_id=$post->post_author;
                     $id=get_the_ID();
 					/*$postImage = wp_get_attachment_image_src( get_post_thumbnail_id( $post->ID ), 'full' );*/

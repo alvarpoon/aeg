@@ -57,6 +57,20 @@ var Roots = {
 	  
 	  $(document).ready(function(){
 		  setMobileMenu();
+		  
+		  var masonryOptions = {
+			itemSelector: '.event-item',
+			columnWidth: '.event-sizer',
+			gutter: '.gutter-sizer',
+			percentPosition: true
+		  };
+		  $(document).ready(function() {
+			if($('.event-grid').length > 0){
+				$(window).load(function(){	
+					var product_grid = $('.event-grid').masonry(masonryOptions);
+				});	
+			}
+		  });
 	  });
 	  
 	  $(window).resize(function(){
@@ -109,10 +123,11 @@ var Roots = {
 	init: function() {
 	  function initContentHeight(){
 		$('.expandable-content-wrapper').each(function(){
+			console.log($(this).outerHeight());
 			$(this).parent().attr('data-original-height',$(this).outerHeight());
-			if(!$(this).parent().parent().find('.expandable-header').hasClass('open')){
+			/*if(!$(this).parent().parent().find('.expandable-header').hasClass('open')){
 				$(this).parent().css('height',0);
-			}
+			}*/
 		});  
 	  }
 	  
@@ -130,9 +145,16 @@ var Roots = {
 	  }
 	  
 	  $(document).ready(function(){
-		  initContentHeight();
+		  //initContentHeight();
+		  $('.expandable-container').each(function(){
+			  if(!$(this).find('.expandable-header').hasClass('open')){
+				  $(this).find('.expandable-content').css('height',0);
+			  }
+		  });
+		  
 		  initDetailPopup();
 		  $( ".expandable-header").click(function() {
+			initContentHeight();
 			if($(this).hasClass('open')){
 			  	$(this).parent().find( ".expandable-content" ).animate({
 					height:'0px'
@@ -218,7 +240,7 @@ var Roots = {
   },
   up_coming_events:{
 	init: function(){
-		var masonryOptions = {
+		/*var masonryOptions = {
 			itemSelector: '.event-item',
 			columnWidth: '.event-sizer',
 			gutter: '.gutter-sizer',
@@ -230,7 +252,12 @@ var Roots = {
 					var product_grid = $('.event-grid').masonry(masonryOptions);
 				});	
 			}
-		});
+		});*/
+	}
+  },
+  upcoming_events_search:{
+	init: function(){
+		
 	}
   },
   asian_eus_congress:{
