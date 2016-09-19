@@ -200,10 +200,12 @@
         </div>
         <div class="member-search-container clearfix">
             <div class="col-sm-6 noPadding">
+           	<?php if($search_string == ''){?>
                 <select id="sorting_control">
                     <option value="title_asc">Sort by Title (Ascending)</option>
                     <option value="title_desc">Sort by Title (Descending)</option>
                 </select>
+            <?php } ?>
             </div>
             <div class="col-sm-6 noPadding" style="text-align:right;">
                 <form action="http://<?=$_SERVER['HTTP_HOST']; ?><?=$uri_parts[0];?>" method="GET">

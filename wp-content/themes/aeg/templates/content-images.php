@@ -142,7 +142,7 @@
             </div>
             <div class="col-sm-7 noPadding align-right">
                 <!--Search bar-->
-				<?=do_shortcode('[searchandfilter id="1126"]');?>
+				<?=do_shortcode('[searchandfilter id="1141"]');?>
             </div>
         </div>
         <div class="table-responsive lecture-table">

@@ -14,7 +14,9 @@
 				$current_args= array(
 					'post_type'			=> 'event',
 					'post_status' 		=> 'publish',
-					'orderby' 			=> 'date_from',
+					'meta_key' 			=> 'date_from',
+					//'orderby' 			=> 'date_from',
+					'orderby'   		=> 'meta_value',
 					'order' 			=> 'ASC',
 					'numberposts' 		=> -1,
 					'posts_per_page' 	=> 10,
@@ -26,7 +28,9 @@
 				$current_args= array(
 					'post_type'			=> 'event',
 					'post_status' 		=> 'publish',
-					'orderby' 			=> 'date_from',
+					'meta_key' 			=> 'date_from',
+					//'orderby' 			=> 'date_from',
+					'orderby'   		=> 'meta_value',
 					'order' 			=> 'DESC',
 					'numberposts' 		=> -1,
 					'posts_per_page' 	=> 10,
@@ -179,7 +183,12 @@
 ?>
 <div class="container">
 	<div class="row">
-    	<? $feature_image = wp_get_attachment_image_src( get_post_thumbnail_id( $post->ID ), 'full' ); ?>
+    	<?php
+		
+			$feature_image = wp_get_attachment_image_src( get_post_thumbnail_id( $post->ID ), 'full' ); 
+		
+			if($feature_image != ''){
+		?>
         
         <div class="feature_banner_wrapper">
 	    	<img src="<?=$feature_image[0];?>" alt="" />
@@ -209,9 +218,11 @@
 			?>
             <a href="http://<?=$banner_event_apply_link?>" target="_blank" class="btn_event_apply_link">Apply</a>
         </div>
+        
+        <?php } ?>
     </div>
 </div>
-<div class="container">
+<div class="container event_container">
 	<div class="row">
     	<? if($post->ID != 37) { ?>
         <div class="clearfix">
@@ -226,7 +237,14 @@
             <div class="clearfix lecture-search-container">
                 <div class="align-right">
                     <!--Search bar-->
-                    <?=do_shortcode('[searchandfilter id="1127"]');?>
+                    
+                    <?php
+						if($post->ID == 39){
+							echo do_shortcode('[searchandfilter id="1127"]');
+						}else if($post->ID == 41){
+							echo do_shortcode('[searchandfilter id="1143"]');		
+						}
+					?>
                 </div>
             </div>
         </div>
@@ -262,6 +280,7 @@
                 <tr>
                 	<td>
                     	<?=date('F j, Y', strtotime(get_field('date_from', $post->ID)));?><br/><?=date('g:ia', strtotime(get_field('date_from', $post->ID)));?>
+                        <? //=get_field('date_from', $post->ID) ?>
                     </td>
                     <td>
                     	<?=get_field('venue', $post->ID);?>
