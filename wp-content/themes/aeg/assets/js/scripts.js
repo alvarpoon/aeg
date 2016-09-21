@@ -7026,13 +7026,16 @@ var Roots = {
 			gutter: '.gutter-sizer',
 			percentPosition: true
 		  };
-		  $(document).ready(function() {
-			if($('.event-grid').length > 0){
-				$(window).load(function(){	
-					var product_grid = $('.event-grid').masonry(masonryOptions);
-				});	
-			}
-		  });
+			
+		  if($('.event-grid').length > 0){
+			$(window).load(function(){	
+				var product_grid = $('.event-grid').masonry(masonryOptions);
+			});	
+		  }
+		  
+		  if($('.lecture-table').length > 0){
+			initEducationPopup();  
+		  }
 	  });
 	  
 	  $(window).resize(function(){
@@ -7158,7 +7161,7 @@ var Roots = {
 	init: function(){
 		
 		$(document).ready(function() {
-            initEducationPopup();
+            //initEducationPopup();
 			updateEducationSortValue();
         });	
 	}
@@ -7166,7 +7169,7 @@ var Roots = {
   videos:{
 	init: function(){
 		$(document).ready(function() {
-            initEducationPopup();
+            //initEducationPopup();
 			updateEducationSortValue();
         });	
 	}
@@ -7174,7 +7177,7 @@ var Roots = {
   image:{
 	init: function(){
 		$(document).ready(function() {
-            initEducationPopup();
+            //initEducationPopup();
 			updateEducationSortValue();
         });	
 	}
