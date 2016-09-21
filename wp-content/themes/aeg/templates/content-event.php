@@ -240,9 +240,9 @@
                     
                     <?php
 						if($post->ID == 39){
-							echo do_shortcode('[searchandfilter id="1127"]');
+							echo do_shortcode('[searchandfilter id="1702"]');
 						}else if($post->ID == 41){
-							echo do_shortcode('[searchandfilter id="1143"]');		
+							echo do_shortcode('[searchandfilter id="1701"]');		
 						}
 					?>
                 </div>

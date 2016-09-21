@@ -15,7 +15,7 @@
             <div class="clearfix lecture-search-container">
                 <div class="align-right">
                     <!--Search bar-->
-                    <?=do_shortcode('[searchandfilter id="1127"]');?>
+                    <?=do_shortcode('[searchandfilter id="1702"]');?>
                 </div>
             </div>
         </div>
